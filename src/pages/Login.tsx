@@ -2,13 +2,20 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Wallet, Eye, EyeOff, LogIn } from "lucide-react";
+import { Wallet, Eye, EyeOff, LogIn, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
+
+const countryCodes = [
+  { value: "+91", label: "🇮🇳 +91" },
+  { value: "+880", label: "🇧🇩 +880" },
+  { value: "+92", label: "🇵🇰 +92" },
+];
 
 const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [countryCode, setCountryCode] = useState("+91");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
 
@@ -19,13 +26,14 @@ const Login = () => {
       return;
     }
 
+    const fullPhone = `${countryCode}${phone}`;
+
     setLoading(true);
     try {
-      // First find user email by phone from profiles
       const { data: profiles, error: profileError } = await supabase
         .from("profiles")
         .select("email")
-        .eq("phone", phone)
+        .eq("phone", fullPhone)
         .maybeSingle();
 
       if (profileError) throw profileError;
@@ -66,17 +74,29 @@ const Login = () => {
 
         <form onSubmit={handleSubmit} className="rounded-2xl border border-border bg-card p-6 sm:p-8 space-y-4">
           <div>
-            <label className="text-sm text-muted-foreground mb-1.5 block">
-              Mobile Number
-            </label>
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="+880 1XXXXXXXXX"
-              required
-              className="w-full rounded-lg border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
-            />
+            <label className="text-sm text-muted-foreground mb-1.5 block">Mobile Number</label>
+            <div className="flex gap-2">
+              <div className="relative shrink-0">
+                <select
+                  value={countryCode}
+                  onChange={(e) => setCountryCode(e.target.value)}
+                  className="appearance-none w-[90px] rounded-lg border border-border bg-secondary px-3 py-3 pr-7 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
+                >
+                  {countryCodes.map((c) => (
+                    <option key={c.value} value={c.value}>{c.label}</option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+              </div>
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="1XXXXXXXXX"
+                required
+                className="flex-1 min-w-0 rounded-lg border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
+              />
+            </div>
           </div>
 
           <div>
