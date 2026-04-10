@@ -2,13 +2,12 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Wallet, Eye, EyeOff, UserPlus } from "lucide-react";
+import { Wallet, Eye, EyeOff, UserPlus, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 
 const countryCodes = [
-  { value: "+880", label: "🇧🇩 +880" },
   { value: "+91", label: "🇮🇳 +91" },
+  { value: "+880", label: "🇧🇩 +880" },
   { value: "+92", label: "🇵🇰 +92" },
 ];
 
@@ -16,7 +15,7 @@ const Register = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [countryCode, setCountryCode] = useState("+880");
+  const [countryCode, setCountryCode] = useState("+91");
   const [form, setForm] = useState({
     fullName: "",
     phone: "",
@@ -58,7 +57,6 @@ const Register = () => {
 
       if (error) throw error;
 
-      // Update profile with full phone number
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         await supabase.from("profiles").update({
@@ -107,16 +105,18 @@ const Register = () => {
               Phone Number <span className="text-destructive">*</span>
             </label>
             <div className="flex gap-2">
-              <Select value={countryCode} onValueChange={setCountryCode}>
-                <SelectTrigger className="w-[120px] rounded-lg border-border bg-secondary h-[48px] text-foreground">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
+              <div className="relative shrink-0">
+                <select
+                  value={countryCode}
+                  onChange={(e) => setCountryCode(e.target.value)}
+                  className="appearance-none w-[90px] rounded-lg border border-border bg-secondary px-3 py-3 pr-7 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
+                >
                   {countryCodes.map((c) => (
-                    <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                    <option key={c.value} value={c.value}>{c.label}</option>
                   ))}
-                </SelectContent>
-              </Select>
+                </select>
+                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+              </div>
               <input
                 name="phone"
                 type="tel"
@@ -124,7 +124,7 @@ const Register = () => {
                 onChange={handleChange}
                 placeholder="1XXXXXXXXX"
                 required
-                className="flex-1 rounded-lg border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
+                className="flex-1 min-w-0 rounded-lg border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
               />
             </div>
           </div>
