@@ -2,13 +2,21 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Wallet, Eye, EyeOff, UserPlus } from "lucide-react";
 import { toast } from "sonner";
+
+const countryCodes = [
+  { value: "+880", label: "🇧🇩 +880" },
+  { value: "+91", label: "🇮🇳 +91" },
+  { value: "+92", label: "🇵🇰 +92" },
+];
 
 const Register = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [countryCode, setCountryCode] = useState("+880");
   const [form, setForm] = useState({
     fullName: "",
     phone: "",
@@ -32,6 +40,8 @@ const Register = () => {
       return;
     }
 
+    const fullPhone = `${countryCode}${form.phone}`;
+
     setLoading(true);
     try {
       const { error } = await supabase.auth.signUp({
@@ -40,7 +50,7 @@ const Register = () => {
         options: {
           data: {
             full_name: form.fullName,
-            phone: form.phone,
+            phone: fullPhone,
             invitation_code: form.invitationCode || null,
           },
         },
@@ -48,9 +58,19 @@ const Register = () => {
 
       if (error) throw error;
 
-      // Update profile with phone and invitation code
-      toast.success("Registration successful! Please check your email to verify.");
-      navigate("/login");
+      // Update profile with full phone number
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase.from("profiles").update({
+          phone: fullPhone,
+          full_name: form.fullName,
+          email: form.email,
+          invitation_code: form.invitationCode || null,
+        }).eq("user_id", user.id);
+      }
+
+      toast.success("Registration successful!");
+      navigate("/");
     } catch (err: any) {
       toast.error(err.message || "Registration failed");
     } finally {
@@ -86,15 +106,27 @@ const Register = () => {
             <label className="text-sm text-muted-foreground mb-1.5 block">
               Phone Number <span className="text-destructive">*</span>
             </label>
-            <input
-              name="phone"
-              type="tel"
-              value={form.phone}
-              onChange={handleChange}
-              placeholder="+880 1XXXXXXXXX"
-              required
-              className="w-full rounded-lg border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
-            />
+            <div className="flex gap-2">
+              <Select value={countryCode} onValueChange={setCountryCode}>
+                <SelectTrigger className="w-[120px] rounded-lg border-border bg-secondary h-[48px] text-foreground">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {countryCodes.map((c) => (
+                    <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <input
+                name="phone"
+                type="tel"
+                value={form.phone}
+                onChange={handleChange}
+                placeholder="1XXXXXXXXX"
+                required
+                className="flex-1 rounded-lg border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
+              />
+            </div>
           </div>
 
           <div>
