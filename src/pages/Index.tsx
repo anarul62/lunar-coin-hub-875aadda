@@ -1,19 +1,13 @@
 import Navbar from "@/components/Navbar";
-import HeroSection from "@/components/HeroSection";
-import MarketTicker from "@/components/MarketTicker";
-import InvestmentPlans from "@/components/InvestmentPlans";
-import NFTMarketplace from "@/components/NFTMarketplace";
-import WalletSection from "@/components/WalletSection";
+import InvestHome from "@/components/InvestHome";
 import Footer from "@/components/Footer";
 
 const Index = () => (
   <div className="min-h-screen bg-background">
     <Navbar />
-    <HeroSection />
-    <MarketTicker />
-    <InvestmentPlans />
-    <NFTMarketplace />
-    <WalletSection />
+    <main className="pt-14">
+      <InvestHome />
+    </main>
     <Footer />
   </div>
 );
