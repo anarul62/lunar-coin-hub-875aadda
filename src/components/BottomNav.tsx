@@ -1,10 +1,10 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Compass, LayoutGrid, Zap, Users, PieChart } from "lucide-react";
+import { Compass, LayoutGrid, Wallet, Users, PieChart } from "lucide-react";
 
 const items = [
   { label: "Discover", icon: Compass, path: "/" },
   { label: "Invest", icon: LayoutGrid, path: "/invest" },
-  { label: "QuickStart", icon: Zap, path: "/quickstart" },
+  { label: "Wallet", icon: Wallet, path: "/wallet" },
   { label: "Referral", icon: Users, path: "/referral" },
   { label: "Profile", icon: PieChart, path: "/profile" },
 ];
