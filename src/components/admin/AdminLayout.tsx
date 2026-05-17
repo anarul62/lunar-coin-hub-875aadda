@@ -6,7 +6,7 @@ import {
   Coins, Gem, FileCheck, LineChart, Gift, Megaphone, Settings,
   UserCog, CreditCard, ArrowDownToLine, ArrowUpFromLine, Banknote,
   Bell, Sun, Menu, X, LogOut, ChevronRight, BadgeIndianRupee,
-  Headphones, MessageSquare, Send, Ticket, Users2, Trophy
+  Headphones, MessageSquare, Send, Ticket, Users2, Trophy, Image as ImageIcon
 } from "lucide-react";
 
 type Item = { label: string; icon: any; path: string };
@@ -41,6 +41,7 @@ const groups: Group[] = [
     { label: "Modify Ewallet Address", icon: Wallet, path: "/admin/ewallet" },
   ]},
   { title: "Advance Settings", items: [
+    { label: "Banners", icon: ImageIcon, path: "/admin/banners" },
     { label: "Agent Settings", icon: UserCog, path: "/admin/agents" },
     { label: "Web Settings", icon: Settings, path: "/admin/web" },
   ]},
