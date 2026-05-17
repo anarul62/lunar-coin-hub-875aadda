@@ -5,6 +5,7 @@ import {
   Wallet, Sparkles, BarChart3, Lock, ChevronRight, Star,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import BannerSlider from "@/components/BannerSlider";
 
 const tabs = ["Gold & Silver", "Crypto", "Plans"];
 
@@ -75,25 +76,8 @@ const InvestHome = () => {
         </div>
       </div>
 
-      {/* Hero banner */}
-      <section id="market" className="px-4 pt-4">
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl bg-gradient-gold-subtle border border-primary/30 px-4 py-5 text-center relative overflow-hidden"
-        >
-          <p className="text-xs text-muted-foreground">Starts from ₹10,000</p>
-          <div className="flex items-center justify-center gap-2 my-2">
-            <span className="px-2 py-0.5 rounded bg-primary text-primary-foreground text-[10px] font-bold tracking-wider">GOLD</span>
-            <span className="text-xs text-muted-foreground">Digital Gold Plan</span>
-          </div>
-          <p className="text-sm text-muted-foreground">EARN</p>
-          <p className="font-heading text-3xl font-bold text-gradient-gold">10.25% <span className="text-xs text-muted-foreground font-medium">YTM</span></p>
-          <Button size="sm" className="mt-3 bg-gradient-gold text-primary-foreground font-semibold px-6">
-            Invest Now
-          </Button>
-        </motion.div>
-      </section>
+      {/* Admin-managed sliding banners */}
+      <BannerSlider />
 
       {/* Categories grid */}
       <section className="px-4 pt-6">
