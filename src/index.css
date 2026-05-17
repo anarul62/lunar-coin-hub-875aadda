@@ -98,4 +98,12 @@
 
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  @keyframes bannerSlide {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .animate-banner-slide {
+    animation: bannerSlide 25s linear infinite;
+  }
 }
