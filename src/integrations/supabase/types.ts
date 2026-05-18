@@ -47,6 +47,42 @@ export type Database = {
         }
         Relationships: []
       }
+      kyc_requests: {
+        Row: {
+          created_at: string
+          full_name: string
+          id: string
+          mobile: string
+          pan_number: string
+          rejection_reason: string | null
+          status: Database["public"]["Enums"]["kyc_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          full_name: string
+          id?: string
+          mobile: string
+          pan_number: string
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["kyc_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string
+          id?: string
+          mobile?: string
+          pan_number?: string
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["kyc_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -88,7 +124,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      kyc_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -215,6 +251,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      kyc_status: ["pending", "approved", "rejected"],
+    },
   },
 } as const
