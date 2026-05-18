@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BannerSlider from "@/components/BannerSlider";
+import KycModal from "@/components/KycModal";
 
 const tabs = ["Gold & Silver", "Crypto", "Plans"];
 
@@ -45,6 +46,7 @@ const allList = [
 
 const InvestHome = () => {
   const [activeTab, setActiveTab] = useState(tabs[0]);
+  const [kycOpen, setKycOpen] = useState(false);
 
   return (
     <div className="pb-20">
@@ -86,6 +88,7 @@ const InvestHome = () => {
           {categories.map((c) => (
             <button
               key={c.label}
+              onClick={() => { if (c.label === "KYC") setKycOpen(true); }}
               className="relative flex flex-col items-center justify-center gap-1.5 rounded-xl bg-card border border-border py-3 px-1 hover:border-primary/30 transition-colors"
             >
               {c.tag && (
@@ -200,11 +203,12 @@ const InvestHome = () => {
             <p className="text-sm font-bold">Is investment ready by completing your KYC</p>
             <p className="text-xs opacity-80">Quick 2-minute verification</p>
           </div>
-          <Button className="bg-background text-primary font-semibold hover:bg-background/90 shrink-0">
+          <Button onClick={() => setKycOpen(true)} className="bg-background text-primary font-semibold hover:bg-background/90 shrink-0">
             Start KYC
           </Button>
         </div>
       </section>
+      <KycModal open={kycOpen} onOpenChange={setKycOpen} />
     </div>
   );
 };

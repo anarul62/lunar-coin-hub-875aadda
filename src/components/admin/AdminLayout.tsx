@@ -26,6 +26,7 @@ const groups: Group[] = [
     { label: "Silver Invest", icon: Gem, path: "/admin/silver" },
     { label: "Investment Plans", icon: TrendingUp, path: "/admin/plans" },
     { label: "KYC Manager", icon: FileCheck, path: "/admin/kyc" },
+    { label: "KYC Requests", icon: FileCheck, path: "/admin/kyc/requests" },
   ]},
   { title: "Finances", items: [
     { label: "Auto PayIn Gateway", icon: ArrowDownToLine, path: "/admin/payin" },
