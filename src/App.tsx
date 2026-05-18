@@ -13,6 +13,8 @@ import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
 import AdminUsers from "./pages/admin/AdminUsers.tsx";
 import AdminPlaceholder from "./pages/admin/AdminPlaceholder.tsx";
 import AdminBanners from "./pages/admin/AdminBanners.tsx";
+import AdminKyc from "./pages/admin/AdminKyc.tsx";
+import AdminKycRequests from "./pages/admin/AdminKycRequests.tsx";
 
 const queryClient = new QueryClient();
 
@@ -23,7 +25,7 @@ const placeholders: { path: string; title: string }[] = [
   { path: "/admin/gold", title: "Gold Invest" },
   { path: "/admin/silver", title: "Silver Invest" },
   { path: "/admin/plans", title: "Investment Plans" },
-  { path: "/admin/kyc", title: "KYC Manager" },
+  
   { path: "/admin/payin", title: "Auto PayIn Gateway" },
   { path: "/admin/payout", title: "Auto PayOut Gateway" },
   { path: "/admin/finance", title: "Finance Setting" },
@@ -67,6 +69,8 @@ const App = () => (
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/banners" element={<AdminBanners />} />
+          <Route path="/admin/kyc" element={<AdminKyc />} />
+          <Route path="/admin/kyc/requests" element={<AdminKycRequests />} />
           {placeholders.map(p => (
             <Route key={p.path} path={p.path} element={<AdminPlaceholder title={p.title} />} />
           ))}
