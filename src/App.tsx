@@ -15,6 +15,10 @@ import AdminPlaceholder from "./pages/admin/AdminPlaceholder.tsx";
 import AdminBanners from "./pages/admin/AdminBanners.tsx";
 import AdminKyc from "./pages/admin/AdminKyc.tsx";
 import AdminKycRequests from "./pages/admin/AdminKycRequests.tsx";
+import AdminBonusManage from "./pages/admin/AdminBonusManage.tsx";
+import AdminDepositBonus from "./pages/admin/AdminDepositBonus.tsx";
+import AdminReferralBonus from "./pages/admin/AdminReferralBonus.tsx";
+import Profile from "./pages/Profile.tsx";
 
 const queryClient = new QueryClient();
 
@@ -39,9 +43,6 @@ const placeholders: { path: string; title: string }[] = [
   { path: "/admin/add-agent", title: "Add Agent" },
   { path: "/admin/agent-data", title: "Agent Data" },
   { path: "/admin/salary", title: "Manage Salary" },
-  { path: "/admin/deposit-bonus", title: "Member Deposit Bonus" },
-  { path: "/admin/referral-bonus", title: "Agent Referral Bonus" },
-  { path: "/admin/bonus", title: "Bonus Manage" },
   { path: "/admin/gift-code", title: "Gift Code" },
   { path: "/admin/activity", title: "Activity Award" },
   { path: "/admin/first-gift", title: "First Gift" },
@@ -65,10 +66,14 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/wallet" element={<Wallet />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/banners" element={<AdminBanners />} />
+          <Route path="/admin/bonus" element={<AdminBonusManage />} />
+          <Route path="/admin/deposit-bonus" element={<AdminDepositBonus />} />
+          <Route path="/admin/referral-bonus" element={<AdminReferralBonus />} />
           <Route path="/admin/kyc" element={<AdminKyc />} />
           <Route path="/admin/kyc/requests" element={<AdminKycRequests />} />
           {placeholders.map(p => (
