@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       banners: {
         Row: {
           active: boolean
@@ -44,6 +62,30 @@ export type Database = {
           sort_order?: number
           title?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      deposit_bonus_tiers: {
+        Row: {
+          active: boolean
+          bonus_usdt: number
+          created_at: string
+          id: string
+          min_deposit_usdt: number
+        }
+        Insert: {
+          active?: boolean
+          bonus_usdt: number
+          created_at?: string
+          id?: string
+          min_deposit_usdt: number
+        }
+        Update: {
+          active?: boolean
+          bonus_usdt?: number
+          created_at?: string
+          id?: string
+          min_deposit_usdt?: number
         }
         Relationships: []
       }
@@ -85,32 +127,44 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
+          balance_usdt: number
           created_at: string
           email: string | null
           full_name: string | null
           id: string
           invitation_code: string | null
+          locked_bonus_usdt: number
           phone: string | null
+          preferred_currency: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          avatar_url?: string | null
+          balance_usdt?: number
           created_at?: string
           email?: string | null
           full_name?: string | null
           id?: string
           invitation_code?: string | null
+          locked_bonus_usdt?: number
           phone?: string | null
+          preferred_currency?: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          avatar_url?: string | null
+          balance_usdt?: number
           created_at?: string
           email?: string | null
           full_name?: string | null
           id?: string
           invitation_code?: string | null
+          locked_bonus_usdt?: number
           phone?: string | null
+          preferred_currency?: string
           updated_at?: string
           user_id?: string
         }
