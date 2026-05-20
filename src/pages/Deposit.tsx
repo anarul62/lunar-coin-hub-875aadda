@@ -140,11 +140,15 @@ const DepositSheet = ({ method, onClose }: { method: Method; onClose: () => void
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setSubmitting(false); return; }
     const usdt = isUsdt ? a : (method.rate > 0 ? a / method.rate : 0);
-    const { error } = await supabase.from("deposits").insert({ user_id: user.id, amount_usdt: usdt, status: "pending" });
+    const { error } = await supabase.from("deposits").insert({
+      user_id: user.id, amount_usdt: usdt, amount: a, currency: method.currency,
+      method_key: method.method_key, method_label: method.label, status: "pending",
+    } as any);
     setSubmitting(false);
     if (error) return toast({ title: "Failed", description: error.message, variant: "destructive" });
     toast({ title: "Deposit request submitted" });
     onClose();
+    window.location.href = "/deposit/history";
   };
 
   const copy = (txt: string) => {
