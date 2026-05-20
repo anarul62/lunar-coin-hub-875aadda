@@ -69,13 +69,6 @@ const WithdrawAddAddress = () => {
     navigate(`/withdraw/${methodKey}`);
   };
 
-  const Field = ({ label, children }: any) => (
-    <div className="mb-4">
-      <label className="block text-slate-900 font-semibold mb-2">{label}</label>
-      {children}
-    </div>
-  );
-  const inp = "w-full bg-white px-4 py-3 rounded-lg text-slate-900 placeholder:text-slate-400 outline-none border border-transparent focus:border-orange-300";
 
   return (
     <div className="min-h-screen bg-[#f5f6fa] text-slate-900 pb-40">
