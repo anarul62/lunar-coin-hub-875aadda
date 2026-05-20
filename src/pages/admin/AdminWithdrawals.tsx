@@ -57,6 +57,7 @@ const AdminWithdrawals = () => {
   const [tab, setTab] = useState<typeof STATUS[number]>("pending");
   const [q, setQ] = useState("");
   const [rejectFor, setRejectFor] = useState<Row | null>(null);
+  const [viewFor, setViewFor] = useState<Row | null>(null);
   const [reason, setReason] = useState("");
 
   const load = async () => {
