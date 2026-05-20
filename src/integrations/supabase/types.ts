@@ -101,6 +101,7 @@ export type Database = {
           order_number: string | null
           rejection_reason: string | null
           status: string
+          transaction_id: string | null
           updated_at: string
           user_id: string
         }
@@ -115,6 +116,7 @@ export type Database = {
           order_number?: string | null
           rejection_reason?: string | null
           status?: string
+          transaction_id?: string | null
           updated_at?: string
           user_id: string
         }
@@ -129,6 +131,7 @@ export type Database = {
           order_number?: string | null
           rejection_reason?: string | null
           status?: string
+          transaction_id?: string | null
           updated_at?: string
           user_id?: string
         }
