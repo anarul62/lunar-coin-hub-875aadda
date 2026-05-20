@@ -147,7 +147,7 @@ const Profile = () => {
             </div>
             <div className="mt-4 pt-4 border-t border-border grid grid-cols-4 gap-2 text-center">
               <ActionTile icon={Wallet} label="Wallet" onClick={() => navigate("/wallet")}/>
-              <ActionTile icon={ArrowDownToLine} label="Deposit" onClick={() => navigate("/wallet")}/>
+              <ActionTile icon={ArrowDownToLine} label="Deposit" onClick={() => navigate("/deposit")}/>
               <ActionTile icon={ArrowUpFromLine} label="Withdraw" onClick={() => setConvertOpen(true)}/>
               <ActionTile icon={Crown} label="VIP" onClick={() => toast({ title: "VIP coming soon" })}/>
             </div>
