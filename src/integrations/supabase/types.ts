@@ -89,6 +89,30 @@ export type Database = {
         }
         Relationships: []
       }
+      deposits: {
+        Row: {
+          amount_usdt: number
+          created_at: string
+          id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          amount_usdt?: number
+          created_at?: string
+          id?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          amount_usdt?: number
+          created_at?: string
+          id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       kyc_requests: {
         Row: {
           created_at: string
@@ -137,6 +161,8 @@ export type Database = {
           locked_bonus_usdt: number
           phone: string | null
           preferred_currency: string
+          referral_code: string | null
+          referred_by: string | null
           updated_at: string
           user_id: string
         }
@@ -151,6 +177,8 @@ export type Database = {
           locked_bonus_usdt?: number
           phone?: string | null
           preferred_currency?: string
+          referral_code?: string | null
+          referred_by?: string | null
           updated_at?: string
           user_id: string
         }
@@ -165,7 +193,33 @@ export type Database = {
           locked_bonus_usdt?: number
           phone?: string | null
           preferred_currency?: string
+          referral_code?: string | null
+          referred_by?: string | null
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      referral_claims: {
+        Row: {
+          amount_usdt: number
+          claimed_user_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          amount_usdt?: number
+          claimed_user_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          amount_usdt?: number
+          claimed_user_id?: string
+          created_at?: string
+          id?: string
           user_id?: string
         }
         Relationships: []
@@ -175,7 +229,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      gen_referral_code: { Args: never; Returns: string }
     }
     Enums: {
       kyc_status: "pending" | "approved" | "rejected"

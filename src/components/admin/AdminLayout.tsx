@@ -51,9 +51,13 @@ const groups: Group[] = [
     { label: "Agent Data", icon: Users2, path: "/admin/agent-data" },
     { label: "Manage Salary", icon: BadgeIndianRupee, path: "/admin/salary" },
   ]},
+  { title: "Referral & Team", items: [
+    { label: "Manage Referral", icon: Users2, path: "/admin/manage-referral" },
+    { label: "Invite Bonus Setup", icon: Gift, path: "/admin/invite-bonus" },
+    { label: "Agent Referral Bonus", icon: Gift, path: "/admin/referral-bonus" },
+  ]},
   { title: "Bonus & Rewards", items: [
     { label: "Member Deposit Bonus", icon: Gift, path: "/admin/deposit-bonus" },
-    { label: "Agent Referral Bonus", icon: Gift, path: "/admin/referral-bonus" },
     { label: "Bonus Manage", icon: Gift, path: "/admin/bonus" },
     { label: "Gift Code", icon: Ticket, path: "/admin/gift-code" },
     { label: "Activity Award", icon: Trophy, path: "/admin/activity" },

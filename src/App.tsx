@@ -18,7 +18,11 @@ import AdminKycRequests from "./pages/admin/AdminKycRequests.tsx";
 import AdminBonusManage from "./pages/admin/AdminBonusManage.tsx";
 import AdminDepositBonus from "./pages/admin/AdminDepositBonus.tsx";
 import AdminReferralBonus from "./pages/admin/AdminReferralBonus.tsx";
+import AdminManageReferral from "./pages/admin/AdminManageReferral.tsx";
+import AdminInviteBonus from "./pages/admin/AdminInviteBonus.tsx";
 import Profile from "./pages/Profile.tsx";
+import Team from "./pages/Team.tsx";
+import Referral from "./pages/Referral.tsx";
 
 const queryClient = new QueryClient();
 
@@ -67,6 +71,10 @@ const App = () => (
           <Route path="/register" element={<Register />} />
           <Route path="/wallet" element={<Wallet />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/team" element={<Team />} />
+          <Route path="/referral" element={<Referral />} />
+          <Route path="/admin/manage-referral" element={<AdminManageReferral />} />
+          <Route path="/admin/invite-bonus" element={<AdminInviteBonus />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<AdminUsers />} />
