@@ -58,7 +58,7 @@ const Deposit = () => {
       <header className="sticky top-0 z-20 bg-white border-b border-slate-200 h-14 flex items-center justify-between px-4">
         <button onClick={() => navigate(-1)} className="p-2 -ml-2"><ArrowLeft className="h-5 w-5"/></button>
         <h1 className="font-semibold text-slate-900">Deposit</h1>
-        <button onClick={() => navigate("/wallet")} className="text-sm text-slate-700">Deposit history</button>
+        <button onClick={() => navigate("/deposit/history")} className="text-sm text-rose-500 font-medium">Deposit history</button>
       </header>
 
       <main className="p-4 pb-24 max-w-2xl mx-auto">
@@ -140,11 +140,15 @@ const DepositSheet = ({ method, onClose }: { method: Method; onClose: () => void
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setSubmitting(false); return; }
     const usdt = isUsdt ? a : (method.rate > 0 ? a / method.rate : 0);
-    const { error } = await supabase.from("deposits").insert({ user_id: user.id, amount_usdt: usdt, status: "pending" });
+    const { error } = await supabase.from("deposits").insert({
+      user_id: user.id, amount_usdt: usdt, amount: a, currency: method.currency,
+      method_key: method.method_key, method_label: method.label, status: "pending",
+    } as any);
     setSubmitting(false);
     if (error) return toast({ title: "Failed", description: error.message, variant: "destructive" });
     toast({ title: "Deposit request submitted" });
     onClose();
+    window.location.href = "/deposit/history";
   };
 
   const copy = (txt: string) => {

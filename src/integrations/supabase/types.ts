@@ -91,24 +91,45 @@ export type Database = {
       }
       deposits: {
         Row: {
+          amount: number
           amount_usdt: number
           created_at: string
+          currency: string
           id: string
+          method_key: string | null
+          method_label: string | null
+          order_number: string | null
+          rejection_reason: string | null
           status: string
+          updated_at: string
           user_id: string
         }
         Insert: {
+          amount?: number
           amount_usdt?: number
           created_at?: string
+          currency?: string
           id?: string
+          method_key?: string | null
+          method_label?: string | null
+          order_number?: string | null
+          rejection_reason?: string | null
           status?: string
+          updated_at?: string
           user_id: string
         }
         Update: {
+          amount?: number
           amount_usdt?: number
           created_at?: string
+          currency?: string
           id?: string
+          method_key?: string | null
+          method_label?: string | null
+          order_number?: string | null
+          rejection_reason?: string | null
           status?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
