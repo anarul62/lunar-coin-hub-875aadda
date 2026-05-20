@@ -305,6 +305,84 @@ export type Database = {
         }
         Relationships: []
       }
+      site_seo_settings: {
+        Row: {
+          author: string
+          bing_site_verification: string
+          canonical_url: string
+          custom_head: string
+          description: string
+          facebook_pixel_id: string
+          favicon_url: string
+          google_analytics_id: string
+          google_site_verification: string
+          gtm_id: string
+          id: number
+          json_ld: string
+          keywords: string
+          og_description: string
+          og_image: string
+          og_title: string
+          robots: string
+          robots_txt: string
+          site_name: string
+          sitemap_extra: string
+          title: string
+          twitter_handle: string
+          updated_at: string
+        }
+        Insert: {
+          author?: string
+          bing_site_verification?: string
+          canonical_url?: string
+          custom_head?: string
+          description?: string
+          facebook_pixel_id?: string
+          favicon_url?: string
+          google_analytics_id?: string
+          google_site_verification?: string
+          gtm_id?: string
+          id?: number
+          json_ld?: string
+          keywords?: string
+          og_description?: string
+          og_image?: string
+          og_title?: string
+          robots?: string
+          robots_txt?: string
+          site_name?: string
+          sitemap_extra?: string
+          title?: string
+          twitter_handle?: string
+          updated_at?: string
+        }
+        Update: {
+          author?: string
+          bing_site_verification?: string
+          canonical_url?: string
+          custom_head?: string
+          description?: string
+          facebook_pixel_id?: string
+          favicon_url?: string
+          google_analytics_id?: string
+          google_site_verification?: string
+          gtm_id?: string
+          id?: number
+          json_ld?: string
+          keywords?: string
+          og_description?: string
+          og_image?: string
+          og_title?: string
+          robots?: string
+          robots_txt?: string
+          site_name?: string
+          sitemap_extra?: string
+          title?: string
+          twitter_handle?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_withdraw_limits: {
         Row: {
           daily_max_times: number | null

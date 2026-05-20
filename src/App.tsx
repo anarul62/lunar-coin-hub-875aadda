@@ -33,6 +33,8 @@ import WithdrawAddAddress from "./pages/WithdrawAddAddress.tsx";
 import WithdrawHistory from "./pages/WithdrawHistory.tsx";
 import AdminWithdrawMethods from "./pages/admin/AdminWithdrawMethods.tsx";
 import AdminWithdrawals from "./pages/admin/AdminWithdrawals.tsx";
+import AdminSeo from "./pages/admin/AdminSeo.tsx";
+import SeoHead from "./components/SeoHead.tsx";
 
 const queryClient = new QueryClient();
 
@@ -72,6 +74,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <SeoHead />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
@@ -90,6 +93,7 @@ const App = () => (
           <Route path="/admin/deposit" element={<AdminDeposits />} />
           <Route path="/admin/withdraw-methods" element={<AdminWithdrawMethods />} />
           <Route path="/admin/withdrawals" element={<AdminWithdrawals />} />
+          <Route path="/admin/seo" element={<AdminSeo />} />
           <Route path="/admin/manage-referral" element={<AdminManageReferral />} />
           <Route path="/admin/invite-bonus" element={<AdminInviteBonus />} />
           <Route path="/admin/login" element={<AdminLogin />} />
