@@ -6,7 +6,7 @@ import {
   Coins, Gem, FileCheck, LineChart, Gift, Megaphone, Settings,
   UserCog, CreditCard, ArrowDownToLine, ArrowUpFromLine, Banknote,
   Bell, Sun, Menu, X, LogOut, ChevronRight, BadgeIndianRupee,
-  Headphones, MessageSquare, Send, Ticket, Users2, Trophy, Image as ImageIcon
+  Headphones, MessageSquare, Send, Ticket, Users2, Trophy, Image as ImageIcon, Search
 } from "lucide-react";
 
 type Item = { label: string; icon: any; path: string };
