@@ -96,9 +96,16 @@ const WithdrawMethod = () => {
       address_snapshot: selectedAddr.details,
       status: "pending",
     });
+    if (error) {
+      setSubmitting(false);
+      return toast({ title: "Failed", description: error.message, variant: "destructive" });
+    }
+    // Deduct balance immediately on request (refunded if admin rejects)
+    const { data: fresh } = await supabase.from("profiles").select("balance_usdt").eq("user_id", user!.id).maybeSingle();
+    const newBal = Math.max(0, Number(fresh?.balance_usdt || 0) - amtUsdt);
+    await supabase.from("profiles").update({ balance_usdt: newBal }).eq("user_id", user!.id);
     setSubmitting(false);
-    if (error) return toast({ title: "Failed", description: error.message, variant: "destructive" });
-    toast({ title: "Withdrawal requested" });
+    toast({ title: "Withdrawal requested", description: `${amtUsdt.toFixed(2)} USDT deducted` });
     navigate("/withdraw/history");
   };
 
