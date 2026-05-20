@@ -12,6 +12,15 @@ const TITLES: Record<string, string> = {
   ewallet: "E-Wallet Payment method",
 };
 
+const inp = "w-full bg-white px-4 py-3 rounded-lg text-slate-900 placeholder:text-slate-400 outline-none border border-transparent focus:border-orange-300";
+
+const Field = ({ label, children }: any) => (
+  <div className="mb-4">
+    <label className="block text-slate-900 font-semibold mb-2">{label}</label>
+    {children}
+  </div>
+);
+
 const WithdrawAddAddress = () => {
   const { methodKey = "" } = useParams();
   const navigate = useNavigate();
