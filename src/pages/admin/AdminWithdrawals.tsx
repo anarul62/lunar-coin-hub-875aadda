@@ -218,6 +218,27 @@ const AdminWithdrawals = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={!!viewFor} onOpenChange={o => !o && setViewFor(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Withdrawal Address</DialogTitle>
+          </DialogHeader>
+          {viewFor && (
+            <div className="space-y-3">
+              <div className="flex flex-wrap gap-2 text-xs">
+                <span className="px-2 py-1 rounded bg-emerald-50 text-emerald-700 font-semibold">{viewFor.method_label || viewFor.method_key}</span>
+                <span className="px-2 py-1 rounded bg-slate-100 text-slate-700">{sym(viewFor.currency)}{Number(viewFor.amount).toFixed(2)}</span>
+                <span className="px-2 py-1 rounded bg-slate-100 text-slate-700">{Number(viewFor.amount_usdt).toFixed(2)} USDT</span>
+              </div>
+              <AddressView data={viewFor.address_snapshot}/>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setViewFor(null)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 };
