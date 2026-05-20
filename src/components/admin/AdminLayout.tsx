@@ -86,7 +86,7 @@ const AdminLayout = ({ children, title }: { children: ReactNode; title?: string 
   const logout = () => { adminLogout(); navigate("/admin/login"); };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex">
+    <div className="admin-scope min-h-screen bg-slate-50 text-slate-900 flex">
       {/* Sidebar */}
       <aside className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-72 bg-white border-r border-slate-200 transform transition-transform overflow-y-auto ${open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}>
         <div className="flex items-center justify-between px-4 h-14 border-b border-slate-200 sticky top-0 bg-white z-10">
