@@ -33,6 +33,8 @@ import WithdrawAddAddress from "./pages/WithdrawAddAddress.tsx";
 import WithdrawHistory from "./pages/WithdrawHistory.tsx";
 import AdminWithdrawMethods from "./pages/admin/AdminWithdrawMethods.tsx";
 import AdminWithdrawals from "./pages/admin/AdminWithdrawals.tsx";
+import AdminSeo from "./pages/admin/AdminSeo.tsx";
+import SeoHead from "./components/SeoHead.tsx";
 
 const queryClient = new QueryClient();
 
