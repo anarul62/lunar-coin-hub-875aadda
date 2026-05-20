@@ -6,7 +6,45 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
-import { Loader2, Search, Check, X, Copy } from "lucide-react";
+import { Loader2, Search, Check, X, Copy, Eye } from "lucide-react";
+
+const FIELD_LABELS: Record<string, string> = {
+  number: "Mobile Number",
+  account_number: "Account Number",
+  account_name: "Account Name",
+  full_name: "Full Name",
+  bank_name: "Bank Name",
+  ifsc: "IFSC Code",
+  branch: "Branch",
+  wallet_type: "Wallet Type",
+  alias: "Alias",
+  address: "Wallet Address",
+  network: "Network",
+  upi_id: "UPI ID",
+  email: "Email",
+};
+const fieldLabel = (k: string) => FIELD_LABELS[k] || k.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+
+const AddressView = ({ data }: { data: any }) => {
+  if (!data || typeof data !== "object") return <p className="text-sm text-slate-500">No address</p>;
+  const entries = Object.entries(data).filter(([, v]) => v !== null && v !== undefined && String(v).trim() !== "");
+  const copy = (v: string) => { navigator.clipboard.writeText(String(v)); toast({ title: "Copied" }); };
+  return (
+    <div className="space-y-2">
+      {entries.map(([k, v]) => (
+        <div key={k} className="rounded-lg border bg-slate-50 p-2.5">
+          <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold">{fieldLabel(k)}</p>
+          <div className="flex items-center justify-between gap-2 mt-1">
+            <p className="text-sm font-medium text-slate-900 break-all">{String(v)}</p>
+            <button onClick={() => copy(String(v))} className="shrink-0 p-1.5 rounded hover:bg-white text-slate-500 hover:text-emerald-600">
+              <Copy className="h-3.5 w-3.5"/>
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 type Row = any;
 const STATUS = ["pending", "approved", "rejected", "all"] as const;
