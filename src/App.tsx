@@ -74,6 +74,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <SeoHead />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
