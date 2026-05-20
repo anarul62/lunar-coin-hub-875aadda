@@ -13,9 +13,11 @@ type Deposit = {
   amount_usdt: number;
   method_key: string | null;
   method_label: string | null;
+  transaction_id: string | null;
   rejection_reason: string | null;
   created_at: string;
 };
+
 
 type Method = { method_key: string; label: string; icon_url: string | null };
 
