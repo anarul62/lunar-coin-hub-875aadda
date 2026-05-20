@@ -93,6 +93,7 @@ const App = () => (
           <Route path="/admin/deposit" element={<AdminDeposits />} />
           <Route path="/admin/withdraw-methods" element={<AdminWithdrawMethods />} />
           <Route path="/admin/withdrawals" element={<AdminWithdrawals />} />
+          <Route path="/admin/seo" element={<AdminSeo />} />
           <Route path="/admin/manage-referral" element={<AdminManageReferral />} />
           <Route path="/admin/invite-bonus" element={<AdminInviteBonus />} />
           <Route path="/admin/login" element={<AdminLogin />} />
