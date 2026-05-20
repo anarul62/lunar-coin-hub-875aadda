@@ -105,6 +105,8 @@ const DepositSheet = ({ method, onClose }: { method: Method; onClose: () => void
   const [usdtAmount, setUsdtAmount] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [step, setStep] = useState<"amount" | "txid">("amount");
+  const [txid, setTxid] = useState("");
 
   const presets = method.preset_amounts || [];
   const isUpi = method.method_key === "upi_qr" || method.method_key === "paytm_qr";
@@ -131,18 +133,25 @@ const DepositSheet = ({ method, onClose }: { method: Method; onClose: () => void
   const fmt = (n: number) => n >= 1000 ? `${(n/1000)}K` : `${n}`;
   const symbol = method.currency === "INR" ? "₹" : method.currency === "BDT" ? "৳" : "";
 
-  const submit = async () => {
+  const proceedToPay = () => {
     const min = method.min_amount || 0;
     const a = isUsdt ? numUsdt : numAmount;
     if (!(a > 0)) return toast({ title: "Enter amount", variant: "destructive" });
     if (a < min) return toast({ title: `Minimum ${min} ${method.currency}`, variant: "destructive" });
+    setStep("txid");
+  };
+
+  const submit = async () => {
+    if (!txid.trim()) return toast({ title: "Enter transaction ID", variant: "destructive" });
     setSubmitting(true);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setSubmitting(false); return; }
+    const a = isUsdt ? numUsdt : numAmount;
     const usdt = isUsdt ? a : (method.rate > 0 ? a / method.rate : 0);
     const { error } = await supabase.from("deposits").insert({
       user_id: user.id, amount_usdt: usdt, amount: a, currency: method.currency,
       method_key: method.method_key, method_label: method.label, status: "pending",
+      transaction_id: txid.trim(),
     } as any);
     setSubmitting(false);
     if (error) return toast({ title: "Failed", description: error.message, variant: "destructive" });
@@ -163,12 +172,18 @@ const DepositSheet = ({ method, onClose }: { method: Method; onClose: () => void
         className="bg-slate-50 w-full sm:max-w-lg sm:rounded-2xl rounded-t-2xl max-h-[92vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-slate-200 px-4 h-12 flex items-center justify-between">
           <div className="flex items-center gap-2">
+            {step === "txid" && (
+              <button onClick={() => setStep("amount")} className="p-1 -ml-1 text-slate-500"><ArrowLeft className="h-4 w-4"/></button>
+            )}
             {method.icon_url && <img src={method.icon_url} alt="" className="h-6 w-6 object-contain"/>}
-            <div className="font-semibold text-slate-900 text-sm">{method.label}</div>
+            <div className="font-semibold text-slate-900 text-sm">
+              {step === "txid" ? "Submit Transaction ID" : method.label}
+            </div>
           </div>
           <button onClick={onClose} className="p-1 text-slate-500"><X className="h-5 w-5"/></button>
         </div>
 
+        {step === "amount" ? (
         <div className="p-4 space-y-4">
           {/* Amount picker */}
           <div className="rounded-2xl bg-white border border-slate-200 p-4">
@@ -260,27 +275,57 @@ const DepositSheet = ({ method, onClose }: { method: Method; onClose: () => void
             </div>
             <ul className="text-sm text-slate-600 space-y-2 pl-4 list-disc marker:text-rose-500">
               <li>Minimum deposit: {method.min_amount} {method.currency}, less will not be credited.</li>
-              <li>Do not deposit any non-currency assets to the above address, or the assets will not be recovered.</li>
+              <li>After paying, click <b>Deposit</b> and submit your <b>Transaction ID / UTR</b>.</li>
               <li>The transfer amount must match the order you created, otherwise the money cannot be credited successfully.</li>
               <li>Note: do not cancel the deposit order after the money has been transferred.</li>
             </ul>
           </div>
         </div>
+        ) : (
+        <div className="p-4 space-y-4">
+          <div className="rounded-2xl bg-white border border-slate-200 p-4">
+            <div className="text-sm text-slate-500">Amount paid</div>
+            <div className="text-2xl font-bold text-slate-900 mt-1">
+              {isUsdt ? `₮ ${numUsdt}` : `${symbol}${numAmount}`}
+            </div>
+            <div className="text-xs text-slate-400 mt-1">via {method.label}</div>
+          </div>
+          <div className="rounded-2xl bg-white border border-slate-200 p-4 space-y-3">
+            <div className="font-semibold text-slate-900 text-sm">Transaction / UTR ID</div>
+            <input value={txid} onChange={e => setTxid(e.target.value)}
+              placeholder="Paste the 12-digit UTR or TxID from your payment app"
+              className="w-full bg-slate-100 rounded-lg px-3 py-3 text-sm outline-none"/>
+            <p className="text-xs text-slate-500">
+              You will find this on your payment app's success page (UPI reference number,
+              bKash/Nagad TrxID, or USDT TxHash). Without a valid Transaction ID, your deposit may be rejected.
+            </p>
+          </div>
+        </div>
+        )}
 
         <div className="sticky bottom-0 bg-white border-t border-slate-200 p-3 flex items-center justify-between">
           <div className="text-xs">
             <div className="text-slate-500">Recharge Method:</div>
             <div className="font-bold text-slate-900">{method.label}</div>
           </div>
-          <button onClick={submit} disabled={submitting}
-            className="px-6 py-3 rounded-lg bg-rose-500 hover:bg-rose-600 text-white font-semibold disabled:opacity-60">
-            {submitting ? <Loader2 className="h-4 w-4 animate-spin"/> : "Deposit"}
-          </button>
+          {step === "amount" ? (
+            <button onClick={proceedToPay}
+              className="px-6 py-3 rounded-lg bg-rose-500 hover:bg-rose-600 text-white font-semibold">
+              Deposit
+            </button>
+          ) : (
+            <button onClick={submit} disabled={submitting}
+              className="px-6 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold disabled:opacity-60 inline-flex items-center gap-2">
+              {submitting ? <Loader2 className="h-4 w-4 animate-spin"/> : <CheckCircle2 className="h-4 w-4"/>}
+              Submit
+            </button>
+          )}
         </div>
       </div>
     </div>
   );
 };
+
 
 const DetailRow = ({ label, value, onCopy, copied }: { label: string; value: string; onCopy?: () => void; copied?: boolean }) => (
   <div className="flex items-center justify-between gap-2 bg-slate-50 rounded-lg p-3">
