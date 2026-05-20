@@ -58,7 +58,7 @@ const Deposit = () => {
       <header className="sticky top-0 z-20 bg-white border-b border-slate-200 h-14 flex items-center justify-between px-4">
         <button onClick={() => navigate(-1)} className="p-2 -ml-2"><ArrowLeft className="h-5 w-5"/></button>
         <h1 className="font-semibold text-slate-900">Deposit</h1>
-        <button onClick={() => navigate("/wallet")} className="text-sm text-slate-700">Deposit history</button>
+        <button onClick={() => navigate("/deposit/history")} className="text-sm text-rose-500 font-medium">Deposit history</button>
       </header>
 
       <main className="p-4 pb-24 max-w-2xl mx-auto">
