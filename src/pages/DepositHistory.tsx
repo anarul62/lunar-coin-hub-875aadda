@@ -122,6 +122,15 @@ const DepositHistory = () => {
                       <Copy className="h-3.5 w-3.5 text-slate-400"/>
                     </button>
                   }/>
+                  <Row label="Transaction ID" value={
+                    d.transaction_id ? (
+                      <button onClick={() => copy(d.transaction_id!)} className="flex items-center gap-1 text-slate-700">
+                        <span className="truncate max-w-[180px] font-mono text-xs">{d.transaction_id}</span>
+                        <Copy className="h-3.5 w-3.5 text-slate-400"/>
+                      </button>
+                    ) : <span className="text-slate-400">—</span>
+                  }/>
+
                   {d.status === "rejected" && d.rejection_reason && (
                     <div className="mt-2 text-xs text-rose-500 bg-rose-50 rounded-md p-2">Reason: {d.rejection_reason}</div>
                   )}
