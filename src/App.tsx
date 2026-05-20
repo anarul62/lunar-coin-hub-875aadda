@@ -23,6 +23,8 @@ import AdminInviteBonus from "./pages/admin/AdminInviteBonus.tsx";
 import Profile from "./pages/Profile.tsx";
 import Team from "./pages/Team.tsx";
 import Referral from "./pages/Referral.tsx";
+import Deposit from "./pages/Deposit.tsx";
+import AdminPayments from "./pages/admin/AdminPayments.tsx";
 
 const queryClient = new QueryClient();
 
@@ -34,12 +36,11 @@ const placeholders: { path: string; title: string }[] = [
   { path: "/admin/silver", title: "Silver Invest" },
   { path: "/admin/plans", title: "Investment Plans" },
   
-  { path: "/admin/payin", title: "Auto PayIn Gateway" },
+  
   { path: "/admin/payout", title: "Auto PayOut Gateway" },
   { path: "/admin/finance", title: "Finance Setting" },
   { path: "/admin/withdraw-ewallet", title: "Withdraw E-Wallet" },
   { path: "/admin/withdraw-usdt", title: "Withdraw USDT" },
-  { path: "/admin/deposit", title: "Deposit" },
   { path: "/admin/banned", title: "Banned Users" },
   { path: "/admin/ewallet", title: "Modify Ewallet Address" },
   { path: "/admin/agents", title: "Agent Settings" },
@@ -73,6 +74,9 @@ const App = () => (
           <Route path="/profile" element={<Profile />} />
           <Route path="/team" element={<Team />} />
           <Route path="/referral" element={<Referral />} />
+          <Route path="/deposit" element={<Deposit />} />
+          <Route path="/admin/payin" element={<AdminPayments />} />
+          <Route path="/admin/deposit" element={<AdminPayments />} />
           <Route path="/admin/manage-referral" element={<AdminManageReferral />} />
           <Route path="/admin/invite-bonus" element={<AdminInviteBonus />} />
           <Route path="/admin/login" element={<AdminLogin />} />

@@ -149,6 +149,63 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_methods: {
+        Row: {
+          config: Json
+          created_at: string
+          currency: string
+          enabled: boolean
+          gateway_config: Json
+          gateway_provider: string | null
+          icon_url: string | null
+          id: string
+          label: string
+          method_key: string
+          min_amount: number
+          mode: string
+          preset_amounts: Json
+          rate: number
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          currency?: string
+          enabled?: boolean
+          gateway_config?: Json
+          gateway_provider?: string | null
+          icon_url?: string | null
+          id?: string
+          label: string
+          method_key: string
+          min_amount?: number
+          mode?: string
+          preset_amounts?: Json
+          rate?: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          currency?: string
+          enabled?: boolean
+          gateway_config?: Json
+          gateway_provider?: string | null
+          icon_url?: string | null
+          id?: string
+          label?: string
+          method_key?: string
+          min_amount?: number
+          mode?: string
+          preset_amounts?: Json
+          rate?: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
