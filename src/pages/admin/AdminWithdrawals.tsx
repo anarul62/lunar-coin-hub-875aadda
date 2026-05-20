@@ -62,23 +62,24 @@ const AdminWithdrawals = () => {
   }, [rows]);
 
   const approve = async (w: Row) => {
-    // deduct from user balance
-    const newBal = Number(w.profile?.balance_usdt || 0) - Number(w.amount_usdt || 0);
-    if (newBal < 0) return toast({ title: "Insufficient user balance", variant: "destructive" });
-    const { error: e1 } = await supabase.from("profiles").update({ balance_usdt: newBal }).eq("user_id", w.user_id);
-    if (e1) return toast({ title: "Failed", description: e1.message, variant: "destructive" });
-    const { error: e2 } = await supabase.from("withdrawals").update({ status: "approved", updated_at: new Date().toISOString() }).eq("id", w.id);
-    if (e2) return toast({ title: "Failed", description: e2.message, variant: "destructive" });
-    toast({ title: "Approved & balance deducted" });
+    // Balance was already deducted at request time
+    const { error } = await supabase.from("withdrawals").update({ status: "approved", updated_at: new Date().toISOString() }).eq("id", w.id);
+    if (error) return toast({ title: "Failed", description: error.message, variant: "destructive" });
+    toast({ title: "Approved" });
     load();
   };
 
   const doReject = async () => {
     if (!rejectFor) return;
     if (!reason.trim()) return toast({ title: "Enter reason", variant: "destructive" });
+    // Refund balance back to user
+    const { data: fresh } = await supabase.from("profiles").select("balance_usdt").eq("user_id", rejectFor.user_id).maybeSingle();
+    const refunded = Number(fresh?.balance_usdt || 0) + Number(rejectFor.amount_usdt || 0);
+    const { error: eBal } = await supabase.from("profiles").update({ balance_usdt: refunded }).eq("user_id", rejectFor.user_id);
+    if (eBal) return toast({ title: "Refund failed", description: eBal.message, variant: "destructive" });
     const { error } = await supabase.from("withdrawals").update({ status: "rejected", rejection_reason: reason, updated_at: new Date().toISOString() }).eq("id", rejectFor.id);
     if (error) return toast({ title: "Failed", description: error.message, variant: "destructive" });
-    toast({ title: "Rejected" });
+    toast({ title: "Rejected & balance refunded" });
     setRejectFor(null); setReason(""); load();
   };
 
