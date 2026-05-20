@@ -107,3 +107,16 @@
     animation: bannerSlide 25s linear infinite;
   }
 }
+
+/* Admin panel: force light inputs regardless of theme tokens */
+.admin-scope input,
+.admin-scope textarea,
+.admin-scope select {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+.admin-scope input::placeholder,
+.admin-scope textarea::placeholder {
+  color: #94a3b8 !important;
+}
