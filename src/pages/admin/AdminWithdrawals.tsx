@@ -181,8 +181,10 @@ const AdminWithdrawals = () => {
                         <p className="font-mono text-emerald-600">{w.profile?.referral_code}</p>
                       </div>
                     </td>
-                    <td className="p-2 text-xs max-w-[220px]">
-                      <pre className="whitespace-pre-wrap break-words text-[10px] text-slate-600">{JSON.stringify(w.address_snapshot, null, 0)}</pre>
+                    <td className="p-2 text-xs">
+                      <Button size="sm" variant="outline" onClick={() => setViewFor(w)} className="h-7 px-2 text-xs">
+                        <Eye className="h-3 w-3 mr-1"/>View
+                      </Button>
                     </td>
                     <td className="p-2 text-xs text-center">{new Date(w.created_at).toLocaleString()}</td>
                     <td className="p-2 text-center capitalize">
