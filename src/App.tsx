@@ -24,7 +24,9 @@ import Profile from "./pages/Profile.tsx";
 import Team from "./pages/Team.tsx";
 import Referral from "./pages/Referral.tsx";
 import Deposit from "./pages/Deposit.tsx";
+import DepositHistory from "./pages/DepositHistory.tsx";
 import AdminPayments from "./pages/admin/AdminPayments.tsx";
+import AdminDeposits from "./pages/admin/AdminDeposits.tsx";
 
 const queryClient = new QueryClient();
 
@@ -75,8 +77,9 @@ const App = () => (
           <Route path="/team" element={<Team />} />
           <Route path="/referral" element={<Referral />} />
           <Route path="/deposit" element={<Deposit />} />
+          <Route path="/deposit/history" element={<DepositHistory />} />
           <Route path="/admin/payin" element={<AdminPayments />} />
-          <Route path="/admin/deposit" element={<AdminPayments />} />
+          <Route path="/admin/deposit" element={<AdminDeposits />} />
           <Route path="/admin/manage-referral" element={<AdminManageReferral />} />
           <Route path="/admin/invite-bonus" element={<AdminInviteBonus />} />
           <Route path="/admin/login" element={<AdminLogin />} />

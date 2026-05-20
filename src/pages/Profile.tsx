@@ -158,7 +158,7 @@ const Profile = () => {
         <section className="px-4 mt-4 grid grid-cols-2 gap-3">
           <CardTile icon={FileText} title="Plan History" sub="My game history"/>
           <CardTile icon={History} title="Transactions" sub="My transaction history"/>
-          <CardTile icon={ArrowDownToLine} title="Deposit" sub="My deposit history"/>
+          <div onClick={() => navigate("/deposit/history")} className="cursor-pointer"><CardTile icon={ArrowDownToLine} title="Deposit" sub="My deposit history"/></div>
           <CardTile icon={ArrowUpFromLine} title="Withdraw" sub="My withdraw history"/>
         </section>
 
