@@ -16,6 +16,7 @@ type Method = {
   min_amount: number;
   preset_amounts: number[];
   config: any;
+  gateway_provider: string | null;
 };
 
 const BG_BY_KEY: Record<string, string> = {
