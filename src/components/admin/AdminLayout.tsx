@@ -32,8 +32,8 @@ const groups: Group[] = [
     { label: "Auto PayIn Gateway", icon: ArrowDownToLine, path: "/admin/payin" },
     { label: "Auto PayOut Gateway", icon: ArrowUpFromLine, path: "/admin/payout" },
     { label: "Finance Setting", icon: Banknote, path: "/admin/finance" },
-    { label: "Withdraw E-Wallet", icon: Wallet, path: "/admin/withdraw-ewallet" },
-    { label: "Withdraw USDT", icon: CreditCard, path: "/admin/withdraw-usdt" },
+    { label: "Withdraw Methods", icon: Wallet, path: "/admin/withdraw-methods" },
+    { label: "Withdrawal Requests", icon: ArrowUpFromLine, path: "/admin/withdrawals" },
     { label: "Deposit", icon: ArrowDownToLine, path: "/admin/deposit" },
   ]},
   { title: "Manage Users", items: [

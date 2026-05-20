@@ -148,7 +148,7 @@ const Profile = () => {
             <div className="mt-4 pt-4 border-t border-border grid grid-cols-4 gap-2 text-center">
               <ActionTile icon={Wallet} label="Wallet" onClick={() => navigate("/wallet")}/>
               <ActionTile icon={ArrowDownToLine} label="Deposit" onClick={() => navigate("/deposit")}/>
-              <ActionTile icon={ArrowUpFromLine} label="Withdraw" onClick={() => setConvertOpen(true)}/>
+              <ActionTile icon={ArrowUpFromLine} label="Withdraw" onClick={() => navigate("/withdraw")}/>
               <ActionTile icon={Crown} label="VIP" onClick={() => toast({ title: "VIP coming soon" })}/>
             </div>
           </div>
@@ -159,7 +159,7 @@ const Profile = () => {
           <CardTile icon={FileText} title="Plan History" sub="My game history"/>
           <CardTile icon={History} title="Transactions" sub="My transaction history"/>
           <div onClick={() => navigate("/deposit/history")} className="cursor-pointer"><CardTile icon={ArrowDownToLine} title="Deposit" sub="My deposit history"/></div>
-          <CardTile icon={ArrowUpFromLine} title="Withdraw" sub="My withdraw history"/>
+          <div onClick={() => navigate("/withdraw/history")} className="cursor-pointer"><CardTile icon={ArrowUpFromLine} title="Withdraw" sub="My withdraw history"/></div>
         </section>
 
         {/* KYC strip */}

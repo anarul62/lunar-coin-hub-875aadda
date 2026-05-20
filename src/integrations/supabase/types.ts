@@ -305,6 +305,168 @@ export type Database = {
         }
         Relationships: []
       }
+      user_withdraw_limits: {
+        Row: {
+          daily_max_times: number | null
+          max_amount: number | null
+          min_amount: number | null
+          need_to_deposit_usdt: number | null
+          need_to_refer: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          daily_max_times?: number | null
+          max_amount?: number | null
+          min_amount?: number | null
+          need_to_deposit_usdt?: number | null
+          need_to_refer?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          daily_max_times?: number | null
+          max_amount?: number | null
+          min_amount?: number | null
+          need_to_deposit_usdt?: number | null
+          need_to_refer?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      withdraw_addresses: {
+        Row: {
+          created_at: string
+          details: Json
+          id: string
+          is_default: boolean
+          label: string | null
+          method_key: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          details?: Json
+          id?: string
+          is_default?: boolean
+          label?: string | null
+          method_key: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          details?: Json
+          id?: string
+          is_default?: boolean
+          label?: string | null
+          method_key?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      withdraw_methods: {
+        Row: {
+          charge_currency: string
+          charge_type: string
+          charge_value: number
+          config: Json
+          created_at: string
+          enabled: boolean
+          icon_url: string | null
+          id: string
+          label: string
+          method_key: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          charge_currency?: string
+          charge_type?: string
+          charge_value?: number
+          config?: Json
+          created_at?: string
+          enabled?: boolean
+          icon_url?: string | null
+          id?: string
+          label: string
+          method_key: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          charge_currency?: string
+          charge_type?: string
+          charge_value?: number
+          config?: Json
+          created_at?: string
+          enabled?: boolean
+          icon_url?: string | null
+          id?: string
+          label?: string
+          method_key?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      withdrawals: {
+        Row: {
+          address_snapshot: Json
+          amount: number
+          amount_usdt: number
+          charge_usdt: number
+          created_at: string
+          currency: string
+          id: string
+          method_key: string
+          method_label: string | null
+          net_usdt: number
+          order_number: string | null
+          rejection_reason: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address_snapshot?: Json
+          amount?: number
+          amount_usdt?: number
+          charge_usdt?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          method_key: string
+          method_label?: string | null
+          net_usdt?: number
+          order_number?: string | null
+          rejection_reason?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address_snapshot?: Json
+          amount?: number
+          amount_usdt?: number
+          charge_usdt?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          method_key?: string
+          method_label?: string | null
+          net_usdt?: number
+          order_number?: string | null
+          rejection_reason?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

@@ -27,6 +27,12 @@ import Deposit from "./pages/Deposit.tsx";
 import DepositHistory from "./pages/DepositHistory.tsx";
 import AdminPayments from "./pages/admin/AdminPayments.tsx";
 import AdminDeposits from "./pages/admin/AdminDeposits.tsx";
+import Withdraw from "./pages/Withdraw.tsx";
+import WithdrawMethod from "./pages/WithdrawMethod.tsx";
+import WithdrawAddAddress from "./pages/WithdrawAddAddress.tsx";
+import WithdrawHistory from "./pages/WithdrawHistory.tsx";
+import AdminWithdrawMethods from "./pages/admin/AdminWithdrawMethods.tsx";
+import AdminWithdrawals from "./pages/admin/AdminWithdrawals.tsx";
 
 const queryClient = new QueryClient();
 
@@ -41,8 +47,6 @@ const placeholders: { path: string; title: string }[] = [
   
   { path: "/admin/payout", title: "Auto PayOut Gateway" },
   { path: "/admin/finance", title: "Finance Setting" },
-  { path: "/admin/withdraw-ewallet", title: "Withdraw E-Wallet" },
-  { path: "/admin/withdraw-usdt", title: "Withdraw USDT" },
   { path: "/admin/banned", title: "Banned Users" },
   { path: "/admin/ewallet", title: "Modify Ewallet Address" },
   { path: "/admin/agents", title: "Agent Settings" },
@@ -78,8 +82,14 @@ const App = () => (
           <Route path="/referral" element={<Referral />} />
           <Route path="/deposit" element={<Deposit />} />
           <Route path="/deposit/history" element={<DepositHistory />} />
+          <Route path="/withdraw" element={<Withdraw />} />
+          <Route path="/withdraw/history" element={<WithdrawHistory />} />
+          <Route path="/withdraw/:methodKey" element={<WithdrawMethod />} />
+          <Route path="/withdraw/:methodKey/add" element={<WithdrawAddAddress />} />
           <Route path="/admin/payin" element={<AdminPayments />} />
           <Route path="/admin/deposit" element={<AdminDeposits />} />
+          <Route path="/admin/withdraw-methods" element={<AdminWithdrawMethods />} />
+          <Route path="/admin/withdrawals" element={<AdminWithdrawals />} />
           <Route path="/admin/manage-referral" element={<AdminManageReferral />} />
           <Route path="/admin/invite-bonus" element={<AdminInviteBonus />} />
           <Route path="/admin/login" element={<AdminLogin />} />
