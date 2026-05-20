@@ -6,7 +6,45 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
-import { Loader2, Search, Check, X, Copy } from "lucide-react";
+import { Loader2, Search, Check, X, Copy, Eye } from "lucide-react";
+
+const FIELD_LABELS: Record<string, string> = {
+  number: "Mobile Number",
+  account_number: "Account Number",
+  account_name: "Account Name",
+  full_name: "Full Name",
+  bank_name: "Bank Name",
+  ifsc: "IFSC Code",
+  branch: "Branch",
+  wallet_type: "Wallet Type",
+  alias: "Alias",
+  address: "Wallet Address",
+  network: "Network",
+  upi_id: "UPI ID",
+  email: "Email",
+};
+const fieldLabel = (k: string) => FIELD_LABELS[k] || k.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+
+const AddressView = ({ data }: { data: any }) => {
+  if (!data || typeof data !== "object") return <p className="text-sm text-slate-500">No address</p>;
+  const entries = Object.entries(data).filter(([, v]) => v !== null && v !== undefined && String(v).trim() !== "");
+  const copy = (v: string) => { navigator.clipboard.writeText(String(v)); toast({ title: "Copied" }); };
+  return (
+    <div className="space-y-2">
+      {entries.map(([k, v]) => (
+        <div key={k} className="rounded-lg border bg-slate-50 p-2.5">
+          <p className="text-[11px] uppercase tracking-wide text-slate-500 font-semibold">{fieldLabel(k)}</p>
+          <div className="flex items-center justify-between gap-2 mt-1">
+            <p className="text-sm font-medium text-slate-900 break-all">{String(v)}</p>
+            <button onClick={() => copy(String(v))} className="shrink-0 p-1.5 rounded hover:bg-white text-slate-500 hover:text-emerald-600">
+              <Copy className="h-3.5 w-3.5"/>
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 type Row = any;
 const STATUS = ["pending", "approved", "rejected", "all"] as const;
@@ -19,6 +57,7 @@ const AdminWithdrawals = () => {
   const [tab, setTab] = useState<typeof STATUS[number]>("pending");
   const [q, setQ] = useState("");
   const [rejectFor, setRejectFor] = useState<Row | null>(null);
+  const [viewFor, setViewFor] = useState<Row | null>(null);
   const [reason, setReason] = useState("");
 
   const load = async () => {
@@ -142,8 +181,10 @@ const AdminWithdrawals = () => {
                         <p className="font-mono text-emerald-600">{w.profile?.referral_code}</p>
                       </div>
                     </td>
-                    <td className="p-2 text-xs max-w-[220px]">
-                      <pre className="whitespace-pre-wrap break-words text-[10px] text-slate-600">{JSON.stringify(w.address_snapshot, null, 0)}</pre>
+                    <td className="p-2 text-xs">
+                      <Button size="sm" variant="outline" onClick={() => setViewFor(w)} className="h-7 px-2 text-xs">
+                        <Eye className="h-3 w-3 mr-1"/>View
+                      </Button>
                     </td>
                     <td className="p-2 text-xs text-center">{new Date(w.created_at).toLocaleString()}</td>
                     <td className="p-2 text-center capitalize">
@@ -174,6 +215,27 @@ const AdminWithdrawals = () => {
           <DialogFooter>
             <Button variant="outline" onClick={() => setRejectFor(null)}>Cancel</Button>
             <Button variant="destructive" onClick={doReject}>Reject</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!viewFor} onOpenChange={o => !o && setViewFor(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Withdrawal Address</DialogTitle>
+          </DialogHeader>
+          {viewFor && (
+            <div className="space-y-3">
+              <div className="flex flex-wrap gap-2 text-xs">
+                <span className="px-2 py-1 rounded bg-emerald-50 text-emerald-700 font-semibold">{viewFor.method_label || viewFor.method_key}</span>
+                <span className="px-2 py-1 rounded bg-slate-100 text-slate-700">{sym(viewFor.currency)}{Number(viewFor.amount).toFixed(2)}</span>
+                <span className="px-2 py-1 rounded bg-slate-100 text-slate-700">{Number(viewFor.amount_usdt).toFixed(2)} USDT</span>
+              </div>
+              <AddressView data={viewFor.address_snapshot}/>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setViewFor(null)}>Close</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
