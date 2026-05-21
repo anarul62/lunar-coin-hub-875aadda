@@ -574,6 +574,78 @@ export type Database = {
         }
         Relationships: []
       }
+      user_investments: {
+        Row: {
+          amount: number
+          channel_id: string | null
+          channel_name: string | null
+          compound: boolean | null
+          created_at: string
+          currency: string
+          duration_days: number
+          ends_at: string | null
+          expected_return: number
+          id: string
+          interest_period: string | null
+          interest_type: string | null
+          interest_value: number | null
+          plan_id: string | null
+          plan_image_url: string | null
+          plan_name: string
+          profit: number
+          starts_at: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          channel_id?: string | null
+          channel_name?: string | null
+          compound?: boolean | null
+          created_at?: string
+          currency?: string
+          duration_days?: number
+          ends_at?: string | null
+          expected_return?: number
+          id?: string
+          interest_period?: string | null
+          interest_type?: string | null
+          interest_value?: number | null
+          plan_id?: string | null
+          plan_image_url?: string | null
+          plan_name: string
+          profit?: number
+          starts_at?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          channel_id?: string | null
+          channel_name?: string | null
+          compound?: boolean | null
+          created_at?: string
+          currency?: string
+          duration_days?: number
+          ends_at?: string | null
+          expected_return?: number
+          id?: string
+          interest_period?: string | null
+          interest_type?: string | null
+          interest_value?: number | null
+          plan_id?: string | null
+          plan_image_url?: string | null
+          plan_name?: string
+          profit?: number
+          starts_at?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_withdraw_limits: {
         Row: {
           daily_max_times: number | null
