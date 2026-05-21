@@ -22,6 +22,8 @@ const groups: Group[] = [
     { label: "Setup Game Trend", icon: LineChart, path: "/admin/game-trend" },
   ]},
   { title: "Investments", items: [
+    { label: "Invest Channels", icon: LayoutDashboard, path: "/admin/invest-channels" },
+    { label: "Invest Setup", icon: TrendingUp, path: "/admin/invest-plans" },
     { label: "Gold Invest", icon: Coins, path: "/admin/gold" },
     { label: "Silver Invest", icon: Gem, path: "/admin/silver" },
     { label: "Investment Plans", icon: TrendingUp, path: "/admin/plans" },

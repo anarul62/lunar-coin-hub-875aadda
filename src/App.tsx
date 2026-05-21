@@ -40,6 +40,10 @@ import AdminAnnouncements from "./pages/admin/AdminAnnouncements.tsx";
 import RedeemXcoin from "./pages/RedeemXcoin.tsx";
 import Attendance from "./pages/Attendance.tsx";
 import Rewards from "./pages/Rewards.tsx";
+import Invest from "./pages/Invest.tsx";
+import InvestChannel from "./pages/InvestChannel.tsx";
+import AdminInvestChannels from "./pages/admin/AdminInvestChannels.tsx";
+import AdminInvestPlans from "./pages/admin/AdminInvestPlans.tsx";
 import SeoHead from "./components/SeoHead.tsx";
 
 const queryClient = new QueryClient();
@@ -97,6 +101,10 @@ const App = () => (
           <Route path="/redeem-xcoin" element={<RedeemXcoin />} />
           <Route path="/attendance" element={<Attendance />} />
           <Route path="/rewards" element={<Rewards />} />
+          <Route path="/invest" element={<Invest />} />
+          <Route path="/invest/:channelKey" element={<InvestChannel />} />
+          <Route path="/admin/invest-channels" element={<AdminInvestChannels />} />
+          <Route path="/admin/invest-plans" element={<AdminInvestPlans />} />
           <Route path="/admin/xcoin" element={<AdminXcoin />} />
           <Route path="/admin/attendance" element={<AdminAttendance />} />
           <Route path="/admin/announcements" element={<AdminAnnouncements />} />
