@@ -16,7 +16,7 @@ const AdminAttendance = () => {
     const { data } = await supabase.from("attendance_rewards").select("*").order("day");
     let r = data || [];
     if (r.length < 7) {
-      for (let d = 1; d <= 7; d++) if (!r.find(x => x.day === d)) r.push({ day: d, amount_xcoin: 0, active: true });
+      for (let d = 1; d <= 7; d++) if (!r.find(x => x.day === d)) r.push({ day: d, amount_xcoin: 0, active: true, updated_at: new Date().toISOString() } as any);
       r.sort((a,b) => a.day - b.day);
     }
     setRows(r);
