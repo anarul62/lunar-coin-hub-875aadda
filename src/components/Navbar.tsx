@@ -3,9 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
-  Menu, Wallet, LogOut, User, ChevronRight, ChevronDown,
+  Menu, Wallet, LogOut, User, ChevronRight, ChevronDown, Bell,
   Compass, TrendingUp, Briefcase, Gift, Package, FileText, Wrench, Smartphone,
 } from "lucide-react";
+
 import { supabase } from "@/integrations/supabase/client";
 import type { User as SupaUser } from "@supabase/supabase-js";
 
@@ -22,17 +23,28 @@ const menuItems: { label: string; icon: any; expandable: boolean; path?: string 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState<SupaUser | null>(null);
+  const [unread, setUnread] = useState(0);
   const navigate = useNavigate();
+
+  const loadUnread = async (uid: string) => {
+    const { count } = await (supabase as any).from("notifications")
+      .select("*", { count: "exact", head: true })
+      .eq("audience", "user").eq("user_id", uid).eq("read", false);
+    setUnread(count || 0);
+  };
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      if (session?.user) loadUnread(session.user.id); else setUnread(0);
     });
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
+      if (session?.user) loadUnread(session.user.id);
     });
     return () => subscription.unsubscribe();
   }, []);
+
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -120,6 +132,16 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          {user && (
+            <button onClick={() => navigate("/notifications")} className="relative p-2 -mr-1 text-foreground" aria-label="Notifications">
+              <Bell className="h-5 w-5" />
+              {unread > 0 && (
+                <span className="absolute top-0.5 right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center">
+                  {unread > 99 ? "99+" : unread}
+                </span>
+              )}
+            </button>
+          )}
           {user ? (
             <div className="h-9 w-9 rounded-full bg-gradient-gold flex items-center justify-center text-primary-foreground text-sm font-bold">
               {(user.user_metadata?.full_name || user.email || "U").slice(0, 2).toUpperCase()}
@@ -130,6 +152,7 @@ const Navbar = () => {
             </Button>
           )}
         </div>
+
       </div>
     </nav>
   );
