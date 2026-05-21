@@ -44,6 +44,7 @@ import Invest from "./pages/Invest.tsx";
 import InvestChannel from "./pages/InvestChannel.tsx";
 import AdminInvestChannels from "./pages/admin/AdminInvestChannels.tsx";
 import AdminInvestPlans from "./pages/admin/AdminInvestPlans.tsx";
+import PlanHistory from "./pages/PlanHistory.tsx";
 import SeoHead from "./components/SeoHead.tsx";
 
 const queryClient = new QueryClient();
