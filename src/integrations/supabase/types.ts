@@ -221,6 +221,113 @@ export type Database = {
         }
         Relationships: []
       }
+      invest_channels: {
+        Row: {
+          banner_url: string | null
+          created_at: string
+          description: string | null
+          enabled: boolean
+          id: string
+          key: string
+          name: string
+          sort_order: number
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          banner_url?: string | null
+          created_at?: string
+          description?: string | null
+          enabled?: boolean
+          id?: string
+          key: string
+          name: string
+          sort_order?: number
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          banner_url?: string | null
+          created_at?: string
+          description?: string | null
+          enabled?: boolean
+          id?: string
+          key?: string
+          name?: string
+          sort_order?: number
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      invest_plans: {
+        Row: {
+          channel_id: string
+          compound: boolean
+          created_at: string
+          currency: string
+          duration_days: number
+          enabled: boolean
+          featured: boolean
+          id: string
+          image_url: string | null
+          interest_period: string
+          interest_type: string
+          interest_value: number
+          max_amount: number
+          min_amount: number
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          channel_id: string
+          compound?: boolean
+          created_at?: string
+          currency?: string
+          duration_days?: number
+          enabled?: boolean
+          featured?: boolean
+          id?: string
+          image_url?: string | null
+          interest_period?: string
+          interest_type?: string
+          interest_value?: number
+          max_amount?: number
+          min_amount?: number
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          channel_id?: string
+          compound?: boolean
+          created_at?: string
+          currency?: string
+          duration_days?: number
+          enabled?: boolean
+          featured?: boolean
+          id?: string
+          image_url?: string | null
+          interest_period?: string
+          interest_type?: string
+          interest_value?: number
+          max_amount?: number
+          min_amount?: number
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invest_plans_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "invest_channels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       kyc_requests: {
         Row: {
           created_at: string
