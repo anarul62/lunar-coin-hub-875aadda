@@ -101,6 +101,10 @@ const App = () => (
           <Route path="/redeem-xcoin" element={<RedeemXcoin />} />
           <Route path="/attendance" element={<Attendance />} />
           <Route path="/rewards" element={<Rewards />} />
+          <Route path="/invest" element={<Invest />} />
+          <Route path="/invest/:channelKey" element={<InvestChannel />} />
+          <Route path="/admin/invest-channels" element={<AdminInvestChannels />} />
+          <Route path="/admin/invest-plans" element={<AdminInvestPlans />} />
           <Route path="/admin/xcoin" element={<AdminXcoin />} />
           <Route path="/admin/attendance" element={<AdminAttendance />} />
           <Route path="/admin/announcements" element={<AdminAnnouncements />} />
