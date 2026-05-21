@@ -48,6 +48,7 @@ const allList = [
 const InvestHome = () => {
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const [kycOpen, setKycOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="pb-20">
