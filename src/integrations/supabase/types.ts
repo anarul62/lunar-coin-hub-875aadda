@@ -364,6 +364,51 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          amount: number | null
+          audience: string
+          body: string | null
+          created_at: string
+          currency: string | null
+          id: string
+          link: string | null
+          meta: Json
+          read: boolean
+          title: string
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          amount?: number | null
+          audience?: string
+          body?: string | null
+          created_at?: string
+          currency?: string | null
+          id?: string
+          link?: string | null
+          meta?: Json
+          read?: boolean
+          title: string
+          type?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number | null
+          audience?: string
+          body?: string | null
+          created_at?: string
+          currency?: string | null
+          id?: string
+          link?: string | null
+          meta?: Json
+          read?: boolean
+          title?: string
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       payment_methods: {
         Row: {
           config: Json

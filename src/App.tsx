@@ -45,7 +45,11 @@ import InvestChannel from "./pages/InvestChannel.tsx";
 import AdminInvestChannels from "./pages/admin/AdminInvestChannels.tsx";
 import AdminInvestPlans from "./pages/admin/AdminInvestPlans.tsx";
 import PlanHistory from "./pages/PlanHistory.tsx";
+import Notifications from "./pages/Notifications.tsx";
+import AdminNotifications from "./pages/admin/AdminNotifications.tsx";
+import AdminInvestments from "./pages/admin/AdminInvestments.tsx";
 import SeoHead from "./components/SeoHead.tsx";
+
 
 const queryClient = new QueryClient();
 
@@ -105,9 +109,15 @@ const App = () => (
           <Route path="/invest" element={<Invest />} />
           <Route path="/invest/:channelKey" element={<InvestChannel />} />
           <Route path="/plan-history" element={<PlanHistory />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/admin/notifications" element={<AdminNotifications />} />
+          <Route path="/admin/invest-today" element={<AdminInvestments mode="today" />} />
+          <Route path="/admin/invest-all" element={<AdminInvestments mode="all" />} />
+          <Route path="/admin/invest-completed" element={<AdminInvestments mode="completed" />} />
           <Route path="/admin/invest-channels" element={<AdminInvestChannels />} />
           <Route path="/admin/invest-plans" element={<AdminInvestPlans />} />
           <Route path="/admin/xcoin" element={<AdminXcoin />} />
+
           <Route path="/admin/attendance" element={<AdminAttendance />} />
           <Route path="/admin/announcements" element={<AdminAnnouncements />} />
           <Route path="/admin/payin" element={<AdminPayments />} />
