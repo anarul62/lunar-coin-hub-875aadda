@@ -156,7 +156,7 @@ const Profile = () => {
 
         {/* History grid */}
         <section className="px-4 mt-4 grid grid-cols-2 gap-3">
-          <CardTile icon={FileText} title="Plan History" sub="My game history"/>
+          <div onClick={() => navigate("/plan-history")} className="cursor-pointer"><CardTile icon={FileText} title="Plan History" sub="My investment history"/></div>
           <CardTile icon={History} title="Transactions" sub="My transaction history"/>
           <div onClick={() => navigate("/deposit/history")} className="cursor-pointer"><CardTile icon={ArrowDownToLine} title="Deposit" sub="My deposit history"/></div>
           <div onClick={() => navigate("/withdraw/history")} className="cursor-pointer"><CardTile icon={ArrowUpFromLine} title="Withdraw" sub="My withdraw history"/></div>
