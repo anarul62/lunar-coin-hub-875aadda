@@ -88,12 +88,28 @@ const AdminLayout = ({ children, title }: { children: ReactNode; title?: string 
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
+  const [unread, setUnread] = useState(0);
 
   useEffect(() => {
     if (!isAdmin()) navigate("/admin/login");
   }, [navigate]);
 
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { count } = await (supabase as any).from("notifications")
+        .select("*", { count: "exact", head: true })
+        .eq("audience", "admin").eq("read", false);
+      if (mounted) setUnread(count || 0);
+    };
+    load();
+    const t = setInterval(load, 30000);
+    return () => { mounted = false; clearInterval(t); };
+  }, [pathname]);
+
   const logout = () => { adminLogout(); navigate("/admin/login"); };
+
 
   return (
     <div className="admin-scope min-h-screen bg-slate-50 text-slate-900 flex">
@@ -140,8 +156,16 @@ const AdminLayout = ({ children, title }: { children: ReactNode; title?: string 
           </div>
           <div className="flex items-center gap-3 text-slate-500">
             <Sun className="h-5 w-5"/>
-            <Bell className="h-5 w-5"/>
+            <button onClick={() => navigate("/admin/notifications")} className="relative" aria-label="Notifications">
+              <Bell className="h-5 w-5"/>
+              {unread > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center">
+                  {unread > 99 ? "99+" : unread}
+                </span>
+              )}
+            </button>
             <button onClick={logout} className="flex items-center gap-1 text-sm text-red-600 hover:text-red-700">
+
               <LogOut className="h-4 w-4"/> <span className="hidden sm:inline">Logout</span>
             </button>
           </div>
