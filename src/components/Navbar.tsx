@@ -9,11 +9,11 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import type { User as SupaUser } from "@supabase/supabase-js";
 
-const menuItems = [
-  { label: "Discover", icon: Compass, expandable: false },
-  { label: "Invest", icon: TrendingUp, expandable: false },
+const menuItems: { label: string; icon: any; expandable: boolean; path?: string }[] = [
+  { label: "Discover", icon: Compass, expandable: false, path: "/" },
+  { label: "Invest", icon: TrendingUp, expandable: false, path: "/invest" },
   { label: "Portfolio", icon: Briefcase, expandable: false },
-  { label: "Refer & Earn", icon: Gift, expandable: false },
+  { label: "Refer & Earn", icon: Gift, expandable: false, path: "/referral" },
   { label: "Our Products", icon: Package, expandable: true },
   { label: "FRA", icon: FileText, expandable: false },
   { label: "Tools", icon: Wrench, expandable: true },
