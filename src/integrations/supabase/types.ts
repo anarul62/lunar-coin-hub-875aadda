@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      announcements: {
+        Row: {
+          active: boolean
+          body: string | null
+          created_at: string
+          gift_code: string | null
+          id: string
+          image_url: string | null
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          body?: string | null
+          created_at?: string
+          gift_code?: string | null
+          id?: string
+          image_url?: string | null
+          title: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          body?: string | null
+          created_at?: string
+          gift_code?: string | null
+          id?: string
+          image_url?: string | null
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       app_settings: {
         Row: {
           key: string
@@ -29,6 +65,54 @@ export type Database = {
           key?: string
           updated_at?: string
           value?: Json
+        }
+        Relationships: []
+      }
+      attendance_checkins: {
+        Row: {
+          amount_xcoin: number
+          created_at: string
+          date: string
+          day_index: number
+          id: string
+          user_id: string
+        }
+        Insert: {
+          amount_xcoin?: number
+          created_at?: string
+          date: string
+          day_index: number
+          id?: string
+          user_id: string
+        }
+        Update: {
+          amount_xcoin?: number
+          created_at?: string
+          date?: string
+          day_index?: number
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      attendance_rewards: {
+        Row: {
+          active: boolean
+          amount_xcoin: number
+          day: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          amount_xcoin?: number
+          day: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          amount_xcoin?: number
+          day?: number
+          updated_at?: string
         }
         Relationships: []
       }
@@ -413,6 +497,24 @@ export type Database = {
         }
         Relationships: []
       }
+      user_xcoin: {
+        Row: {
+          balance: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       withdraw_addresses: {
         Row: {
           created_at: string
@@ -541,6 +643,93 @@ export type Database = {
           rejection_reason?: string | null
           status?: string
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      xcoin_gift_codes: {
+        Row: {
+          amount: number
+          code: string
+          created_at: string
+          created_by: string | null
+          expire_at: string | null
+          id: string
+          max_users: number
+          note: string | null
+          used_count: number
+        }
+        Insert: {
+          amount?: number
+          code: string
+          created_at?: string
+          created_by?: string | null
+          expire_at?: string | null
+          id?: string
+          max_users?: number
+          note?: string | null
+          used_count?: number
+        }
+        Update: {
+          amount?: number
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          expire_at?: string | null
+          id?: string
+          max_users?: number
+          note?: string | null
+          used_count?: number
+        }
+        Relationships: []
+      }
+      xcoin_gift_redemptions: {
+        Row: {
+          amount: number
+          code_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          code_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          code_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      xcoin_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          meta: Json
+          type: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          id?: string
+          meta?: Json
+          type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          meta?: Json
+          type?: string
           user_id?: string
         }
         Relationships: []
