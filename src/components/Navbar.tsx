@@ -60,7 +60,7 @@ const Navbar = () => {
                 {menuItems.map((item) => (
                   <button
                     key={item.label}
-                    onClick={() => { setOpen(false); }}
+                    onClick={() => { setOpen(false); if (item.path) navigate(item.path); }}
                     className="w-full flex items-center justify-between px-5 py-4 border-b border-border/60 hover:bg-secondary/40 transition-colors"
                   >
                     <span className="flex items-center gap-3">
