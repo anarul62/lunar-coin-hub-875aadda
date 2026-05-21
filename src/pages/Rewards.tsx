@@ -54,19 +54,19 @@ const Rewards = () => {
             if (p.type === "gift_code" && p.gift_code) {
               const amt = codeAmounts[p.gift_code];
               return (
-                <div key={p.id} className="bg-white rounded-2xl p-4 shadow-sm">
-                  {p.title && <p className="font-semibold mb-2">{p.title}</p>}
-                  <div className="relative w-full" style={{ aspectRatio: "2 / 1" }}>
-                    <img src={bgImg} alt="" className="absolute inset-0 w-full h-full object-contain"/>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center pr-[14%]">
-                      <p className="font-extrabold text-slate-900 text-xl sm:text-2xl tracking-wide drop-shadow">{p.gift_code}</p>
-                      {amt != null && <p className="font-extrabold text-slate-900 text-2xl sm:text-3xl mt-1 drop-shadow">X{amt}</p>}
+                <div key={p.id} className="rounded-2xl p-4 shadow-xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white border border-amber-500/20">
+                  {p.title && <p className="font-semibold mb-3 text-amber-200 tracking-wide">{p.title}</p>}
+                  <div className="relative w-full overflow-hidden rounded-xl ring-1 ring-amber-300/40 shadow-[0_8px_30px_-8px_rgba(251,191,36,0.5)]" style={{ aspectRatio: "2 / 1" }}>
+                    <img src={bgImg} alt="" className="absolute inset-0 w-full h-full object-cover"/>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center pr-[12%] pl-[4%]">
+                      <p className="font-extrabold text-slate-900 text-2xl sm:text-3xl tracking-[0.18em] drop-shadow-[0_1px_0_rgba(255,255,255,0.5)]" style={{ fontFamily: 'ui-monospace, monospace' }}>{p.gift_code}</p>
+                      {amt != null && <p className="font-black text-slate-900 text-3xl sm:text-4xl mt-1 drop-shadow-[0_1px_0_rgba(255,255,255,0.5)]">X{amt}</p>}
                     </div>
                   </div>
-                  <button onClick={() => copy(p.gift_code)} className="mt-3 w-full flex items-center justify-center gap-2 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2 text-rose-600 font-semibold">
+                  <button onClick={() => copy(p.gift_code)} className="mt-4 w-full flex items-center justify-center gap-2 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 transition rounded-xl px-3 py-3 text-slate-900 font-bold shadow-md">
                     <Copy className="h-4 w-4"/> Copy code
                   </button>
-                  {p.body && <p className="text-xs text-slate-500 mt-2 whitespace-pre-wrap">{p.body}</p>}
+                  {p.body && <p className="text-xs text-slate-300 mt-3 whitespace-pre-wrap">{p.body}</p>}
                   <p className="text-[11px] text-slate-400 mt-2">{new Date(p.created_at).toLocaleString()}</p>
                 </div>
               );
