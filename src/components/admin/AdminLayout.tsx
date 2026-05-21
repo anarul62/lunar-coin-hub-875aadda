@@ -15,6 +15,7 @@ type Group = { title: string; items: Item[] };
 const groups: Group[] = [
   { title: "Dashboards", items: [
     { label: "Dashboard", icon: LayoutDashboard, path: "/admin" },
+    { label: "Notifications", icon: Bell, path: "/admin/notifications" },
     { label: "Team Dashboard", icon: Users2, path: "/admin/team" },
   ]},
   { title: "Game Setting", items: [
@@ -22,6 +23,9 @@ const groups: Group[] = [
     { label: "Setup Game Trend", icon: LineChart, path: "/admin/game-trend" },
   ]},
   { title: "Investments", items: [
+    { label: "Today's Invest", icon: TrendingUp, path: "/admin/invest-today" },
+    { label: "All Invest", icon: TrendingUp, path: "/admin/invest-all" },
+    { label: "Completed Invest", icon: Trophy, path: "/admin/invest-completed" },
     { label: "Invest Channels", icon: LayoutDashboard, path: "/admin/invest-channels" },
     { label: "Invest Setup", icon: TrendingUp, path: "/admin/invest-plans" },
     { label: "Gold Invest", icon: Coins, path: "/admin/gold" },
@@ -30,6 +34,7 @@ const groups: Group[] = [
     { label: "KYC Manager", icon: FileCheck, path: "/admin/kyc" },
     { label: "KYC Requests", icon: FileCheck, path: "/admin/kyc/requests" },
   ]},
+
   { title: "Finances", items: [
     { label: "Auto PayIn Gateway", icon: ArrowDownToLine, path: "/admin/payin" },
     { label: "Auto PayOut Gateway", icon: ArrowUpFromLine, path: "/admin/payout" },
