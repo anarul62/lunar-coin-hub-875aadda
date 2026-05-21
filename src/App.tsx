@@ -104,6 +104,7 @@ const App = () => (
           <Route path="/rewards" element={<Rewards />} />
           <Route path="/invest" element={<Invest />} />
           <Route path="/invest/:channelKey" element={<InvestChannel />} />
+          <Route path="/plan-history" element={<PlanHistory />} />
           <Route path="/admin/invest-channels" element={<AdminInvestChannels />} />
           <Route path="/admin/invest-plans" element={<AdminInvestPlans />} />
           <Route path="/admin/xcoin" element={<AdminXcoin />} />
