@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, UserCheck, ShieldOff, Wallet, ArrowDownToLine, ArrowUpFromLine, Clock, CheckCircle2, TrendingUp, Trophy, Target } from "lucide-react";
+import { Users, UserCheck, ShieldOff, Wallet, ArrowDownToLine, ArrowUpFromLine, Clock, CheckCircle2, TrendingUp, Trophy, Target, ChevronRight } from "lucide-react";
+
 
 const Stat = ({ label, value, icon: Icon, tone = "blue", sub }: any) => {
   const tones: any = {
@@ -38,12 +40,26 @@ const AdminDashboard = () => {
 
   return (
     <AdminLayout title="Dashboard">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+        {[
+          { to: "/admin/invest-today", label: "Today's Investments", icon: TrendingUp, tone: "from-blue-500 to-blue-700" },
+          { to: "/admin/invest-all", label: "All Investments", icon: Trophy, tone: "from-emerald-500 to-emerald-700" },
+          { to: "/admin/invest-completed", label: "Completed Investments", icon: CheckCircle2, tone: "from-violet-500 to-violet-700" },
+        ].map((q) => (
+          <Link key={q.to} to={q.to} className={`rounded-xl p-4 text-white bg-gradient-to-br ${q.tone} flex items-center justify-between hover:opacity-95`}>
+            <div className="flex items-center gap-3"><q.icon className="h-6 w-6"/><span className="font-semibold">{q.label}</span></div>
+            <ChevronRight className="h-5 w-5 opacity-80"/>
+          </Link>
+        ))}
+      </div>
+
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <Stat label="Total Users" value={stats.total} icon={Users} tone="blue" sub="All registered users"/>
         <Stat label="Active Users" value={stats.active} icon={UserCheck} tone="green" sub="Active accounts"/>
         <Stat label="Banned Users" value={stats.banned} icon={ShieldOff} tone="red" sub="Suspended accounts"/>
         <Stat label="Wallet Balance" value="₹0.00" icon={Wallet} tone="cyan" sub="Total balance"/>
       </div>
+
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
         <div className="bg-white rounded-xl border border-slate-200 p-4 lg:col-span-1">
