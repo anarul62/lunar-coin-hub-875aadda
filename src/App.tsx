@@ -34,6 +34,12 @@ import WithdrawHistory from "./pages/WithdrawHistory.tsx";
 import AdminWithdrawMethods from "./pages/admin/AdminWithdrawMethods.tsx";
 import AdminWithdrawals from "./pages/admin/AdminWithdrawals.tsx";
 import AdminSeo from "./pages/admin/AdminSeo.tsx";
+import AdminXcoin from "./pages/admin/AdminXcoin.tsx";
+import AdminAttendance from "./pages/admin/AdminAttendance.tsx";
+import AdminAnnouncements from "./pages/admin/AdminAnnouncements.tsx";
+import RedeemXcoin from "./pages/RedeemXcoin.tsx";
+import Attendance from "./pages/Attendance.tsx";
+import Rewards from "./pages/Rewards.tsx";
 import SeoHead from "./components/SeoHead.tsx";
 
 const queryClient = new QueryClient();
@@ -62,7 +68,6 @@ const placeholders: { path: string; title: string }[] = [
   { path: "/admin/invite-wheel", title: "Invite Wheel" },
   { path: "/admin/spin-wheel", title: "Spin Wheel" },
   { path: "/admin/bonus-collation", title: "Bonus Collation" },
-  { path: "/admin/attendance", title: "Attendance Bonus" },
   { path: "/admin/support", title: "Customer Service" },
   { path: "/admin/feedback", title: "Users Feedback" },
   { path: "/admin/telegram", title: "Telegram" },
@@ -89,6 +94,12 @@ const App = () => (
           <Route path="/withdraw/history" element={<WithdrawHistory />} />
           <Route path="/withdraw/:methodKey" element={<WithdrawMethod />} />
           <Route path="/withdraw/:methodKey/add" element={<WithdrawAddAddress />} />
+          <Route path="/redeem-xcoin" element={<RedeemXcoin />} />
+          <Route path="/attendance" element={<Attendance />} />
+          <Route path="/rewards" element={<Rewards />} />
+          <Route path="/admin/xcoin" element={<AdminXcoin />} />
+          <Route path="/admin/attendance" element={<AdminAttendance />} />
+          <Route path="/admin/announcements" element={<AdminAnnouncements />} />
           <Route path="/admin/payin" element={<AdminPayments />} />
           <Route path="/admin/deposit" element={<AdminDeposits />} />
           <Route path="/admin/withdraw-methods" element={<AdminWithdrawMethods />} />
