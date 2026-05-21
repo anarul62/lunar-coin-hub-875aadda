@@ -90,7 +90,7 @@ const InvestHome = () => {
           {categories.map((c) => (
             <button
               key={c.label}
-              onClick={() => { if (c.label === "KYC") setKycOpen(true); }}
+              onClick={() => { if (c.label === "KYC") setKycOpen(true); else if (c.path) navigate(c.path); }}
               className="relative flex flex-col items-center justify-center gap-1.5 rounded-xl bg-card border border-border py-3 px-1 hover:border-primary/30 transition-colors"
             >
               {c.tag && (
