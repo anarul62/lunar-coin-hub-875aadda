@@ -58,6 +58,8 @@ const groups: Group[] = [
     { label: "Agent Referral Bonus", icon: Gift, path: "/admin/referral-bonus" },
   ]},
   { title: "Bonus & Rewards", items: [
+    { label: "X Coin Manage", icon: Coins, path: "/admin/xcoin" },
+    { label: "Announcements", icon: Megaphone, path: "/admin/announcements" },
     { label: "Member Deposit Bonus", icon: Gift, path: "/admin/deposit-bonus" },
     { label: "Bonus Manage", icon: Gift, path: "/admin/bonus" },
     { label: "Gift Code", icon: Ticket, path: "/admin/gift-code" },

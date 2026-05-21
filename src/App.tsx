@@ -94,6 +94,12 @@ const App = () => (
           <Route path="/withdraw/history" element={<WithdrawHistory />} />
           <Route path="/withdraw/:methodKey" element={<WithdrawMethod />} />
           <Route path="/withdraw/:methodKey/add" element={<WithdrawAddAddress />} />
+          <Route path="/redeem-xcoin" element={<RedeemXcoin />} />
+          <Route path="/attendance" element={<Attendance />} />
+          <Route path="/rewards" element={<Rewards />} />
+          <Route path="/admin/xcoin" element={<AdminXcoin />} />
+          <Route path="/admin/attendance" element={<AdminAttendance />} />
+          <Route path="/admin/announcements" element={<AdminAnnouncements />} />
           <Route path="/admin/payin" element={<AdminPayments />} />
           <Route path="/admin/deposit" element={<AdminDeposits />} />
           <Route path="/admin/withdraw-methods" element={<AdminWithdrawMethods />} />
