@@ -16,14 +16,24 @@ const AdminAnnouncements = () => {
   const [body, setBody] = useState("");
   const [code, setCode] = useState("");
   const [img, setImg] = useState("");
+  const [bgUrl, setBgUrl] = useState("");
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase.from("announcements").select("*").order("created_at", { ascending: false });
+    const [{ data }, { data: bg }] = await Promise.all([
+      supabase.from("announcements").select("*").order("created_at", { ascending: false }),
+      supabase.from("app_settings").select("value").eq("key", "gift_code_bg").maybeSingle(),
+    ]);
     setPosts(data || []);
+    setBgUrl(((bg?.value as any)?.url) || "");
     setLoading(false);
   };
   useEffect(() => { load(); }, []);
+
+  const saveBg = async () => {
+    await supabase.from("app_settings").upsert({ key: "gift_code_bg", value: { url: bgUrl }, updated_at: new Date().toISOString() });
+    toast({ title: "Gift code background saved" });
+  };
 
   const submit = async () => {
     if (!title) return toast({ title: "Title required", variant: "destructive" });
@@ -46,6 +56,16 @@ const AdminAnnouncements = () => {
 
   return (
     <AdminLayout title="Announcements / Rewards Feed">
+      <div className="bg-white rounded-xl p-5 border mb-6 max-w-2xl">
+        <h3 className="font-semibold mb-3">Gift Code Background Image</h3>
+        <p className="text-xs text-slate-500 mb-2">URL of the background ticket image shown behind every gift code on the Rewards feed. Leave empty to use the default.</p>
+        <div className="flex gap-2">
+          <Input value={bgUrl} onChange={e => setBgUrl(e.target.value)} placeholder="https://..."/>
+          <Button onClick={saveBg}>Save</Button>
+        </div>
+        {bgUrl && <img src={bgUrl} alt="" className="mt-3 max-h-32 rounded border"/>}
+      </div>
+
       <div className="bg-white rounded-xl p-5 border mb-6 max-w-2xl">
         <h3 className="font-semibold mb-3">Create Post</h3>
         <div className="grid gap-3">

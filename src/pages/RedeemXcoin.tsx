@@ -4,8 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-
-const HERO = "https://files.catbox.moe/14bdul.png";
+import giftTicket from "@/assets/gift-ticket.png";
 
 const RedeemXcoin = () => {
   const navigate = useNavigate();
@@ -13,13 +12,19 @@ const RedeemXcoin = () => {
   const [submitting, setSubmitting] = useState(false);
   const [history, setHistory] = useState<any[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
+  const [bgImg, setBgImg] = useState<string>(giftTicket);
 
   const load = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { navigate("/login"); return; }
     setUserId(user.id);
-    const { data: h } = await supabase.from("xcoin_gift_redemptions").select("*").eq("user_id", user.id).order("created_at", { ascending: false });
+    const [{ data: h }, { data: setRow }] = await Promise.all([
+      supabase.from("xcoin_gift_redemptions").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
+      supabase.from("app_settings").select("value").eq("key", "gift_code_bg").maybeSingle(),
+    ]);
     setHistory(h || []);
+    const url = (setRow?.value as any)?.url;
+    if (url) setBgImg(url);
   };
   useEffect(() => { load(); }, []);
 
@@ -56,7 +61,9 @@ const RedeemXcoin = () => {
         <h1 className="text-lg font-semibold">Gift</h1>
         <div className="w-9"/>
       </header>
-      <img src={HERO} alt="" className="w-full object-cover" />
+      <div className="flex justify-center py-8">
+        <img src={bgImg} alt="Gift" className="max-h-56 object-contain" />
+      </div>
 
       <div className="p-4 space-y-4">
         <div className="bg-white rounded-2xl p-4">
