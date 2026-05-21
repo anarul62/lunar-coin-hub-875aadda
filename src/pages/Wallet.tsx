@@ -8,10 +8,9 @@ import { Info, RefreshCw, Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import xcoinImg from "@/assets/xcoin.png";
 
-const XCOIN_IMG = "https://files.catbox.moe/ves0e0.png";
-const REDEEM_IMG = "https://files.catbox.moe/14bdul.png";
-const ATTEND_IMG = "https://aviator-demo.spribegaming.com/assets/static/avatars/v2/av-1.png"; // fallback - real img inline emoji
+const XCOIN_IMG = xcoinImg;
 
 const Wallet = () => {
   const navigate = useNavigate();
