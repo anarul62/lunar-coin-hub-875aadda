@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Search, TrendingUp, Coins, Gem, ShieldCheck, FileBadge,
@@ -11,14 +12,14 @@ import KycModal from "@/components/KycModal";
 const tabs = ["Gold & Silver", "Crypto", "Plans"];
 
 const categories = [
-  { icon: Coins, label: "Gold Invest", tag: "Hot" },
-  { icon: Gem, label: "Silver Invest", tag: null },
-  { icon: ShieldCheck, label: "KYC", tag: null },
-  { icon: BarChart3, label: "Plans", tag: "12%+" },
-  { icon: Wallet, label: "Wallet", tag: null },
-  { icon: FileBadge, label: "Reports", tag: null },
-  { icon: Sparkles, label: "Rewards", tag: "New" },
-  { icon: Lock, label: "Vault", tag: null },
+  { icon: Coins, label: "Gold Invest", tag: "Hot", path: null },
+  { icon: Gem, label: "Silver Invest", tag: null, path: null },
+  { icon: ShieldCheck, label: "KYC", tag: null, path: null },
+  { icon: BarChart3, label: "Plans", tag: "12%+", path: null },
+  { icon: Wallet, label: "Wallet", tag: null, path: "/wallet" },
+  { icon: FileBadge, label: "Reports", tag: null, path: null },
+  { icon: Sparkles, label: "Rewards", tag: "New", path: "/rewards" },
+  { icon: Lock, label: "Vault", tag: null, path: null },
 ];
 
 const newlyLaunched = [
@@ -47,6 +48,7 @@ const allList = [
 const InvestHome = () => {
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const [kycOpen, setKycOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="pb-20">
@@ -88,7 +90,7 @@ const InvestHome = () => {
           {categories.map((c) => (
             <button
               key={c.label}
-              onClick={() => { if (c.label === "KYC") setKycOpen(true); }}
+              onClick={() => { if (c.label === "KYC") setKycOpen(true); else if (c.path) navigate(c.path); }}
               className="relative flex flex-col items-center justify-center gap-1.5 rounded-xl bg-card border border-border py-3 px-1 hover:border-primary/30 transition-colors"
             >
               {c.tag && (
