@@ -5,8 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Trash2 } from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
 
 type Channel = { id: string; name: string; key: string };
 type Plan = any;
@@ -32,6 +33,7 @@ const AdminInvestPlans = () => {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [rates, setRates] = useState({ usdt_bdt: 120, usdt_inr: 83, usdt_xcoin: 1000 });
   const [form, setForm] = useState({ ...emptyForm });
+  const [editing, setEditing] = useState<Plan | null>(null);
   const selectedChannel = params.get("channel") || "";
 
   const loadChannels = async () => {
@@ -68,6 +70,16 @@ const AdminInvestPlans = () => {
 
   const update = async (id: string, patch: any) => {
     await supabase.from("invest_plans").update(patch).eq("id", id);
+    loadPlans(selectedChannel);
+  };
+
+  const saveEdit = async () => {
+    if (!editing) return;
+    const { id, created_at, updated_at, ...patch } = editing;
+    const { error } = await supabase.from("invest_plans").update(patch).eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Plan updated");
+    setEditing(null);
     loadPlans(selectedChannel);
   };
 
@@ -160,7 +172,7 @@ const AdminInvestPlans = () => {
             {/* Existing plans */}
             <div className="bg-white rounded-xl border border-slate-200 divide-y">
               {plans.map((p) => (
-                <div key={p.id} className="p-3 flex items-center gap-3">
+                <div key={p.id} className="p-3 flex items-center gap-2 flex-wrap">
                   {p.image_url ? <img src={p.image_url} className="h-12 w-12 object-cover rounded" /> : <div className="h-12 w-12 bg-slate-100 rounded" />}
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold truncate">{p.name} {p.featured && <span className="text-amber-500 text-xs">★</span>}</p>
@@ -170,6 +182,7 @@ const AdminInvestPlans = () => {
                     </p>
                   </div>
                   <Switch checked={p.enabled} onCheckedChange={(v) => update(p.id, { enabled: v })} />
+                  <Button variant="outline" size="sm" onClick={() => setEditing(p)}><Pencil className="h-4 w-4" /></Button>
                   <Button variant="ghost" size="sm" onClick={() => remove(p.id)}><Trash2 className="h-4 w-4 text-red-600" /></Button>
                 </div>
               ))}
@@ -178,6 +191,51 @@ const AdminInvestPlans = () => {
           </>
         )}
       </div>
+
+      <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>Edit Plan</DialogTitle></DialogHeader>
+          {editing && (
+            <div className="space-y-3">
+              <Input placeholder="Plan name" value={editing.name || ""} onChange={(e) => setEditing({ ...editing, name: e.target.value })} />
+              <Input placeholder="Image URL" value={editing.image_url || ""} onChange={(e) => setEditing({ ...editing, image_url: e.target.value })} />
+              {editing.image_url && <img src={editing.image_url} className="w-full h-32 object-cover rounded" />}
+              <div>
+                <label className="text-xs text-slate-500">Interest Type</label>
+                <select className="w-full border border-slate-200 rounded-md px-3 py-2 text-sm" value={editing.interest_type} onChange={(e) => setEditing({ ...editing, interest_type: e.target.value })}>
+                  <option value="percent">Percent (%)</option>
+                  <option value="fixed">Fixed amount</option>
+                </select>
+              </div>
+              <Input type="number" placeholder="Interest value" value={editing.interest_value} onChange={(e) => setEditing({ ...editing, interest_value: Number(e.target.value) })} />
+              <div>
+                <label className="text-xs text-slate-500">Per</label>
+                <select className="w-full border border-slate-200 rounded-md px-3 py-2 text-sm" value={editing.interest_period} onChange={(e) => setEditing({ ...editing, interest_period: e.target.value })}>
+                  <option value="day">Day</option>
+                  <option value="month">Month</option>
+                </select>
+              </div>
+              <Input type="number" placeholder="Duration (days)" value={editing.duration_days} onChange={(e) => setEditing({ ...editing, duration_days: Number(e.target.value) })} />
+              <div>
+                <label className="text-xs text-slate-500">Currency</label>
+                <select className="w-full border border-slate-200 rounded-md px-3 py-2 text-sm" value={editing.currency} onChange={(e) => setEditing({ ...editing, currency: e.target.value })}>
+                  <option>USDT</option><option>XCOIN</option><option>INR</option><option>BDT</option>
+                </select>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <Input type="number" placeholder="Min" value={editing.min_amount} onChange={(e) => setEditing({ ...editing, min_amount: Number(e.target.value) })} />
+                <Input type="number" placeholder="Max" value={editing.max_amount} onChange={(e) => setEditing({ ...editing, max_amount: Number(e.target.value) })} />
+              </div>
+              <label className="flex items-center gap-2 text-sm"><Switch checked={editing.compound} onCheckedChange={(v) => setEditing({ ...editing, compound: v })} /> Compound Interest</label>
+              <label className="flex items-center gap-2 text-sm"><Switch checked={editing.featured} onCheckedChange={(v) => setEditing({ ...editing, featured: v })} /> Featured</label>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditing(null)}>Cancel</Button>
+            <Button onClick={saveEdit}>Save</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 };
