@@ -25,6 +25,7 @@ type Method = {
 };
 
 const GATEWAYS = ["lgpay", "watchpay", "morepay", "razorpay", "easypay", "phonepe", "okpay"];
+const LGPAY_TRADE_TYPES = ["bKash", "Nagad", "INRUPI", "UPI", "USDT"];
 
 const CURRENCY_BY_KEY: Record<string, string> = {
   upi_qr: "INR", paytm_qr: "INR", nagad: "BDT", bkash: "BDT", usdt: "USDT", bep20: "USDT",
