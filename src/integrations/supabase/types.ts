@@ -14,6 +14,75 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_permissions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string | null
+          permissions: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string | null
+          permissions?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string | null
+          permissions?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      agents: {
+        Row: {
+          active: boolean
+          agent_code: string
+          created_at: string
+          created_by: string | null
+          email: string | null
+          id: string
+          name: string | null
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          agent_code: string
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          name?: string | null
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          agent_code?: string
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          name?: string | null
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       announcements: {
         Row: {
           active: boolean
@@ -691,6 +760,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          agent_id: string | null
           avatar_url: string | null
           balance_usdt: number
           blocked: boolean
@@ -708,6 +778,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          agent_id?: string | null
           avatar_url?: string | null
           balance_usdt?: number
           blocked?: boolean
@@ -725,6 +796,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          agent_id?: string | null
           avatar_url?: string | null
           balance_usdt?: number
           blocked?: boolean
@@ -1267,7 +1339,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "moderator" | "user"
+      app_role: "admin" | "moderator" | "user" | "subadmin" | "agent"
       kyc_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
@@ -1396,7 +1468,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "moderator", "user"],
+      app_role: ["admin", "moderator", "user", "subadmin", "agent"],
       kyc_status: ["pending", "approved", "rejected"],
     },
   },
