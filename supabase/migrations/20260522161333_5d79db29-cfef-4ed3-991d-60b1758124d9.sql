@@ -1,0 +1,1 @@
+ALTER TABLE public.lottery_plans ADD COLUMN IF NOT EXISTS hide_after_seconds INTEGER NOT NULL DEFAULT 10;
