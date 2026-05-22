@@ -48,6 +48,9 @@ import PlanHistory from "./pages/PlanHistory.tsx";
 import Notifications from "./pages/Notifications.tsx";
 import AdminNotifications from "./pages/admin/AdminNotifications.tsx";
 import AdminInvestments from "./pages/admin/AdminInvestments.tsx";
+import AdminLotteryPlans from "./pages/admin/AdminLotteryPlans.tsx";
+import LotteryTickets from "./pages/lottery/LotteryTickets.tsx";
+import LotteryDetails from "./pages/lottery/LotteryDetails.tsx";
 import SeoHead from "./components/SeoHead.tsx";
 
 
