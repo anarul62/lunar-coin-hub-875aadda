@@ -199,7 +199,7 @@ const AdminLotteryPlans = () => {
                   <div><label className="text-xs text-slate-500">Hours</label><Input type="number" min={0} value={editing.recreate_hours || 0} onChange={(e) => setEditing({ ...editing, recreate_hours: Number(e.target.value) })} /></div>
                   <div><label className="text-xs text-slate-500">Minutes</label><Input type="number" min={0} value={editing.recreate_minutes || 0} onChange={(e) => setEditing({ ...editing, recreate_minutes: Number(e.target.value) })} /></div>
                 </div>
-                <div><label className="text-xs text-slate-500">Hide from users (minutes after draw)</label><Input type="number" min={0} value={editing.hide_after_minutes ?? 1} onChange={(e) => setEditing({ ...editing, hide_after_minutes: Number(e.target.value) })} /></div>
+                <div><label className="text-xs text-slate-500">Hide from users after draw (seconds)</label><Input type="number" min={1} value={editing.hide_after_seconds ?? 10} onChange={(e) => setEditing({ ...editing, hide_after_seconds: Number(e.target.value) })} /></div>
               </div>
               <label className="flex items-center gap-2 text-sm"><Switch checked={editing.enabled} onCheckedChange={(v) => setEditing({ ...editing, enabled: v })} /> Enabled</label>
             </div>
