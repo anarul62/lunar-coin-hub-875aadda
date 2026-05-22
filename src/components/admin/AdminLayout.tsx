@@ -58,6 +58,7 @@ const groups: Group[] = [
   { title: "Manage Agents", items: [
     { label: "Add Agent", icon: UserCog, path: "/admin/add-agent" },
     { label: "Agent Data", icon: Users2, path: "/admin/agent-data" },
+    { label: "Manage Admins", icon: UserCog, path: "/admin/manage-admins" },
     { label: "Manage Salary", icon: BadgeIndianRupee, path: "/admin/salary" },
   ]},
   { title: "Referral & Team", items: [
