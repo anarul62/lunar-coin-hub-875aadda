@@ -42,6 +42,7 @@ const LotteryTickets = () => {
 
   const toggle = (t: Ticket) => {
     if (t.user_id) return;
+    if (plan && new Date(plan.draw_at).getTime() <= Date.now()) { toast.error("Booking time has ended"); return; }
     const s = new Set(selected);
     if (s.has(t.id)) s.delete(t.id);
     else {
