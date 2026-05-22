@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { CheckCircle2, XCircle, Loader2, Search, TrendingUp, Wallet, Clock, ShieldX, ShieldCheck } from "lucide-react";
+import { CheckCircle2, XCircle, Loader2, Search, TrendingUp, Wallet, Clock, ShieldX, ShieldCheck, Eye, CreditCard, X } from "lucide-react";
 
 type Dep = {
   id: string; user_id: string; order_number: string | null;
@@ -28,6 +28,7 @@ const AdminDeposits = () => {
   const [searchMode, setSearchMode] = useState<"order" | "code">("order");
   const [rejectId, setRejectId] = useState<string | null>(null);
   const [reason, setReason] = useState("");
+  const [showLgpay, setShowLgpay] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -65,19 +66,28 @@ const AdminDeposits = () => {
     load();
   };
 
+  const isLgpay = (d: Dep) => (d.order_number || "").startsWith("LG");
+
   // Stats
   const stats = useMemo(() => {
     const today = new Date(); today.setHours(0,0,0,0);
     let todayAmount = 0, todayCount = 0, approved = 0, rejected = 0, pending = 0, completedAmt = 0;
+    let lgpayCompletedAmt = 0, lgpayCount = 0;
     items.forEach(d => {
       const created = new Date(d.created_at);
       if (created >= today && d.status === "completed") { todayAmount += Number(d.amount_usdt||0); todayCount++; }
       if (d.status === "completed") { approved++; completedAmt += Number(d.amount_usdt||0); }
       if (d.status === "rejected") rejected++;
       if (d.status === "pending") pending++;
+      if (isLgpay(d)) {
+        lgpayCount++;
+        if (d.status === "completed") lgpayCompletedAmt += Number(d.amount_usdt||0);
+      }
     });
-    return { todayAmount, todayCount, approved, rejected, pending, completedAmt };
+    return { todayAmount, todayCount, approved, rejected, pending, completedAmt, lgpayCompletedAmt, lgpayCount };
   }, [items]);
+
+  const lgpayDeposits = useMemo(() => items.filter(isLgpay), [items]);
 
   // 7-day bar graph (completed deposits per day in USDT)
   const chart = useMemo(() => {
@@ -121,6 +131,22 @@ const AdminDeposits = () => {
         <StatCard icon={<Clock className="h-5 w-5"/>} label="Pending" value={stats.pending} color="from-amber-500 to-amber-600"/>
         <StatCard icon={<TrendingUp className="h-5 w-5"/>} label="Total Orders" value={items.length} color="from-violet-500 to-violet-600"/>
       </div>
+
+      {/* LG-Pay summary card */}
+      <div className="mb-4 rounded-xl p-4 text-white bg-gradient-to-br from-indigo-500 to-purple-600 shadow-sm flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <CreditCard className="h-6 w-6"/>
+          <div>
+            <div className="text-xs opacity-90">LG-Pay Total Deposits</div>
+            <div className="text-2xl font-bold">₮ {stats.lgpayCompletedAmt.toFixed(2)}</div>
+            <div className="text-[11px] opacity-80">{stats.lgpayCount} orders ({lgpayDeposits.filter(d=>d.status==="completed").length} completed)</div>
+          </div>
+        </div>
+        <button onClick={() => setShowLgpay(true)} className="inline-flex items-center gap-1 px-3 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium backdrop-blur">
+          <Eye className="h-4 w-4"/> View
+        </button>
+      </div>
+
 
       {/* Chart */}
       <div className="bg-white rounded-xl border border-slate-200 p-4 mb-4">
@@ -226,6 +252,55 @@ const AdminDeposits = () => {
             <div className="flex justify-end gap-2 mt-3">
               <button onClick={() => setRejectId(null)} className="px-3 py-2 text-sm border border-slate-200 rounded-lg">Cancel</button>
               <button onClick={reject} disabled={!reason.trim()} className="px-3 py-2 text-sm bg-rose-600 text-white rounded-lg disabled:opacity-50">Reject</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showLgpay && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => setShowLgpay(false)}>
+          <div onClick={e => e.stopPropagation()} className="bg-white rounded-xl w-full max-w-4xl max-h-[85vh] flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-slate-200">
+              <div>
+                <h3 className="font-semibold text-slate-900">LG-Pay Deposits</h3>
+                <p className="text-xs text-slate-500">Total completed: ₮ {stats.lgpayCompletedAmt.toFixed(2)} · {stats.lgpayCount} orders</p>
+              </div>
+              <button onClick={() => setShowLgpay(false)} className="p-1.5 hover:bg-slate-100 rounded"><X className="h-4 w-4"/></button>
+            </div>
+            <div className="overflow-auto p-4">
+              <table className="w-full text-sm">
+                <thead className="text-left text-slate-500 border-b border-slate-200">
+                  <tr>
+                    <th className="py-2 pr-3">User</th>
+                    <th className="py-2 pr-3">Phone</th>
+                    <th className="py-2 pr-3">Order No</th>
+                    <th className="py-2 pr-3">Amount</th>
+                    <th className="py-2 pr-3">USDT</th>
+                    <th className="py-2 pr-3">Status</th>
+                    <th className="py-2 pr-3">Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {lgpayDeposits.map(d => {
+                    const p = profMap[d.user_id];
+                    return (
+                      <tr key={d.id} className="border-b border-slate-100 hover:bg-slate-50">
+                        <td className="py-2 pr-3">
+                          <div className="text-xs font-medium text-slate-900">{p?.full_name || "—"}</div>
+                          <div className="text-[10px] text-violet-600 font-mono">{p?.referral_code || ""}</div>
+                        </td>
+                        <td className="py-2 pr-3 text-xs">{p?.phone || "—"}</td>
+                        <td className="py-2 pr-3 font-mono text-xs">{d.order_number}</td>
+                        <td className="py-2 pr-3 whitespace-nowrap">{sym(d.currency)}{Number(d.amount).toFixed(2)} <span className="text-slate-400 text-xs">{d.currency}</span></td>
+                        <td className="py-2 pr-3">{Number(d.amount_usdt).toFixed(4)}</td>
+                        <td className="py-2 pr-3"><span className={`px-2 py-0.5 rounded text-xs ${STATUS_BADGE[d.status] || "bg-slate-100"}`}>{d.status}</span></td>
+                        <td className="py-2 pr-3 text-xs whitespace-nowrap">{new Date(d.created_at).toLocaleString()}</td>
+                      </tr>
+                    );
+                  })}
+                  {lgpayDeposits.length === 0 && <tr><td colSpan={7} className="text-center text-slate-400 py-10">No LG-Pay deposits yet</td></tr>}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
