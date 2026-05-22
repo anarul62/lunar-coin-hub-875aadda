@@ -28,9 +28,10 @@ const empty = {
   duration_minutes: 60,
   draw_at_local: "",
   auto_recreate: false,
-  hide_after_minutes: 1,
+  hide_after_minutes: 0,
+  hide_after_seconds: 10,
   recreate_days: 0,
-  recreate_hours: 1,
+  recreate_hours: 2,
   recreate_minutes: 0,
 };
 
