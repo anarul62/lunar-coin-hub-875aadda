@@ -95,19 +95,32 @@ const AdminLotteryPlans = () => {
                 {channels.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             </div>
-            <Input placeholder="Name (e.g. Snakes & Ladders No.1)" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-            <Input placeholder="Game image URL" value={form.game_image_url} onChange={(e) => setForm({ ...form, game_image_url: e.target.value })} />
+            <div><label className="text-xs text-slate-500">Plan name</label><Input placeholder="e.g. Snakes & Ladders No.1" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
+            <div><label className="text-xs text-slate-500">Game image URL</label><Input placeholder="https://..." value={form.game_image_url} onChange={(e) => setForm({ ...form, game_image_url: e.target.value })} /></div>
             <div className="grid grid-cols-2 gap-2">
-              <Input type="number" placeholder="Total tickets" value={form.total_tickets} onChange={(e) => setForm({ ...form, total_tickets: Number(e.target.value) })} />
-              <Input type="number" placeholder="Ticket price" value={form.ticket_price} onChange={(e) => setForm({ ...form, ticket_price: Number(e.target.value) })} />
+              <div><label className="text-xs text-slate-500">Total tickets</label><Input type="number" value={form.total_tickets} onChange={(e) => setForm({ ...form, total_tickets: Number(e.target.value) })} /></div>
+              <div><label className="text-xs text-slate-500">Ticket price</label><Input type="number" value={form.ticket_price} onChange={(e) => setForm({ ...form, ticket_price: Number(e.target.value) })} /></div>
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <select className="border border-slate-200 rounded-md px-3 py-2 text-sm" value={form.currency} onChange={(e) => setForm({ ...form, currency: e.target.value })}>
-                <option>XCOIN</option><option>BDT</option><option>USDT</option><option>INR</option>
-              </select>
-              <Input type="number" placeholder="X coin bonus (optional)" value={form.xcoin_bonus} onChange={(e) => setForm({ ...form, xcoin_bonus: Number(e.target.value) })} />
+              <div><label className="text-xs text-slate-500">Currency</label>
+                <select className="w-full border border-slate-200 rounded-md px-3 py-2 text-sm" value={form.currency} onChange={(e) => setForm({ ...form, currency: e.target.value })}>
+                  <option>XCOIN</option><option>BDT</option><option>USDT</option><option>INR</option>
+                </select>
+              </div>
+              <div><label className="text-xs text-slate-500">X coin bonus (optional)</label><Input type="number" value={form.xcoin_bonus} onChange={(e) => setForm({ ...form, xcoin_bonus: Number(e.target.value) })} /></div>
             </div>
-            <Input type="number" placeholder="Duration (minutes till draw)" value={form.duration_minutes} onChange={(e) => setForm({ ...form, duration_minutes: Number(e.target.value) })} />
+            <div><label className="text-xs text-slate-500">Duration in minutes (used if no exact draw time)</label><Input type="number" value={form.duration_minutes} onChange={(e) => setForm({ ...form, duration_minutes: Number(e.target.value) })} /></div>
+            <div><label className="text-xs text-slate-500">Draw at (exact date & time, optional)</label><Input type="datetime-local" value={form.draw_at_local} onChange={(e) => setForm({ ...form, draw_at_local: e.target.value })} /></div>
+            <div className="sm:col-span-2 border-t pt-3">
+              <label className="flex items-center gap-2 text-sm font-semibold"><Switch checked={form.auto_recreate} onCheckedChange={(v) => setForm({ ...form, auto_recreate: v })} /> Auto re-run this plan</label>
+              <p className="text-[11px] text-slate-500 mt-1">When ON, after draw ends a new identical round will start automatically using the interval below.</p>
+              <div className="grid grid-cols-3 gap-2 mt-2">
+                <div><label className="text-xs text-slate-500">Days</label><Input type="number" min={0} value={form.recreate_days} onChange={(e) => setForm({ ...form, recreate_days: Number(e.target.value) })} /></div>
+                <div><label className="text-xs text-slate-500">Hours</label><Input type="number" min={0} value={form.recreate_hours} onChange={(e) => setForm({ ...form, recreate_hours: Number(e.target.value) })} /></div>
+                <div><label className="text-xs text-slate-500">Minutes</label><Input type="number" min={0} value={form.recreate_minutes} onChange={(e) => setForm({ ...form, recreate_minutes: Number(e.target.value) })} /></div>
+              </div>
+              <div className="mt-2"><label className="text-xs text-slate-500">Hide from users (minutes after draw)</label><Input type="number" min={0} value={form.hide_after_minutes} onChange={(e) => setForm({ ...form, hide_after_minutes: Number(e.target.value) })} /></div>
+            </div>
             <div>
               <label className="text-xs text-slate-500">Prize Mode</label>
               <select className="w-full border border-slate-200 rounded-md px-3 py-2 text-sm" value={form.prize_mode} onChange={(e) => {
