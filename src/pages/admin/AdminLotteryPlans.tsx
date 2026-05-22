@@ -149,10 +149,12 @@ const AdminLotteryPlans = () => {
             <div key={p.id} className="p-3 flex items-center gap-3">
               {p.game_image_url ? <img src={p.game_image_url} className="h-12 w-12 rounded object-cover" /> : <div className="h-12 w-12 bg-slate-100 rounded" />}
               <div className="flex-1 min-w-0">
-                <p className="font-semibold truncate">{p.name}</p>
+                <p className="font-semibold truncate">{p.name} <span className="text-[10px] text-slate-400">({p.status})</span></p>
                 <p className="text-xs text-slate-500">
-                  {p.total_tickets} tix · {p.ticket_price} {p.currency} · {p.prize_mode} · {p.status} · draws {new Date(p.draw_at).toLocaleString()}
+                  {p.total_tickets} tix · {p.ticket_price} {p.currency} · {p.prize_mode}
+                  {p.auto_recreate ? ` · auto every ${p.recreate_days||0}d ${p.recreate_hours||0}h ${p.recreate_minutes||0}m` : ""}
                 </p>
+                <p className="text-[11px] text-slate-400">Draw: {new Date(p.draw_at).toLocaleString()}</p>
               </div>
               <Button variant="outline" size="sm" onClick={() => setEditing(p)}><Pencil className="h-4 w-4" /></Button>
               <Button variant="ghost" size="sm" onClick={() => remove(p.id)}><Trash2 className="h-4 w-4 text-red-600" /></Button>
