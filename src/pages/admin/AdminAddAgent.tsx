@@ -36,19 +36,14 @@ const AdminAddAgent = () => {
     e.preventDefault();
     if (!form.email || !form.password || !form.agent_code) { toast.error("Email, password & refcode required"); return; }
     setLoading(true);
-    const { data: { session } } = await supabase.auth.getSession();
-    const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-create-user`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.access_token || ""}`,
-        apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-      },
-      body: JSON.stringify({ type: "agent", ...form, agent_code: form.agent_code.toUpperCase() }),
+    const { data, error } = await supabase.functions.invoke("admin-create-user", {
+      body: { type: "agent", ...form, agent_code: form.agent_code.toUpperCase() },
     });
-    const json = await res.json();
     setLoading(false);
-    if (!res.ok) { toast.error(json.error || "Failed"); return; }
+    if (error || (data as any)?.error) {
+      toast.error((data as any)?.error || error?.message || "Failed. Please re-login as admin.");
+      return;
+    }
     toast.success("Agent created");
     setForm({ name: "", email: "", phone: "", password: "", agent_code: randCode() });
     load();
