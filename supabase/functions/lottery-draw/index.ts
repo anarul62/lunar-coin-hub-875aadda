@@ -51,15 +51,29 @@ Deno.serve(async (req) => {
       for (let r = 4; r <= 11; r++) pickRanks.push({ rank: r, pct: Number(plan.pct_4_11) });
     }
 
+    const availableWinnerSlots = pickRanks.slice(0, shuffled.length);
+    const companyPct = Math.max(0, Math.min(100, Number(plan.pct_company || 0)));
+    const totalConfiguredPrizePct = pickRanks.reduce((sum, r) => sum + Math.max(0, Number(r.pct || 0)), 0);
+    const targetPrizePct = Math.min(Math.max(0, 100 - companyPct), totalConfiguredPrizePct || Math.max(0, 100 - companyPct));
+    const assignedWinnerPct = availableWinnerSlots.reduce((sum, r) => sum + Math.max(0, Number(r.pct || 0)), 0);
+    const distributablePool = Math.floor((pool * targetPrizePct) * 100) / 10000;
+
     const winners: any[] = [];
-    for (let i = 0; i < pickRanks.length && i < shuffled.length; i++) {
+    let paidSoFar = 0;
+    for (let i = 0; i < availableWinnerSlots.length; i++) {
       const t = shuffled[i];
-      const prize = Math.floor((pool * pickRanks[i].pct) / 100 * 100) / 100;
+      const rankInfo = availableWinnerSlots[i];
+      const isLastWinner = i === availableWinnerSlots.length - 1;
+      const weight = assignedWinnerPct > 0 ? Math.max(0, Number(rankInfo.pct || 0)) / assignedWinnerPct : 1 / availableWinnerSlots.length;
+      const prize = isLastWinner
+        ? Math.max(0, Math.floor((distributablePool - paidSoFar) * 100) / 100)
+        : Math.floor(distributablePool * weight * 100) / 100;
+      paidSoFar += prize;
       winners.push({
         plan_id: plan.id,
         ticket_id: t.id,
         user_id: t.user_id,
-        rank: pickRanks[i].rank,
+        rank: rankInfo.rank,
         prize_amount: prize,
         currency: plan.currency,
         paid: false,

@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Gem, Trophy } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import BottomNav from "@/components/BottomNav";
-import { formatCountdown, currencySymbol } from "@/lib/lottery";
+import { calculateLotteryPrizes, formatCountdown, currencySymbol } from "@/lib/lottery";
 import { Button } from "@/components/ui/button";
 
 type Tab = "prizes" | "tickets" | "leaderboard";
@@ -54,12 +54,7 @@ const LotteryDetails = () => {
   const effectiveCount = sold > 0 ? sold : plan.total_tickets;
   const pool = effectiveCount * Number(plan.ticket_price);
   const sym = currencySymbol(plan.currency);
-  const prizes = [
-    { rank: "#1", pct: plan.pct_first, amount: Math.floor(pool * plan.pct_first / 100) },
-    { rank: "#2", pct: plan.pct_second, amount: Math.floor(pool * plan.pct_second / 100) },
-    { rank: "#3", pct: plan.pct_third, amount: Math.floor(pool * plan.pct_third / 100) },
-    ...(plan.pct_4_11_enabled ? [{ rank: "#4-11", pct: plan.pct_4_11, amount: Math.floor(pool * plan.pct_4_11 / 100) }] : []),
-  ];
+  const prizes = calculateLotteryPrizes(plan, sold);
 
   return (
     <div className="min-h-screen bg-background pb-24">

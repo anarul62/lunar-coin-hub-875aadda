@@ -5,7 +5,7 @@ import { ArrowLeft, Gem, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { currencySymbol, formatCountdown, LotteryPlan } from "@/lib/lottery";
+import { calculateLotteryPrizes, currencySymbol, formatCountdown, LotteryPlan } from "@/lib/lottery";
 
 type Props = { channelId: string; channelName: string; onBack: () => void };
 
@@ -118,7 +118,7 @@ const CurrencyBadge = ({ currency, className = "" }: { currency: string; classNa
 const LotteryCard = ({ plan, sold, onBuy }: { plan: LotteryPlan; sold: number; onBuy: () => void }) => {
   const effectiveCount = sold > 0 ? sold : plan.total_tickets;
   const pool = effectiveCount * Number(plan.ticket_price);
-  const first = Math.floor(pool * (Number(plan.pct_first) / 100));
+  const first = calculateLotteryPrizes(plan, sold)[0]?.amount || 0;
   const sym = currencySymbol(plan.currency);
   const isXcoin = plan.currency?.toUpperCase() === "XCOIN";
   const Money = ({ value, className = "" }: { value: number; className?: string }) => (
