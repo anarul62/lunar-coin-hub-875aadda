@@ -44,6 +44,8 @@ const AdminLotteryPlans = () => {
 
   const add = async () => {
     if (!form.channel_id || !form.name) return toast.error("Channel and name required");
+    if (!form.total_tickets || form.total_tickets < 1) return toast.error("Total tickets must be at least 1");
+    if (!form.ticket_price || form.ticket_price <= 0) return toast.error("Ticket price required");
     const draw_at = new Date(Date.now() + form.duration_minutes * 60_000).toISOString();
     const { error } = await supabase.from("lottery_plans").insert({ ...form, draw_at, image_url: form.game_image_url } as any);
     if (error) return toast.error(error.message);
