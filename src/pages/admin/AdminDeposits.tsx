@@ -132,6 +132,22 @@ const AdminDeposits = () => {
         <StatCard icon={<TrendingUp className="h-5 w-5"/>} label="Total Orders" value={items.length} color="from-violet-500 to-violet-600"/>
       </div>
 
+      {/* LG-Pay summary card */}
+      <div className="mb-4 rounded-xl p-4 text-white bg-gradient-to-br from-indigo-500 to-purple-600 shadow-sm flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <CreditCard className="h-6 w-6"/>
+          <div>
+            <div className="text-xs opacity-90">LG-Pay Total Deposits</div>
+            <div className="text-2xl font-bold">₮ {stats.lgpayCompletedAmt.toFixed(2)}</div>
+            <div className="text-[11px] opacity-80">{stats.lgpayCount} orders ({lgpayDeposits.filter(d=>d.status==="completed").length} completed)</div>
+          </div>
+        </div>
+        <button onClick={() => setShowLgpay(true)} className="inline-flex items-center gap-1 px-3 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium backdrop-blur">
+          <Eye className="h-4 w-4"/> View
+        </button>
+      </div>
+
+
       {/* Chart */}
       <div className="bg-white rounded-xl border border-slate-200 p-4 mb-4">
         <div className="flex items-center justify-between mb-3">
