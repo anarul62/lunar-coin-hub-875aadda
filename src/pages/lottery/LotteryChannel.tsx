@@ -35,9 +35,11 @@ const LotteryChannel = ({ channelId, channelName, onBack }: Props) => {
       .eq("enabled", true)
       .order("created_at", { ascending: false });
 
-    // Hide plans whose draw_at + hide_after_minutes is past
+    // Hide plans whose draw_at + hide_after_seconds is past
     const visible = ((ps as any[]) || []).filter((p) => {
-      const hideMs = (Number((p as any).hide_after_minutes) || 1) * 60_000;
+      const sec = Number((p as any).hide_after_seconds);
+      const fallbackSec = (Number((p as any).hide_after_minutes) || 0) * 60;
+      const hideMs = ((Number.isFinite(sec) && sec > 0 ? sec : fallbackSec) || 10) * 1000;
       return new Date(p.draw_at).getTime() + hideMs > Date.now();
     });
     setPlans(visible as any);
