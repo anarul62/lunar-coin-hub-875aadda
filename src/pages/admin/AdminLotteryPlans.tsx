@@ -115,8 +115,7 @@ const AdminLotteryPlans = () => {
               </div>
               <div><label className="text-xs text-slate-500">X coin bonus (optional)</label><Input type="number" value={form.xcoin_bonus} onChange={(e) => setForm({ ...form, xcoin_bonus: Number(e.target.value) })} /></div>
             </div>
-            <div><label className="text-xs text-slate-500">Duration in minutes (used if no exact draw time)</label><Input type="number" value={form.duration_minutes} onChange={(e) => setForm({ ...form, duration_minutes: Number(e.target.value) })} /></div>
-            <div><label className="text-xs text-slate-500">Draw at (exact date & time, optional)</label><Input type="datetime-local" value={form.draw_at_local} onChange={(e) => setForm({ ...form, draw_at_local: e.target.value })} /></div>
+            <div className="sm:col-span-2"><label className="text-xs text-slate-500">Draw at (optional — overrides recreate interval for first round)</label><Input type="datetime-local" value={form.draw_at_local} onChange={(e) => setForm({ ...form, draw_at_local: e.target.value })} /></div>
             <div className="sm:col-span-2 border-t pt-3">
               <label className="flex items-center gap-2 text-sm font-semibold"><Switch checked={form.auto_recreate} onCheckedChange={(v) => setForm({ ...form, auto_recreate: v })} /> Auto re-run this plan</label>
               <p className="text-[11px] text-slate-500 mt-1">When ON, after the draw the plan auto-hides, then a fresh round starts with booking re-opened from scratch. The interval below sets how long the next booking window lasts.</p>
