@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import BannerSlider from "@/components/BannerSlider";
 import KycModal from "@/components/KycModal";
+import { supabase } from "@/integrations/supabase/client";
 
 const tabs = ["Gold & Silver", "Crypto", "Plans"];
 
