@@ -48,6 +48,9 @@ import PlanHistory from "./pages/PlanHistory.tsx";
 import Notifications from "./pages/Notifications.tsx";
 import AdminNotifications from "./pages/admin/AdminNotifications.tsx";
 import AdminInvestments from "./pages/admin/AdminInvestments.tsx";
+import AdminLotteryPlans from "./pages/admin/AdminLotteryPlans.tsx";
+import LotteryTickets from "./pages/lottery/LotteryTickets.tsx";
+import LotteryDetails from "./pages/lottery/LotteryDetails.tsx";
 import SeoHead from "./components/SeoHead.tsx";
 
 
@@ -116,6 +119,9 @@ const App = () => (
           <Route path="/admin/invest-completed" element={<AdminInvestments mode="completed" />} />
           <Route path="/admin/invest-channels" element={<AdminInvestChannels />} />
           <Route path="/admin/invest-plans" element={<AdminInvestPlans />} />
+          <Route path="/admin/lottery-plans" element={<AdminLotteryPlans />} />
+          <Route path="/lottery/:planId/tickets" element={<LotteryTickets />} />
+          <Route path="/lottery/:planId/details" element={<LotteryDetails />} />
           <Route path="/admin/xcoin" element={<AdminXcoin />} />
 
           <Route path="/admin/attendance" element={<AdminAttendance />} />

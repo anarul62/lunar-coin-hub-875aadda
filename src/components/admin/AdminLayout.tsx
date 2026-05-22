@@ -28,6 +28,7 @@ const groups: Group[] = [
     { label: "Completed Invest", icon: Trophy, path: "/admin/invest-completed" },
     { label: "Invest Channels", icon: LayoutDashboard, path: "/admin/invest-channels" },
     { label: "Invest Setup", icon: TrendingUp, path: "/admin/invest-plans" },
+    { label: "Lottery Plans", icon: Ticket, path: "/admin/lottery-plans" },
     { label: "Gold Invest", icon: Coins, path: "/admin/gold" },
     { label: "Silver Invest", icon: Gem, path: "/admin/silver" },
     { label: "Investment Plans", icon: TrendingUp, path: "/admin/plans" },

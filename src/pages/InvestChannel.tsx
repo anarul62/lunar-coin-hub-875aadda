@@ -8,8 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import GoldTradingChart from "@/components/GoldTradingChart";
+import LotteryChannel from "@/pages/lottery/LotteryChannel";
 
-type Channel = { id: string; key: string; name: string; banner_url: string | null };
+type Channel = { id: string; key: string; name: string; type: string; banner_url: string | null };
 type Plan = {
   id: string;
   name: string;
@@ -39,7 +40,7 @@ const InvestChannel = () => {
     (async () => {
       const { data: ch } = await supabase
         .from("invest_channels")
-        .select("id,key,name,banner_url")
+        .select("id,key,name,type,banner_url")
         .eq("key", channelKey)
         .maybeSingle();
       if (!ch) return;
@@ -135,6 +136,18 @@ const InvestChannel = () => {
       setSubmitting(false);
     }
   };
+
+  if (channel?.type === "lottery") {
+    return (
+      <div className="min-h-screen bg-background pb-20">
+        <Navbar />
+        <main className="pt-16 px-4">
+          <LotteryChannel channelId={channel.id} channelName={channel.name} onBack={() => navigate("/invest")} />
+        </main>
+        <BottomNav />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background pb-20">

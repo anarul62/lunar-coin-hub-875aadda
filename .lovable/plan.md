@@ -1,79 +1,91 @@
-## X Coin System + Wallet Hub + Attendance + Rewards Feed
+# Lottery System Plan
 
-A complete virtual-coin economy with admin management, redemption codes, attendance bonus, and a unified rewards/announcements feed.
+A full lottery feature inside `/invest/lottery` channel with admin plan setup and automated AI draws.
 
----
+## 1. Database (new migration)
 
-### 1. Database (new tables via migration)
+**`lottery_plans`** — admin-defined lottery products
+- `id, channel_id, name, image_url, game_image_url`
+- `total_tickets` (e.g. 100), `ticket_price`, `currency` (BDT/USDT/INR/XCOIN)
+- `xcoin_bonus` (extra X coin shown on card, nullable)
+- `prize_mode` ('auto' | 'manual')
+- `pct_first, pct_second, pct_third, pct_4_11, pct_company` (numeric percents)
+- `pct_4_11_enabled` (bool)
+- `draw_at` (timestamptz – countdown end), `duration_minutes` (for next cycle auto-recreate later)
+- `status` ('open' | 'drawing' | 'completed'), `enabled, sort_order`
 
-- **`xcoin_settings`** (single-row, key/value via `app_settings` row `xcoin_settings`): `xcoin_per_usdt` (e.g. 1000 xcoin = 1 USDT), `min_convert_xcoin`, `description`.
-- **`user_xcoin`**: `user_id`, `balance` (numeric), `updated_at`.
-- **`xcoin_transactions`**: `user_id`, `type` (`attendance`, `redeem_code`, `convert_to_usdt`, `admin_adjust`), `amount`, `meta jsonb`, `created_at`. Powers admin "today redeem", "convert list", per-user history.
-- **`xcoin_gift_codes`**: `code` (unique), `amount`, `max_users`, `used_count`, `expire_at`, `note`, `created_by`, `created_at`.
-- **`xcoin_gift_redemptions`**: `code_id`, `user_id`, `amount`, `created_at` (unique on code_id+user_id).
-- **`attendance_rewards`**: `day` (1..7), `amount_xcoin`, `active`. Seeded with 7 tiers.
-- **`attendance_checkins`**: `user_id`, `date`, `day_index`, `amount_xcoin`. Unique on user_id+date.
-- **`announcements`** (Rewards feed): `id`, `type` (`notice`, `gift_code`, `announcement`), `title`, `body`, `gift_code` (nullable), `image_url`, `created_at`, `active`.
+**`lottery_tickets`** — every ticket slot for a plan
+- `id, plan_id, ticket_number` (1..total_tickets), `code` (e.g. DRAW-8X2V)
+- `user_id` (null = available), `booked_at`
+- unique(plan_id, ticket_number)
 
-All with permissive RLS (user-scoped read/write where appropriate, public read for settings/codes/announcements, admin via public-UI policy pattern already used in this project).
+**`lottery_entries`** — a user's paid entry (1 entry = N tickets)
+- `id, plan_id, user_id, tickets_count, amount_paid, currency, created_at`
+- `tickets_assigned` int default 0
 
----
+**`lottery_results`** — draw outcome
+- `id, plan_id, ticket_id, user_id, rank` (1,2,3, or 4..11), `prize_amount, currency, paid` bool
 
-### 2. User-side pages/components
+Auto-seed `lottery_tickets` rows when a plan is created (1..total_tickets, codes random).
+RLS: public read for plans/tickets/results; user inserts their own entries; admin full via public policies (existing pattern).
 
-- **`/wallet`** — redesign to match screenshot 1:
-  - Top: Total balance card (existing).
-  - Middle: light-cyan panel with X-coin logo + **Total x coin: N**, an **(i)** info button (popover showing market price `1 USDT = X xcoin`, min convert), and a **Convert** button → opens convert dialog (xcoin → USDT, deducts xcoin, credits balance_usdt, inserts xcoin_transactions).
-  - Two cards: **Redeem X coin** → `/redeem-xcoin`; **Attendance bonus** → `/attendance`.
+## 2. Admin Panel
 
-- **`/redeem-xcoin`** — gift code redemption (matches screenshot 4): hero image, "Hi / We have a gift for you", input field, **Receive** button, history list of past redemptions. Server validates code (not expired, not over max_users, not already redeemed), credits xcoin.
+**`/admin/lottery-plans`** (new) — list / add / edit / delete plans tied to lottery channels.
+Fields: name, game image, total tickets, ticket price, currency, X coin bonus, draw time, prize mode (auto/manual), percent inputs, 4–11 toggle.
 
-- **`/attendance`** — matches screenshot 3: hero, "Attended consecutively N Day", "Accumulated ₹X" (xcoin total), 7 day tiles with reward amounts (from `attendance_rewards`, INR-displayed via xcoin→USDT→INR rate), bottom **Attendance** button. One check-in per calendar day; consecutive streak resets on miss. Credits day's xcoin to user.
+In auto mode defaults: 1st=30, 2nd=20, 3rd=10, 4-11=3.75 each, company=10.
 
-- **`/rewards`** — unified feed of admin-posted announcements + gift-code posts + notifications. Gift-code posts show **Copy** button.
+Sidebar link added in `AdminLayout`.
 
-Wire **Wallet** tile on Profile and **Reward** action on home/profile to these routes.
+## 3. User Pages
 
----
+**`/invest/lottery`** — channel page, two tabs:
+- **Lottery**: cards matching uploaded design (game image left, prize pool + 1st prize center, ticket price button right, countdown top-right). Currency icon (diamond = XCOIN, etc.) Shows xcoin bonus if set. Click price button → confirmation modal.
+- **Dashboard**: list of plans user has entered → tap into View Tickets / Prizes / Leaderboard view.
 
-### 3. Admin pages
+**Confirmation modal** (matches screenshot 2)
+- Total Entries (already bought) · Total (price per ticket) · `19/100` progress bar · total_ticket selector (default 1, +/–) · price recalculated · Conform button → deducts balance → creates `lottery_entry` → redirects to ticket grid.
 
-- **`/admin/xcoin`** — dashboard:
-  - KPIs: total xcoin in circulation, today redeemed, today converted.
-  - Settings card: `xcoin_per_usdt`, `min_convert_xcoin`, info text.
-  - Tabs/sections:
-    - **Generate code**: amount, max_users, expire time, optional note → POST creates code (random 10-char). Lists generated codes with time, used_count/max, redemption list (user ref code + their xcoin balance), **Delete** button, **Post to Rewards feed** button (creates `announcements` row of type `gift_code`).
-    - **Redemption activity**: list of `xcoin_transactions` type `redeem_code` (user, ref code, time, amount).
-    - **Convert list**: `xcoin_transactions` type `convert_to_usdt`.
-    - **User balances**: searchable user list with xcoin balance, ref code.
+**`/invest/lottery/:planId/tickets`** — ticket grid (screenshot 3)
+- 3-column grid of `LUCKY DRAW` ticket images. Sold tickets show red `SOLD` ribbon overlay, owned-by-others disabled. User picks N tickets equal to remaining unassigned from their entries, then **Book** → assigns `user_id` on those `lottery_tickets`. Redirect to dashboard view.
 
-- **`/admin/attendance`** — edit the 7 day-tier xcoin amounts (active toggle).
+**`/invest/lottery/:planId/details`** — dashboard details (screenshots 1, 4, 5)
+- Header with prize pool, registration end, tournament spots (sold/total), results out.
+- Tabs: **Prizes** (ranks + amounts based on current sold revenue × percent), **View Tickets** (user's booked tickets with numbers), **Leaderboard** (after draw shows ranks).
+- Footer: `TOURNAMENT ENDS IN mm:ss` countdown.
 
-- **`/admin/announcements`** — create/edit/delete posts to Rewards feed (notice, announcement, gift_code).
+## 4. Draw Logic (AI/auto)
 
-Add sidebar entries under existing admin layout.
+Edge function `lottery-draw` (cron-friendly, also callable):
+- For each plan where `draw_at <= now()` and status='open':
+  - Collect sold tickets (those with user_id). If 0, mark completed, no winners.
+  - Compute pool = sold_count × ticket_price.
+  - Shuffle sold tickets; pick rank 1, 2, 3, then 4..11 (only if `pct_4_11_enabled`).
+  - For each winner: prize = pool × pct / 100. Insert `lottery_results`, credit user `balance_usdt` (or `user_xcoin.balance` if currency XCOIN), insert notification.
+  - Set plan status='completed'.
 
----
+Trigger from client when a user opens details page past `draw_at` if still 'open' (safety call to edge function via `supabase.functions.invoke`).
 
-### 4. Technical details
+## 5. Files to create/edit
 
-- Currency conversion: xcoin → USDT uses `xcoin_per_usdt`. Display in INR via existing `getUsdInrRate()`.
-- All balance mutations done client-side with fresh re-read pattern (matches existing project pattern).
-- Codes generated as `XC` + 8 uppercase alphanumerics; uniqueness enforced by DB.
-- Attendance streak computed from latest `attendance_checkins` row for user; if yesterday's date present → day_index+1 (capped at 7, then resets), else 1.
-- Use existing semantic Tailwind tokens; cyan accent block on wallet matches screenshot.
+Create:
+- `supabase/migrations/<ts>_lottery.sql`
+- `supabase/functions/lottery-draw/index.ts`
+- `src/pages/admin/AdminLotteryPlans.tsx`
+- `src/pages/lottery/LotteryChannel.tsx` (replaces channel render when type='lottery')
+- `src/pages/lottery/LotteryConfirm.tsx` (modal component)
+- `src/pages/lottery/LotteryTickets.tsx`
+- `src/pages/lottery/LotteryDetails.tsx`
+- `src/assets/lucky-ticket.png`, `src/assets/sold-ribbon.png` (from uploads)
 
----
+Edit:
+- `src/App.tsx` (routes)
+- `src/pages/InvestChannel.tsx` (if channel.type==='lottery' → redirect/render lottery list)
+- `src/components/admin/AdminLayout.tsx` (sidebar link)
 
-### 5. Files to create
-- migration with all tables + RLS + seed for attendance_rewards & app_settings xcoin row
-- `src/pages/Wallet.tsx` (rewrite)
-- `src/pages/RedeemXcoin.tsx`
-- `src/pages/Attendance.tsx`
-- `src/pages/Rewards.tsx`
-- `src/pages/admin/AdminXcoin.tsx`
-- `src/pages/admin/AdminAttendance.tsx`
-- `src/pages/admin/AdminAnnouncements.tsx`
-- edit `src/App.tsx` (routes), `src/components/admin/AdminLayout.tsx` (nav), `src/components/BottomNav.tsx` / Profile for Reward entry if needed.
+## 6. Out of scope (for this iteration)
+- Auto-recreate next cycle after a plan completes (can add later).
+- Real-time leaderboard score; for now shows entry numbers + winners post-draw.
 
-Confirm to proceed and I'll ship it in one pass.
+Confirm and I'll implement.
