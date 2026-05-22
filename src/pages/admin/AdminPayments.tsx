@@ -122,20 +122,42 @@ const AdminPayments = () => {
                             {GATEWAYS.map(g => <option key={g} value={g}>{g}</option>)}
                           </select>
                         </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <Label>API Key</Label>
-                            <Input value={m.gateway_config?.api_key || ""} onChange={e => update(m.id, { gateway_config: { ...m.gateway_config, api_key: e.target.value } })}/>
+                        {m.gateway_provider === "lgpay" ? (
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <Label>App ID</Label>
+                              <Input value={m.gateway_config?.app_id || ""} onChange={e => update(m.id, { gateway_config: { ...m.gateway_config, app_id: e.target.value } })} placeholder="MJL3155"/>
+                            </div>
+                            <div>
+                              <Label>Secret Key</Label>
+                              <Input value={m.gateway_config?.secret_key || ""} onChange={e => update(m.id, { gateway_config: { ...m.gateway_config, secret_key: e.target.value } })} placeholder="4PheVJz4..."/>
+                            </div>
+                            <div className="col-span-2">
+                              <Label>Trade Type</Label>
+                              <select value={m.gateway_config?.trade_type || ""} onChange={e => update(m.id, { gateway_config: { ...m.gateway_config, trade_type: e.target.value } })}
+                                className="mt-1 w-full h-10 rounded-md border border-slate-300 bg-white px-3 text-sm">
+                                <option value="">— Select trade type —</option>
+                                {LGPAY_TRADE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                              </select>
+                              <p className="text-xs text-slate-500 mt-1">Webhook URL: <code className="text-[10px]">{`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/lgpay-webhook`}</code></p>
+                            </div>
                           </div>
-                          <div>
-                            <Label>API Secret</Label>
-                            <Input value={m.gateway_config?.api_secret || ""} onChange={e => update(m.id, { gateway_config: { ...m.gateway_config, api_secret: e.target.value } })}/>
+                        ) : (
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <Label>API Key</Label>
+                              <Input value={m.gateway_config?.api_key || ""} onChange={e => update(m.id, { gateway_config: { ...m.gateway_config, api_key: e.target.value } })}/>
+                            </div>
+                            <div>
+                              <Label>API Secret</Label>
+                              <Input value={m.gateway_config?.api_secret || ""} onChange={e => update(m.id, { gateway_config: { ...m.gateway_config, api_secret: e.target.value } })}/>
+                            </div>
+                            <div className="col-span-2">
+                              <Label>Merchant / Endpoint URL</Label>
+                              <Input value={m.gateway_config?.endpoint || ""} onChange={e => update(m.id, { gateway_config: { ...m.gateway_config, endpoint: e.target.value } })}/>
+                            </div>
                           </div>
-                          <div className="col-span-2">
-                            <Label>Merchant / Endpoint URL</Label>
-                            <Input value={m.gateway_config?.endpoint || ""} onChange={e => update(m.id, { gateway_config: { ...m.gateway_config, endpoint: e.target.value } })}/>
-                          </div>
-                        </div>
+                        )}
                       </div>
                     ) : (
                       <ManualForm m={m} update={update}/>
