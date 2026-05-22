@@ -364,6 +364,211 @@ export type Database = {
         }
         Relationships: []
       }
+      lottery_entries: {
+        Row: {
+          amount_paid: number
+          created_at: string
+          currency: string
+          id: string
+          plan_id: string
+          tickets_assigned: number
+          tickets_count: number
+          user_id: string
+        }
+        Insert: {
+          amount_paid: number
+          created_at?: string
+          currency: string
+          id?: string
+          plan_id: string
+          tickets_assigned?: number
+          tickets_count: number
+          user_id: string
+        }
+        Update: {
+          amount_paid?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          plan_id?: string
+          tickets_assigned?: number
+          tickets_count?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lottery_entries_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "lottery_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lottery_plans: {
+        Row: {
+          channel_id: string | null
+          created_at: string
+          currency: string
+          draw_at: string
+          duration_minutes: number
+          enabled: boolean
+          game_image_url: string | null
+          id: string
+          image_url: string | null
+          name: string
+          pct_4_11: number
+          pct_4_11_enabled: boolean
+          pct_company: number
+          pct_first: number
+          pct_second: number
+          pct_third: number
+          prize_mode: string
+          sort_order: number
+          status: string
+          ticket_price: number
+          total_tickets: number
+          updated_at: string
+          xcoin_bonus: number | null
+        }
+        Insert: {
+          channel_id?: string | null
+          created_at?: string
+          currency?: string
+          draw_at?: string
+          duration_minutes?: number
+          enabled?: boolean
+          game_image_url?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          pct_4_11?: number
+          pct_4_11_enabled?: boolean
+          pct_company?: number
+          pct_first?: number
+          pct_second?: number
+          pct_third?: number
+          prize_mode?: string
+          sort_order?: number
+          status?: string
+          ticket_price?: number
+          total_tickets?: number
+          updated_at?: string
+          xcoin_bonus?: number | null
+        }
+        Update: {
+          channel_id?: string | null
+          created_at?: string
+          currency?: string
+          draw_at?: string
+          duration_minutes?: number
+          enabled?: boolean
+          game_image_url?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          pct_4_11?: number
+          pct_4_11_enabled?: boolean
+          pct_company?: number
+          pct_first?: number
+          pct_second?: number
+          pct_third?: number
+          prize_mode?: string
+          sort_order?: number
+          status?: string
+          ticket_price?: number
+          total_tickets?: number
+          updated_at?: string
+          xcoin_bonus?: number | null
+        }
+        Relationships: []
+      }
+      lottery_results: {
+        Row: {
+          created_at: string
+          currency: string
+          id: string
+          paid: boolean
+          plan_id: string
+          prize_amount: number
+          rank: number
+          ticket_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          currency: string
+          id?: string
+          paid?: boolean
+          plan_id: string
+          prize_amount?: number
+          rank: number
+          ticket_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          id?: string
+          paid?: boolean
+          plan_id?: string
+          prize_amount?: number
+          rank?: number
+          ticket_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lottery_results_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "lottery_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lottery_results_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "lottery_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lottery_tickets: {
+        Row: {
+          booked_at: string | null
+          code: string
+          id: string
+          plan_id: string
+          ticket_number: number
+          user_id: string | null
+        }
+        Insert: {
+          booked_at?: string | null
+          code: string
+          id?: string
+          plan_id: string
+          ticket_number: number
+          user_id?: string | null
+        }
+        Update: {
+          booked_at?: string | null
+          code?: string
+          id?: string
+          plan_id?: string
+          ticket_number?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lottery_tickets_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "lottery_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           amount: number | null
