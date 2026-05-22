@@ -133,11 +133,25 @@ const DepositSheet = ({ method, onClose }: { method: Method; onClose: () => void
   const fmt = (n: number) => n >= 1000 ? `${(n/1000)}K` : `${n}`;
   const symbol = method.currency === "INR" ? "₹" : method.currency === "BDT" ? "৳" : "";
 
-  const proceedToPay = () => {
+  const proceedToPay = async () => {
     const min = method.min_amount || 0;
     const a = isUsdt ? numUsdt : numAmount;
     if (!(a > 0)) return toast({ title: "Enter amount", variant: "destructive" });
     if (a < min) return toast({ title: `Minimum ${min} ${method.currency}`, variant: "destructive" });
+
+    // LG-Pay gateway flow: create order on backend, redirect to pay_url
+    if (method.mode === "gateway" && method.gateway_provider === "lgpay") {
+      setSubmitting(true);
+      const { data, error } = await supabase.functions.invoke("lgpay-create-order", {
+        body: { method_id: method.id, amount: a },
+      });
+      setSubmitting(false);
+      if (error || !data?.pay_url) {
+        return toast({ title: "Payment failed", description: (data as any)?.error || error?.message || "Could not start payment", variant: "destructive" });
+      }
+      window.location.href = data.pay_url;
+      return;
+    }
     setStep("txid");
   };
 
