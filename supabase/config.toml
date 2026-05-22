@@ -1,3 +1,7 @@
 project_id = "jdcdkwccltfzjbqyqfnb"
 [functions.lottery-draw]
 verify_jwt = false
+[functions.lgpay-create-order]
+verify_jwt = false
+[functions.lgpay-webhook]
+verify_jwt = false
