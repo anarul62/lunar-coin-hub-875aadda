@@ -53,6 +53,11 @@ import AdminLotteryPlans from "./pages/admin/AdminLotteryPlans.tsx";
 import LotteryTickets from "./pages/lottery/LotteryTickets.tsx";
 import LotteryDetails from "./pages/lottery/LotteryDetails.tsx";
 import SeoHead from "./components/SeoHead.tsx";
+import AdminAddAgent from "./pages/admin/AdminAddAgent.tsx";
+import AdminAgentData from "./pages/admin/AdminAgentData.tsx";
+import AdminManageAdmins from "./pages/admin/AdminManageAdmins.tsx";
+import AgentLogin from "./pages/agent/AgentLogin.tsx";
+import AgentDashboard from "./pages/agent/AgentDashboard.tsx";
 
 
 const queryClient = new QueryClient();
