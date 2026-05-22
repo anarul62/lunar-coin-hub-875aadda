@@ -914,6 +914,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_withdraw_limits: {
         Row: {
           daily_max_times: number | null
@@ -1183,12 +1204,67 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      payment_methods_public: {
+        Row: {
+          config: Json | null
+          currency: string | null
+          enabled: boolean | null
+          gateway_provider: string | null
+          icon_url: string | null
+          id: string | null
+          label: string | null
+          method_key: string | null
+          min_amount: number | null
+          mode: string | null
+          preset_amounts: Json | null
+          rate: number | null
+          sort_order: number | null
+        }
+        Insert: {
+          config?: Json | null
+          currency?: string | null
+          enabled?: boolean | null
+          gateway_provider?: string | null
+          icon_url?: string | null
+          id?: string | null
+          label?: string | null
+          method_key?: string | null
+          min_amount?: number | null
+          mode?: string | null
+          preset_amounts?: Json | null
+          rate?: number | null
+          sort_order?: number | null
+        }
+        Update: {
+          config?: Json | null
+          currency?: string | null
+          enabled?: boolean | null
+          gateway_provider?: string | null
+          icon_url?: string | null
+          id?: string | null
+          label?: string | null
+          method_key?: string | null
+          min_amount?: number | null
+          mode?: string | null
+          preset_amounts?: Json | null
+          rate?: number | null
+          sort_order?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       gen_referral_code: { Args: never; Returns: string }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
+      app_role: "admin" | "moderator" | "user"
       kyc_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
@@ -1317,6 +1393,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["admin", "moderator", "user"],
       kyc_status: ["pending", "approved", "rejected"],
     },
   },

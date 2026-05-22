@@ -12,9 +12,10 @@ const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (adminLogin(email, password)) {
+    const ok = await adminLogin(email, password);
+    if (ok) {
       toast.success("Admin login successful");
       navigate("/admin");
     } else {
