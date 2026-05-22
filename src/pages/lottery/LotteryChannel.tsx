@@ -98,10 +98,19 @@ const LotteryChannel = ({ channelId, channelName, onBack }: Props) => {
   );
 };
 
+const CurrencyBadge = ({ currency, className = "" }: { currency: string; className?: string }) => {
+  const sym = currencySymbol(currency);
+  if (currency?.toUpperCase() === "XCOIN") return <Gem className={`text-cyan-300 ${className}`} />;
+  return <span className={`font-extrabold ${className}`}>{sym}</span>;
+};
+
 const LotteryCard = ({ plan, sold, onBuy }: { plan: LotteryPlan; sold: number; onBuy: () => void }) => {
-  const pool = sold * Number(plan.ticket_price);
+  // Show potential max pool when nothing sold yet so users see attractive numbers
+  const effectiveCount = sold > 0 ? sold : plan.total_tickets;
+  const pool = effectiveCount * Number(plan.ticket_price);
   const first = Math.floor(pool * (Number(plan.pct_first) / 100));
   const sym = currencySymbol(plan.currency);
+  const isXcoin = plan.currency?.toUpperCase() === "XCOIN";
   return (
     <div className="relative rounded-2xl bg-gradient-to-r from-indigo-800 to-indigo-700 border border-indigo-500/40 overflow-hidden shadow-lg">
       <div className="absolute top-0 right-0 bg-fuchsia-600/40 px-3 py-1 rounded-bl-xl text-xs">
@@ -116,11 +125,18 @@ const LotteryCard = ({ plan, sold, onBuy }: { plan: LotteryPlan; sold: number; o
         <div className="flex-1 min-w-0">
           <p className="italic text-white/90 text-sm">Prize Pool</p>
           <p className="font-extrabold text-2xl text-amber-300 italic flex items-center gap-1">
-            <Gem className="h-5 w-5 text-cyan-300" />{pool.toLocaleString()}{sym !== "💎" && ` ${sym}`}
+            {isXcoin
+              ? <><Gem className="h-5 w-5 text-cyan-300" />{pool.toLocaleString()}</>
+              : <>{pool.toLocaleString()} <span className="text-cyan-300">{sym}</span></>}
           </p>
           <p className="italic text-white/70 text-xs mt-1">1st Prize</p>
-          <p className="text-white font-bold flex items-center gap-1"><Gem className="h-4 w-4 text-cyan-300" />{first.toLocaleString()}</p>
+          <p className="text-white font-bold flex items-center gap-1">
+            {isXcoin
+              ? <><Gem className="h-4 w-4 text-cyan-300" />{first.toLocaleString()}</>
+              : <>{first.toLocaleString()} <span className="text-cyan-300">{sym}</span></>}
+          </p>
           {plan.xcoin_bonus ? <p className="text-xs text-emerald-300 mt-1">+ {plan.xcoin_bonus} X coin</p> : null}
+          <p className="text-[10px] text-white/50 mt-1">{sold}/{plan.total_tickets} sold</p>
         </div>
       </div>
       <div className="flex justify-end p-3 pt-0">
@@ -128,7 +144,8 @@ const LotteryCard = ({ plan, sold, onBuy }: { plan: LotteryPlan; sold: number; o
           onClick={onBuy}
           className="bg-gradient-to-b from-emerald-400 to-emerald-600 text-white font-bold text-sm px-5 py-2 rounded-lg shadow-lg border border-emerald-300 flex items-center gap-1"
         >
-          <Gem className="h-4 w-4" />{plan.ticket_price}
+          <CurrencyBadge currency={plan.currency} className="h-4 w-4" />
+          {plan.ticket_price}
         </button>
       </div>
     </div>
@@ -163,15 +180,16 @@ const ConfirmDialog = ({ plan, sold, myCount, onClose }: { plan: LotteryPlan; so
   const [busy, setBusy] = useState(false);
   const navigate = useNavigate();
   const total = useMemo(() => count * Number(plan.ticket_price), [count, plan]);
-  const available = plan.total_tickets - sold;
+  const available = Math.max(1, plan.total_tickets - sold);
   const sym = currencySymbol(plan.currency);
+  const isXcoin = plan.currency?.toUpperCase() === "XCOIN";
 
   const submit = async () => {
     setBusy(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { toast.error("Login required"); navigate("/login"); return; }
-      if (count > available) { toast.error("Not enough tickets left"); return; }
+      if (plan.total_tickets > 0 && count > plan.total_tickets - sold) { toast.error("Not enough tickets left"); return; }
 
       if (plan.currency === "XCOIN") {
         const { data: xc } = await supabase.from("user_xcoin").select("balance").eq("user_id", user.id).maybeSingle();
@@ -205,7 +223,7 @@ const ConfirmDialog = ({ plan, sold, myCount, onClose }: { plan: LotteryPlan; so
     }
   };
 
-  const filled = Math.round(((sold + count) / plan.total_tickets) * 100);
+  const filled = plan.total_tickets > 0 ? Math.round(((sold + count) / plan.total_tickets) * 100) : 0;
 
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
@@ -213,9 +231,9 @@ const ConfirmDialog = ({ plan, sold, myCount, onClose }: { plan: LotteryPlan; so
         <DialogHeader className="bg-gradient-to-b from-purple-700 to-purple-900 text-white py-4">
           <DialogTitle className="text-center font-extrabold tracking-wider">CONFIRMATION!</DialogTitle>
         </DialogHeader>
-        <div className="p-4 space-y-3 bg-white">
-          <div className="flex justify-between text-sm"><span>Total Entries</span><span className="flex items-center gap-1"><Gem className="h-4 w-4 text-cyan-500"/>{myCount + count}</span></div>
-          <div className="flex justify-between text-sm"><span>Total</span><span className="flex items-center gap-1"><Gem className="h-4 w-4 text-cyan-500"/>{total}</span></div>
+        <div className="p-4 space-y-3 bg-white text-slate-900">
+          <div className="flex justify-between text-sm"><span>Total Entries</span><span className="flex items-center gap-1">{isXcoin ? <Gem className="h-4 w-4 text-cyan-500"/> : <span className="font-bold">{sym}</span>}{myCount + count}</span></div>
+          <div className="flex justify-between text-sm"><span>Total</span><span className="flex items-center gap-1">{isXcoin ? <Gem className="h-4 w-4 text-cyan-500"/> : <span className="font-bold">{sym}</span>}{total}</span></div>
           <div className="bg-indigo-600 text-white text-center italic font-bold py-2 rounded">{sold + count}/{plan.total_tickets}</div>
           <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
             <div className="h-full bg-indigo-600" style={{ width: `${filled}%` }} />
@@ -225,7 +243,7 @@ const ConfirmDialog = ({ plan, sold, myCount, onClose }: { plan: LotteryPlan; so
             <div className="flex items-center gap-2">
               <button onClick={() => setCount(Math.max(1, count - 1))} className="h-8 w-8 rounded-full bg-slate-200 flex items-center justify-center"><Minus className="h-4 w-4" /></button>
               <span className="font-extrabold text-2xl w-8 text-center">{count}</span>
-              <button onClick={() => setCount(Math.min(available, count + 1))} className="h-8 w-8 rounded-full bg-slate-200 flex items-center justify-center"><Plus className="h-4 w-4" /></button>
+              <button onClick={() => setCount(Math.min(available, count + 1))} className="h-8 w-8 rounded-full bg-emerald-500 text-white flex items-center justify-center"><Plus className="h-4 w-4" /></button>
             </div>
           </div>
           <p className="text-xs text-slate-500 text-center">Price per ticket: {plan.ticket_price} {sym}</p>

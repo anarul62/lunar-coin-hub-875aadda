@@ -51,7 +51,8 @@ const LotteryDetails = () => {
 
   if (!plan) return <div className="p-8 text-center">Loading...</div>;
 
-  const pool = sold * Number(plan.ticket_price);
+  const effectiveCount = sold > 0 ? sold : plan.total_tickets;
+  const pool = effectiveCount * Number(plan.ticket_price);
   const sym = currencySymbol(plan.currency);
   const prizes = [
     { rank: "#1", pct: plan.pct_first, amount: Math.floor(pool * plan.pct_first / 100) },

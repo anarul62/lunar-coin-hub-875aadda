@@ -44,6 +44,8 @@ const AdminLotteryPlans = () => {
 
   const add = async () => {
     if (!form.channel_id || !form.name) return toast.error("Channel and name required");
+    if (!form.total_tickets || form.total_tickets < 1) return toast.error("Total tickets must be at least 1");
+    if (!form.ticket_price || form.ticket_price <= 0) return toast.error("Ticket price required");
     const draw_at = new Date(Date.now() + form.duration_minutes * 60_000).toISOString();
     const { error } = await supabase.from("lottery_plans").insert({ ...form, draw_at, image_url: form.game_image_url } as any);
     if (error) return toast.error(error.message);
@@ -152,6 +154,8 @@ const AdminLotteryPlans = () => {
                 </select>
               </div>
               <Input type="number" value={editing.xcoin_bonus || 0} onChange={(e) => setEditing({ ...editing, xcoin_bonus: Number(e.target.value) })} placeholder="X coin bonus" />
+              <label className="text-xs text-slate-500">Total tickets (increasing seeds new ones)</label>
+              <Input type="number" min={1} value={editing.total_tickets} onChange={(e) => setEditing({ ...editing, total_tickets: Number(e.target.value) })} />
               <label className="text-xs text-slate-500">Draw at</label>
               <Input type="datetime-local" value={new Date(editing.draw_at).toISOString().slice(0,16)} onChange={(e) => setEditing({ ...editing, draw_at: new Date(e.target.value).toISOString() })} />
               <div className="grid grid-cols-2 gap-2">
