@@ -49,7 +49,7 @@ const DepositHistory = () => {
     if (!user) { navigate("/login"); return; }
     const [{ data: deps }, { data: pm }] = await Promise.all([
       supabase.from("deposits").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
-      supabase.from("payment_methods").select("method_key,label,icon_url").eq("enabled", true).order("sort_order"),
+      supabase.from("payment_methods_public" as any).select("method_key,label,icon_url").order("sort_order"),
     ]);
     setItems((deps as any) || []);
     setMethods((pm as any) || []);
