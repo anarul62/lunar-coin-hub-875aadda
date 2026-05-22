@@ -52,9 +52,15 @@ const AdminLotteryPlans = () => {
     if (!form.channel_id || !form.name) return toast.error("Channel and name required");
     if (!form.total_tickets || form.total_tickets < 1) return toast.error("Total tickets must be at least 1");
     if (!form.ticket_price || form.ticket_price <= 0) return toast.error("Ticket price required");
-    const draw_at = form.draw_at_local
-      ? new Date(form.draw_at_local).toISOString()
-      : new Date(Date.now() + form.duration_minutes * 60_000).toISOString();
+    const intervalMs = (((form.recreate_days || 0) * 24 + (form.recreate_hours || 0)) * 60 + (form.recreate_minutes || 0)) * 60_000;
+    let draw_at: string;
+    if (form.draw_at_local) {
+      draw_at = new Date(form.draw_at_local).toISOString();
+    } else if (intervalMs >= 60_000) {
+      draw_at = new Date(Date.now() + intervalMs).toISOString();
+    } else {
+      return toast.error("Set a draw time or a recreate interval (≥ 1 min)");
+    }
     const { draw_at_local, ...rest } = form;
     const { error } = await supabase.from("lottery_plans").insert({ ...rest, draw_at, image_url: rest.game_image_url } as any);
     if (error) return toast.error(error.message);
