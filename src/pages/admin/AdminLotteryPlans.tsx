@@ -188,6 +188,15 @@ const AdminLotteryPlans = () => {
                 <div><label className="text-xs text-slate-500">4-11 %</label><Input type="number" value={editing.pct_4_11} onChange={(e) => setEditing({ ...editing, pct_4_11: Number(e.target.value) })} /></div>
                 <label className="flex items-end gap-2 text-sm pb-2"><Switch checked={editing.pct_4_11_enabled} onCheckedChange={(v) => setEditing({ ...editing, pct_4_11_enabled: v })} /> 4–11 on</label>
               </div>
+              <div className="border-t pt-2 space-y-2">
+                <label className="flex items-center gap-2 text-sm font-semibold"><Switch checked={!!editing.auto_recreate} onCheckedChange={(v) => setEditing({ ...editing, auto_recreate: v })} /> Auto re-run</label>
+                <div className="grid grid-cols-3 gap-2">
+                  <div><label className="text-xs text-slate-500">Days</label><Input type="number" min={0} value={editing.recreate_days || 0} onChange={(e) => setEditing({ ...editing, recreate_days: Number(e.target.value) })} /></div>
+                  <div><label className="text-xs text-slate-500">Hours</label><Input type="number" min={0} value={editing.recreate_hours || 0} onChange={(e) => setEditing({ ...editing, recreate_hours: Number(e.target.value) })} /></div>
+                  <div><label className="text-xs text-slate-500">Minutes</label><Input type="number" min={0} value={editing.recreate_minutes || 0} onChange={(e) => setEditing({ ...editing, recreate_minutes: Number(e.target.value) })} /></div>
+                </div>
+                <div><label className="text-xs text-slate-500">Hide from users (minutes after draw)</label><Input type="number" min={0} value={editing.hide_after_minutes ?? 1} onChange={(e) => setEditing({ ...editing, hide_after_minutes: Number(e.target.value) })} /></div>
+              </div>
               <label className="flex items-center gap-2 text-sm"><Switch checked={editing.enabled} onCheckedChange={(v) => setEditing({ ...editing, enabled: v })} /> Enabled</label>
             </div>
           )}
