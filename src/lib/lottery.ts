@@ -66,7 +66,7 @@ export function calculateLotteryPrizes(plan: any, soldTickets: number) {
   const configuredPrizePct = ranks.reduce((sum, r) => sum + Math.max(0, r.pct), 0);
   const targetPrizePct = Math.min(Math.max(0, 100 - companyPct), configuredPrizePct || Math.max(0, 100 - companyPct));
   const assignedPct = visibleRanks.reduce((sum, r) => sum + Math.max(0, r.pct), 0);
-  const distributable = Math.floor(pool * targetPrizePct) / 100;
+  const distributable = Math.floor(pool * targetPrizePct * 100) / 10000;
   let paid = 0;
 
   return visibleRanks.map((r, i) => {
