@@ -119,6 +119,9 @@ const App = () => (
           <Route path="/admin/invest-completed" element={<AdminInvestments mode="completed" />} />
           <Route path="/admin/invest-channels" element={<AdminInvestChannels />} />
           <Route path="/admin/invest-plans" element={<AdminInvestPlans />} />
+          <Route path="/admin/lottery-plans" element={<AdminLotteryPlans />} />
+          <Route path="/lottery/:planId/tickets" element={<LotteryTickets />} />
+          <Route path="/lottery/:planId/details" element={<LotteryDetails />} />
           <Route path="/admin/xcoin" element={<AdminXcoin />} />
 
           <Route path="/admin/attendance" element={<AdminAttendance />} />
