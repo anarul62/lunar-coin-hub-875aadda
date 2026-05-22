@@ -153,10 +153,20 @@ const InvestHome = () => {
         </div>
       </section>
 
-      {/* Newly Launched */}
+      {/* Newly Launched (live) */}
       <Section title="Newly Launched">
         <div className="space-y-3">
-          {newlyLaunched.map((it) => <ProductCard key={it.name} item={it} />)}
+          {liveLaunched.length === 0 ? (
+            newlyLaunched.map((it) => <ProductCard key={it.name} item={it} />)
+          ) : (
+            liveLaunched.map((it: any) => (
+              <button key={it.kind + it.id} onClick={() => it.path && navigate(it.path)} className="w-full text-left">
+                <ProductCard
+                  item={{ name: it.name, risk: it.risk, roi: it.roi, tenure: it.tenure, min: it.min, badge: it.kind === "lottery" ? "Live" : "New" }}
+                />
+              </button>
+            ))
+          )}
         </div>
       </Section>
 
