@@ -109,7 +109,7 @@ const AdminLayout = ({ children, title }: { children: ReactNode; title?: string 
     return () => { mounted = false; clearInterval(t); };
   }, [pathname]);
 
-  const logout = () => { adminLogout(); navigate("/admin/login"); };
+  const logout = async () => { await adminLogout(); navigate("/admin/login"); };
 
 
   return (
