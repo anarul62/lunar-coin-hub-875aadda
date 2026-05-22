@@ -8,8 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import GoldTradingChart from "@/components/GoldTradingChart";
+import LotteryChannel from "@/pages/lottery/LotteryChannel";
 
-type Channel = { id: string; key: string; name: string; banner_url: string | null };
+type Channel = { id: string; key: string; name: string; type: string; banner_url: string | null };
 type Plan = {
   id: string;
   name: string;
