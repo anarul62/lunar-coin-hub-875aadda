@@ -26,6 +26,12 @@ const empty = {
   pct_company: 10,
   pct_4_11_enabled: true,
   duration_minutes: 60,
+  draw_at_local: "",
+  auto_recreate: false,
+  hide_after_minutes: 1,
+  recreate_days: 0,
+  recreate_hours: 1,
+  recreate_minutes: 0,
 };
 
 const AdminLotteryPlans = () => {
@@ -46,8 +52,11 @@ const AdminLotteryPlans = () => {
     if (!form.channel_id || !form.name) return toast.error("Channel and name required");
     if (!form.total_tickets || form.total_tickets < 1) return toast.error("Total tickets must be at least 1");
     if (!form.ticket_price || form.ticket_price <= 0) return toast.error("Ticket price required");
-    const draw_at = new Date(Date.now() + form.duration_minutes * 60_000).toISOString();
-    const { error } = await supabase.from("lottery_plans").insert({ ...form, draw_at, image_url: form.game_image_url } as any);
+    const draw_at = form.draw_at_local
+      ? new Date(form.draw_at_local).toISOString()
+      : new Date(Date.now() + form.duration_minutes * 60_000).toISOString();
+    const { draw_at_local, ...rest } = form;
+    const { error } = await supabase.from("lottery_plans").insert({ ...rest, draw_at, image_url: rest.game_image_url } as any);
     if (error) return toast.error(error.message);
     toast.success("Lottery plan added (tickets seeded)");
     setForm({ ...empty });
