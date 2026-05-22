@@ -40,7 +40,7 @@ const InvestChannel = () => {
     (async () => {
       const { data: ch } = await supabase
         .from("invest_channels")
-        .select("id,key,name,banner_url")
+        .select("id,key,name,type,banner_url")
         .eq("key", channelKey)
         .maybeSingle();
       if (!ch) return;
