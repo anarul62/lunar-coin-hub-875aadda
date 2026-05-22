@@ -277,7 +277,11 @@ const DepositSheet = ({ method, onClose }: { method: Method; onClose: () => void
 
           {method.mode === "gateway" && (
             <div className="rounded-2xl bg-white border border-slate-200 p-4 text-sm text-slate-600">
-              Payment via <b>{method.gateway_provider || "gateway"}</b>. You will be redirected to complete the payment.
+              {method.gateway_provider === "lgpay" ? (
+                <>Payment via <b>LG-Pay ({method.gateway_config?.trade_type || ""})</b>. After clicking <b>Deposit</b>, you'll be redirected to the secure payment page. Your balance will be credited automatically once payment is confirmed.</>
+              ) : (
+                <>Payment via <b>{method.gateway_provider || "gateway"}</b>. You will be redirected to complete the payment.</>
+              )}
             </div>
           )}
 
