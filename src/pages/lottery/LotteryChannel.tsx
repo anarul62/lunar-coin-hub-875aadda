@@ -35,9 +35,11 @@ const LotteryChannel = ({ channelId, channelName, onBack }: Props) => {
       .eq("enabled", true)
       .order("created_at", { ascending: false });
 
-    // Hide plans whose draw_at + hide_after_minutes is past
+    // Hide plans whose draw_at + hide_after_seconds is past
     const visible = ((ps as any[]) || []).filter((p) => {
-      const hideMs = (Number((p as any).hide_after_minutes) || 1) * 60_000;
+      const sec = Number((p as any).hide_after_seconds);
+      const fallbackSec = (Number((p as any).hide_after_minutes) || 0) * 60;
+      const hideMs = ((Number.isFinite(sec) && sec > 0 ? sec : fallbackSec) || 10) * 1000;
       return new Date(p.draw_at).getTime() + hideMs > Date.now();
     });
     setPlans(visible as any);
@@ -63,7 +65,7 @@ const LotteryChannel = ({ channelId, channelName, onBack }: Props) => {
       setMyEntries((ent as any) || []);
     }
   };
-  useEffect(() => { load(); /* refresh every 30s to drop expired */ const r = setInterval(load, 30_000); return () => clearInterval(r); }, [channelId]);
+  useEffect(() => { load(); const r = setInterval(load, 5_000); return () => clearInterval(r); }, [channelId]);
 
   return (
     <div className="min-h-[60vh] -mx-4">
@@ -147,13 +149,18 @@ const LotteryCard = ({ plan, sold, onBuy }: { plan: LotteryPlan; sold: number; o
           {plan.xcoin_bonus ? <p className="text-[10px] text-emerald-300 leading-tight">+ {plan.xcoin_bonus} X coin</p> : null}
           <p className="text-[9px] text-white/50 mt-0.5">{sold}/{plan.total_tickets} sold</p>
         </div>
-        <button
-          onClick={onBuy}
-          className="self-center bg-gradient-to-b from-emerald-400 to-emerald-600 text-white font-extrabold text-xs px-3 py-2 rounded-lg shadow-md border-2 border-emerald-300 flex items-center gap-1 shrink-0"
-        >
-          <CurrencyBadge currency={plan.currency} className="h-3.5 w-3.5" />
-          {plan.ticket_price}
-        </button>
+        {(() => {
+          const closed = new Date(plan.draw_at).getTime() <= Date.now();
+          return (
+            <button
+              onClick={closed ? undefined : onBuy}
+              disabled={closed}
+              className={`self-center font-extrabold text-xs px-3 py-2 rounded-lg shadow-md border-2 flex items-center gap-1 shrink-0 ${closed ? "bg-slate-500 border-slate-400 text-white/80 cursor-not-allowed" : "bg-gradient-to-b from-emerald-400 to-emerald-600 text-white border-emerald-300"}`}
+            >
+              {closed ? "Closed" : (<><CurrencyBadge currency={plan.currency} className="h-3.5 w-3.5" />{plan.ticket_price}</>)}
+            </button>
+          );
+        })()}
       </div>
     </div>
   );
@@ -194,6 +201,7 @@ const ConfirmDialog = ({ plan, sold, myCount, onClose }: { plan: LotteryPlan; so
   const submit = async () => {
     setBusy(true);
     try {
+      if (new Date(plan.draw_at).getTime() <= Date.now()) { toast.error("Booking time has ended for this lottery"); return; }
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { toast.error("Login required"); navigate("/login"); return; }
       if (plan.total_tickets > 0 && count > plan.total_tickets - sold) { toast.error("Not enough tickets left"); return; }

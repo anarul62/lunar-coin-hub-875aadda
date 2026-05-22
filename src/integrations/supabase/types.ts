@@ -416,6 +416,7 @@ export type Database = {
           enabled: boolean
           game_image_url: string | null
           hide_after_minutes: number
+          hide_after_seconds: number
           id: string
           image_url: string | null
           name: string
@@ -446,6 +447,7 @@ export type Database = {
           enabled?: boolean
           game_image_url?: string | null
           hide_after_minutes?: number
+          hide_after_seconds?: number
           id?: string
           image_url?: string | null
           name: string
@@ -476,6 +478,7 @@ export type Database = {
           enabled?: boolean
           game_image_url?: string | null
           hide_after_minutes?: number
+          hide_after_seconds?: number
           id?: string
           image_url?: string | null
           name?: string
