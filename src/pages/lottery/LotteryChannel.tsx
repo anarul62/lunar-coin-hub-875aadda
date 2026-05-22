@@ -24,15 +24,26 @@ const LotteryChannel = ({ channelId, channelName, onBack }: Props) => {
   }, []);
 
   const load = async () => {
+    // Ask backend to process expired draws + auto-recreate before reading
+    try { await supabase.functions.invoke("lottery-draw", { body: {} }); } catch (_) {}
+
+    const nowIso = new Date().toISOString();
     const { data: ps } = await supabase
       .from("lottery_plans")
       .select("*")
       .eq("channel_id", channelId)
       .eq("enabled", true)
       .order("created_at", { ascending: false });
-    setPlans((ps as any) || []);
-    if (ps?.length) {
-      const ids = (ps as any[]).map((p) => p.id);
+
+    // Hide plans whose draw_at + hide_after_minutes is past
+    const visible = ((ps as any[]) || []).filter((p) => {
+      const hideMs = (Number((p as any).hide_after_minutes) || 1) * 60_000;
+      return new Date(p.draw_at).getTime() + hideMs > Date.now();
+    });
+    setPlans(visible as any);
+
+    if (visible.length) {
+      const ids = visible.map((p: any) => p.id);
       const { data: tix } = await supabase
         .from("lottery_tickets")
         .select("plan_id,user_id")
@@ -52,7 +63,7 @@ const LotteryChannel = ({ channelId, channelName, onBack }: Props) => {
       setMyEntries((ent as any) || []);
     }
   };
-  useEffect(() => { load(); }, [channelId]);
+  useEffect(() => { load(); /* refresh every 30s to drop expired */ const r = setInterval(load, 30_000); return () => clearInterval(r); }, [channelId]);
 
   return (
     <div className="min-h-[60vh] -mx-4">
