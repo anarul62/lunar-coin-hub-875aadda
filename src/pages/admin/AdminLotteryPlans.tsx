@@ -25,14 +25,13 @@ const empty = {
   pct_4_11: 3.75,
   pct_company: 10,
   pct_4_11_enabled: true,
-  duration_minutes: 60,
   draw_at_local: "",
   auto_recreate: false,
   hide_after_minutes: 0,
   hide_after_seconds: 10,
   recreate_days: 0,
-  recreate_hours: 2,
-  recreate_minutes: 0,
+  recreate_hours: 0,
+  recreate_minutes: 5,
 };
 
 const AdminLotteryPlans = () => {
@@ -53,9 +52,15 @@ const AdminLotteryPlans = () => {
     if (!form.channel_id || !form.name) return toast.error("Channel and name required");
     if (!form.total_tickets || form.total_tickets < 1) return toast.error("Total tickets must be at least 1");
     if (!form.ticket_price || form.ticket_price <= 0) return toast.error("Ticket price required");
-    const draw_at = form.draw_at_local
-      ? new Date(form.draw_at_local).toISOString()
-      : new Date(Date.now() + form.duration_minutes * 60_000).toISOString();
+    const intervalMs = (((form.recreate_days || 0) * 24 + (form.recreate_hours || 0)) * 60 + (form.recreate_minutes || 0)) * 60_000;
+    let draw_at: string;
+    if (form.draw_at_local) {
+      draw_at = new Date(form.draw_at_local).toISOString();
+    } else if (intervalMs >= 60_000) {
+      draw_at = new Date(Date.now() + intervalMs).toISOString();
+    } else {
+      return toast.error("Set a draw time or a recreate interval (≥ 1 min)");
+    }
     const { draw_at_local, ...rest } = form;
     const { error } = await supabase.from("lottery_plans").insert({ ...rest, draw_at, image_url: rest.game_image_url } as any);
     if (error) return toast.error(error.message);
@@ -110,8 +115,7 @@ const AdminLotteryPlans = () => {
               </div>
               <div><label className="text-xs text-slate-500">X coin bonus (optional)</label><Input type="number" value={form.xcoin_bonus} onChange={(e) => setForm({ ...form, xcoin_bonus: Number(e.target.value) })} /></div>
             </div>
-            <div><label className="text-xs text-slate-500">Duration in minutes (used if no exact draw time)</label><Input type="number" value={form.duration_minutes} onChange={(e) => setForm({ ...form, duration_minutes: Number(e.target.value) })} /></div>
-            <div><label className="text-xs text-slate-500">Draw at (exact date & time, optional)</label><Input type="datetime-local" value={form.draw_at_local} onChange={(e) => setForm({ ...form, draw_at_local: e.target.value })} /></div>
+            <div className="sm:col-span-2"><label className="text-xs text-slate-500">Draw at (optional — overrides recreate interval for first round)</label><Input type="datetime-local" value={form.draw_at_local} onChange={(e) => setForm({ ...form, draw_at_local: e.target.value })} /></div>
             <div className="sm:col-span-2 border-t pt-3">
               <label className="flex items-center gap-2 text-sm font-semibold"><Switch checked={form.auto_recreate} onCheckedChange={(v) => setForm({ ...form, auto_recreate: v })} /> Auto re-run this plan</label>
               <p className="text-[11px] text-slate-500 mt-1">When ON, after the draw the plan auto-hides, then a fresh round starts with booking re-opened from scratch. The interval below sets how long the next booking window lasts.</p>
@@ -199,6 +203,12 @@ const AdminLotteryPlans = () => {
                   <div><label className="text-xs text-slate-500">Hours</label><Input type="number" min={0} value={editing.recreate_hours || 0} onChange={(e) => setEditing({ ...editing, recreate_hours: Number(e.target.value) })} /></div>
                   <div><label className="text-xs text-slate-500">Minutes</label><Input type="number" min={0} value={editing.recreate_minutes || 0} onChange={(e) => setEditing({ ...editing, recreate_minutes: Number(e.target.value) })} /></div>
                 </div>
+                <Button type="button" variant="outline" size="sm" onClick={() => {
+                  const ms = (((Number(editing.recreate_days)||0) * 24 + (Number(editing.recreate_hours)||0)) * 60 + (Number(editing.recreate_minutes)||0)) * 60_000;
+                  if (ms < 60_000) return toast.error("Set interval ≥ 1 min");
+                  setEditing({ ...editing, draw_at: new Date(Date.now() + ms).toISOString() });
+                  toast.success("Draw time reset — click Save to apply");
+                }}>Reset draw time using recreate interval</Button>
                 <div><label className="text-xs text-slate-500">Hide from users after draw (seconds)</label><Input type="number" min={1} value={editing.hide_after_seconds ?? 10} onChange={(e) => setEditing({ ...editing, hide_after_seconds: Number(e.target.value) })} /></div>
               </div>
               <label className="flex items-center gap-2 text-sm"><Switch checked={editing.enabled} onCheckedChange={(v) => setEditing({ ...editing, enabled: v })} /> Enabled</label>

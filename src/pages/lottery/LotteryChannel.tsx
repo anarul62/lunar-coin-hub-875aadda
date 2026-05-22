@@ -228,6 +228,17 @@ const ConfirmDialog = ({ plan, sold, myCount, onClose }: { plan: LotteryPlan; so
       });
       if (error) throw error;
 
+      // Credit X coin bonus per ticket purchased
+      const bonus = Number(plan.xcoin_bonus || 0) * count;
+      if (bonus > 0) {
+        const { data: xc2 } = await supabase.from("user_xcoin").select("balance").eq("user_id", user.id).maybeSingle();
+        const bal2 = Number(xc2?.balance || 0);
+        if (xc2) await supabase.from("user_xcoin").update({ balance: bal2 + bonus }).eq("user_id", user.id);
+        else await supabase.from("user_xcoin").insert({ user_id: user.id, balance: bonus } as any);
+        await supabase.from("xcoin_transactions").insert({ user_id: user.id, amount: bonus, type: "lottery_bonus", meta: { plan_id: plan.id, tickets: count } } as any);
+        toast.success(`+${bonus} X coin bonus credited!`);
+      }
+
       toast.success("Ticket purchased!");
       onClose();
       navigate(`/lottery/${plan.id}/tickets`);
