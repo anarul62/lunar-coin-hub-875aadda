@@ -407,6 +407,7 @@ export type Database = {
       }
       lottery_plans: {
         Row: {
+          auto_recreate: boolean
           channel_id: string | null
           created_at: string
           currency: string
@@ -414,6 +415,7 @@ export type Database = {
           duration_minutes: number
           enabled: boolean
           game_image_url: string | null
+          hide_after_minutes: number
           id: string
           image_url: string | null
           name: string
@@ -424,6 +426,9 @@ export type Database = {
           pct_second: number
           pct_third: number
           prize_mode: string
+          recreate_days: number
+          recreate_hours: number
+          recreate_minutes: number
           sort_order: number
           status: string
           ticket_price: number
@@ -432,6 +437,7 @@ export type Database = {
           xcoin_bonus: number | null
         }
         Insert: {
+          auto_recreate?: boolean
           channel_id?: string | null
           created_at?: string
           currency?: string
@@ -439,6 +445,7 @@ export type Database = {
           duration_minutes?: number
           enabled?: boolean
           game_image_url?: string | null
+          hide_after_minutes?: number
           id?: string
           image_url?: string | null
           name: string
@@ -449,6 +456,9 @@ export type Database = {
           pct_second?: number
           pct_third?: number
           prize_mode?: string
+          recreate_days?: number
+          recreate_hours?: number
+          recreate_minutes?: number
           sort_order?: number
           status?: string
           ticket_price?: number
@@ -457,6 +467,7 @@ export type Database = {
           xcoin_bonus?: number | null
         }
         Update: {
+          auto_recreate?: boolean
           channel_id?: string | null
           created_at?: string
           currency?: string
@@ -464,6 +475,7 @@ export type Database = {
           duration_minutes?: number
           enabled?: boolean
           game_image_url?: string | null
+          hide_after_minutes?: number
           id?: string
           image_url?: string | null
           name?: string
@@ -474,6 +486,9 @@ export type Database = {
           pct_second?: number
           pct_third?: number
           prize_mode?: string
+          recreate_days?: number
+          recreate_hours?: number
+          recreate_minutes?: number
           sort_order?: number
           status?: string
           ticket_price?: number
