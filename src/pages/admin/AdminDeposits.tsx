@@ -256,6 +256,55 @@ const AdminDeposits = () => {
           </div>
         </div>
       )}
+
+      {showLgpay && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => setShowLgpay(false)}>
+          <div onClick={e => e.stopPropagation()} className="bg-white rounded-xl w-full max-w-4xl max-h-[85vh] flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-slate-200">
+              <div>
+                <h3 className="font-semibold text-slate-900">LG-Pay Deposits</h3>
+                <p className="text-xs text-slate-500">Total completed: ₮ {stats.lgpayCompletedAmt.toFixed(2)} · {stats.lgpayCount} orders</p>
+              </div>
+              <button onClick={() => setShowLgpay(false)} className="p-1.5 hover:bg-slate-100 rounded"><X className="h-4 w-4"/></button>
+            </div>
+            <div className="overflow-auto p-4">
+              <table className="w-full text-sm">
+                <thead className="text-left text-slate-500 border-b border-slate-200">
+                  <tr>
+                    <th className="py-2 pr-3">User</th>
+                    <th className="py-2 pr-3">Phone</th>
+                    <th className="py-2 pr-3">Order No</th>
+                    <th className="py-2 pr-3">Amount</th>
+                    <th className="py-2 pr-3">USDT</th>
+                    <th className="py-2 pr-3">Status</th>
+                    <th className="py-2 pr-3">Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {lgpayDeposits.map(d => {
+                    const p = profMap[d.user_id];
+                    return (
+                      <tr key={d.id} className="border-b border-slate-100 hover:bg-slate-50">
+                        <td className="py-2 pr-3">
+                          <div className="text-xs font-medium text-slate-900">{p?.full_name || "—"}</div>
+                          <div className="text-[10px] text-violet-600 font-mono">{p?.referral_code || ""}</div>
+                        </td>
+                        <td className="py-2 pr-3 text-xs">{p?.phone || "—"}</td>
+                        <td className="py-2 pr-3 font-mono text-xs">{d.order_number}</td>
+                        <td className="py-2 pr-3 whitespace-nowrap">{sym(d.currency)}{Number(d.amount).toFixed(2)} <span className="text-slate-400 text-xs">{d.currency}</span></td>
+                        <td className="py-2 pr-3">{Number(d.amount_usdt).toFixed(4)}</td>
+                        <td className="py-2 pr-3"><span className={`px-2 py-0.5 rounded text-xs ${STATUS_BADGE[d.status] || "bg-slate-100"}`}>{d.status}</span></td>
+                        <td className="py-2 pr-3 text-xs whitespace-nowrap">{new Date(d.created_at).toLocaleString()}</td>
+                      </tr>
+                    );
+                  })}
+                  {lgpayDeposits.length === 0 && <tr><td colSpan={7} className="text-center text-slate-400 py-10">No LG-Pay deposits yet</td></tr>}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
     </AdminLayout>
   );
 };
