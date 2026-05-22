@@ -154,6 +154,8 @@ const AdminLotteryPlans = () => {
                 </select>
               </div>
               <Input type="number" value={editing.xcoin_bonus || 0} onChange={(e) => setEditing({ ...editing, xcoin_bonus: Number(e.target.value) })} placeholder="X coin bonus" />
+              <label className="text-xs text-slate-500">Total tickets (increasing seeds new ones)</label>
+              <Input type="number" min={1} value={editing.total_tickets} onChange={(e) => setEditing({ ...editing, total_tickets: Number(e.target.value) })} />
               <label className="text-xs text-slate-500">Draw at</label>
               <Input type="datetime-local" value={new Date(editing.draw_at).toISOString().slice(0,16)} onChange={(e) => setEditing({ ...editing, draw_at: new Date(e.target.value).toISOString() })} />
               <div className="grid grid-cols-2 gap-2">
