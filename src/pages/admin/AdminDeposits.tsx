@@ -66,19 +66,28 @@ const AdminDeposits = () => {
     load();
   };
 
+  const isLgpay = (d: Dep) => (d.order_number || "").startsWith("LG");
+
   // Stats
   const stats = useMemo(() => {
     const today = new Date(); today.setHours(0,0,0,0);
     let todayAmount = 0, todayCount = 0, approved = 0, rejected = 0, pending = 0, completedAmt = 0;
+    let lgpayCompletedAmt = 0, lgpayCount = 0;
     items.forEach(d => {
       const created = new Date(d.created_at);
       if (created >= today && d.status === "completed") { todayAmount += Number(d.amount_usdt||0); todayCount++; }
       if (d.status === "completed") { approved++; completedAmt += Number(d.amount_usdt||0); }
       if (d.status === "rejected") rejected++;
       if (d.status === "pending") pending++;
+      if (isLgpay(d)) {
+        lgpayCount++;
+        if (d.status === "completed") lgpayCompletedAmt += Number(d.amount_usdt||0);
+      }
     });
-    return { todayAmount, todayCount, approved, rejected, pending, completedAmt };
+    return { todayAmount, todayCount, approved, rejected, pending, completedAmt, lgpayCompletedAmt, lgpayCount };
   }, [items]);
+
+  const lgpayDeposits = useMemo(() => items.filter(isLgpay), [items]);
 
   // 7-day bar graph (completed deposits per day in USDT)
   const chart = useMemo(() => {
