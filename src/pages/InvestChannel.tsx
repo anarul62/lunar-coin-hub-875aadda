@@ -137,6 +137,18 @@ const InvestChannel = () => {
     }
   };
 
+  if (channel?.type === "lottery") {
+    return (
+      <div className="min-h-screen bg-background pb-20">
+        <Navbar />
+        <main className="pt-16 px-4">
+          <LotteryChannel channelId={channel.id} channelName={channel.name} onBack={() => navigate("/invest")} />
+        </main>
+        <BottomNav />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background pb-20">
       <Navbar />
