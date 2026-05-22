@@ -9,15 +9,10 @@ const corsHeaders = {
 };
 
 const md5Upper = async (s: string) => {
-  const buf = await crypto.subtle.digest("MD5", new TextEncoder().encode(s)).catch(async () => {
-    // Deno's WebCrypto doesn't support MD5; use polyfill
-    const { Md5 } = await import("https://deno.land/std@0.160.0/hash/md5.ts");
-    const m = new Md5();
-    m.update(s);
-    return m.digest();
-  });
-  const bytes = new Uint8Array(buf as ArrayBuffer);
-  return Array.from(bytes).map(b => b.toString(16).padStart(2, "0")).join("").toUpperCase();
+  const { Md5 } = await import("https://deno.land/std@0.160.0/hash/md5.ts");
+  const m = new Md5();
+  m.update(s);
+  return (m.toString() as string).toUpperCase();
 };
 
 Deno.serve(async (req) => {
