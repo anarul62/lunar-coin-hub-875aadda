@@ -13,7 +13,7 @@ export const adminLogin = async (email: string, password: string) => {
     .from("user_roles")
     .select("role")
     .eq("user_id", data.user.id)
-    .eq("role", "admin")
+    .in("role", ["admin", "subadmin"])
     .maybeSingle();
   if (!roleRow) {
     await supabase.auth.signOut();
