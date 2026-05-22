@@ -25,14 +25,13 @@ const empty = {
   pct_4_11: 3.75,
   pct_company: 10,
   pct_4_11_enabled: true,
-  duration_minutes: 60,
   draw_at_local: "",
   auto_recreate: false,
   hide_after_minutes: 0,
   hide_after_seconds: 10,
   recreate_days: 0,
-  recreate_hours: 2,
-  recreate_minutes: 0,
+  recreate_hours: 0,
+  recreate_minutes: 5,
 };
 
 const AdminLotteryPlans = () => {
