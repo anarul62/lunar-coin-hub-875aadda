@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { CheckCircle2, XCircle, Loader2, Search, TrendingUp, Wallet, Clock, ShieldX, ShieldCheck } from "lucide-react";
+import { CheckCircle2, XCircle, Loader2, Search, TrendingUp, Wallet, Clock, ShieldX, ShieldCheck, Eye, CreditCard, X } from "lucide-react";
 
 type Dep = {
   id: string; user_id: string; order_number: string | null;
