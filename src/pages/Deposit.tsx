@@ -41,7 +41,7 @@ const Deposit = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { navigate("/login"); return; }
       const [{ data: pm }, { data: prof }] = await Promise.all([
-        supabase.from("payment_methods").select("*").eq("enabled", true).order("sort_order"),
+        supabase.from("payment_methods_public" as any).select("*").order("sort_order"),
         supabase.from("profiles").select("balance_usdt").eq("user_id", user.id).maybeSingle(),
       ]);
       setMethods((pm as any) || []);
