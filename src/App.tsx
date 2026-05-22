@@ -147,6 +147,12 @@ const App = () => (
           <Route path="/admin/referral-bonus" element={<AdminReferralBonus />} />
           <Route path="/admin/kyc" element={<AdminKyc />} />
           <Route path="/admin/kyc/requests" element={<AdminKycRequests />} />
+          <Route path="/admin/add-agent" element={<AdminAddAgent />} />
+          <Route path="/admin/agent-data" element={<AdminAgentData />} />
+          <Route path="/admin/manage-admins" element={<AdminManageAdmins />} />
+          <Route path="/agent/login" element={<AgentLogin />} />
+          <Route path="/agent" element={<AgentDashboard />} />
+          <Route path="/agent-data1" element={<AgentDashboard />} />
           {placeholders.map(p => (
             <Route key={p.path} path={p.path} element={<AdminPlaceholder title={p.title} />} />
           ))}
