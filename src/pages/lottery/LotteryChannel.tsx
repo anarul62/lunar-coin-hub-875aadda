@@ -196,6 +196,7 @@ const ConfirmDialog = ({ plan, sold, myCount, onClose }: { plan: LotteryPlan; so
   const submit = async () => {
     setBusy(true);
     try {
+      if (new Date(plan.draw_at).getTime() <= Date.now()) { toast.error("Booking time has ended for this lottery"); return; }
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { toast.error("Login required"); navigate("/login"); return; }
       if (plan.total_tickets > 0 && count > plan.total_tickets - sold) { toast.error("Not enough tickets left"); return; }
