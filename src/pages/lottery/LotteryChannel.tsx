@@ -149,13 +149,18 @@ const LotteryCard = ({ plan, sold, onBuy }: { plan: LotteryPlan; sold: number; o
           {plan.xcoin_bonus ? <p className="text-[10px] text-emerald-300 leading-tight">+ {plan.xcoin_bonus} X coin</p> : null}
           <p className="text-[9px] text-white/50 mt-0.5">{sold}/{plan.total_tickets} sold</p>
         </div>
-        <button
-          onClick={onBuy}
-          className="self-center bg-gradient-to-b from-emerald-400 to-emerald-600 text-white font-extrabold text-xs px-3 py-2 rounded-lg shadow-md border-2 border-emerald-300 flex items-center gap-1 shrink-0"
-        >
-          <CurrencyBadge currency={plan.currency} className="h-3.5 w-3.5" />
-          {plan.ticket_price}
-        </button>
+        {(() => {
+          const closed = new Date(plan.draw_at).getTime() <= Date.now();
+          return (
+            <button
+              onClick={closed ? undefined : onBuy}
+              disabled={closed}
+              className={`self-center font-extrabold text-xs px-3 py-2 rounded-lg shadow-md border-2 flex items-center gap-1 shrink-0 ${closed ? "bg-slate-500 border-slate-400 text-white/80 cursor-not-allowed" : "bg-gradient-to-b from-emerald-400 to-emerald-600 text-white border-emerald-300"}`}
+            >
+              {closed ? "Closed" : (<><CurrencyBadge currency={plan.currency} className="h-3.5 w-3.5" />{plan.ticket_price}</>)}
+            </button>
+          );
+        })()}
       </div>
     </div>
   );
