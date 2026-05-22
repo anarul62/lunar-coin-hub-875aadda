@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound.tsx";
 import AdminLogin from "./pages/admin/AdminLogin.tsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
 import AdminUsers from "./pages/admin/AdminUsers.tsx";
+import AdminUserDetails from "./pages/admin/AdminUserDetails.tsx";
 import AdminPlaceholder from "./pages/admin/AdminPlaceholder.tsx";
 import AdminBanners from "./pages/admin/AdminBanners.tsx";
 import AdminKyc from "./pages/admin/AdminKyc.tsx";
@@ -136,6 +137,7 @@ const App = () => (
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/users/:userId" element={<AdminUserDetails />} />
           <Route path="/admin/banners" element={<AdminBanners />} />
           <Route path="/admin/bonus" element={<AdminBonusManage />} />
           <Route path="/admin/deposit-bonus" element={<AdminDepositBonus />} />
