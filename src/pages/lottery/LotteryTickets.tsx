@@ -53,6 +53,7 @@ const LotteryTickets = () => {
 
   const book = async () => {
     if (!me || selected.size === 0) return;
+    if (plan && new Date(plan.draw_at).getTime() <= Date.now()) { toast.error("Booking time has ended"); return; }
     setBusy(true);
     try {
       const ids = Array.from(selected);
