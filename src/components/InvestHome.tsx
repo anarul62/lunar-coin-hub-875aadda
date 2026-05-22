@@ -12,12 +12,12 @@ import KycModal from "@/components/KycModal";
 const tabs = ["Gold & Silver", "Crypto", "Plans"];
 
 const categories = [
-  { icon: Coins, label: "Gold Invest", tag: "Hot", path: null },
-  { icon: Gem, label: "Silver Invest", tag: null, path: null },
+  { icon: Coins, label: "Gold Invest", tag: "Hot", path: "/invest/gold" },
+  { icon: Gem, label: "Silver Invest", tag: null, path: "/invest/silver" },
   { icon: ShieldCheck, label: "KYC", tag: null, path: null },
-  { icon: BarChart3, label: "Plans", tag: "12%+", path: null },
+  { icon: BarChart3, label: "Plans", tag: "12%+", path: "/plan-history" },
   { icon: Wallet, label: "Wallet", tag: null, path: "/wallet" },
-  { icon: FileBadge, label: "Reports", tag: null, path: null },
+  { icon: FileBadge, label: "Reports", tag: null, path: "/plan-history" },
   { icon: Sparkles, label: "Rewards", tag: "New", path: "/rewards" },
   { icon: Lock, label: "Vault", tag: null, path: null },
 ];
