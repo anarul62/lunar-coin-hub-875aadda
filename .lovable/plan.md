@@ -1,32 +1,109 @@
-## Problems
+## Overview
 
-1. **Countdown shows 1 hour instead of 5 minutes**
-   The admin form has two separate timing fields:
-   - `duration_minutes` (defaults to **60**) → used for the very first round's `draw_at`.
-   - `recreate_days/hours/minutes` (e.g. 5 min) → only used by the edge function when auto-creating the *next* round.
+Build two new role systems on top of the existing admin: **Sub-Admins** (with granular feature permissions) and **Agents** (referral managers with their own login + dashboard).
 
-   You set recreate = 5 min, but the first round still uses the 60-minute default → user sees "Ends in 58:57". Editing an existing plan in the dialog also doesn't sync `draw_at` from the recreate interval.
+---
 
-2. **X coin bonus not credited to wallet**
-   `plan.xcoin_bonus` is displayed as "+ 100 X coin" on the lottery card but is **never written to `user_xcoin`** — not on purchase, not on draw. So users never receive it.
+## 1. Database Changes
 
-## Fix
+### Extend `app_role` enum
+- Add `'subadmin'` and `'agent'` to the existing enum.
 
-### A. Single source of truth for round duration
-- Drop the separate `duration_minutes` input from the admin "Add plan" form.
-- When `auto_recreate` is ON: initial `draw_at` = now + (days·24h + hours·60m + minutes). This is also what the edge function already uses for next rounds, so admin and user always see the same number.
-- When `auto_recreate` is OFF: require an explicit `draw_at` (datetime picker). If empty, fall back to recreate interval; if that's also zero, error.
-- In the **Edit dialog**, add a button "Reset draw time using recreate interval" so changing 60 → 5 immediately reschedules the current open round (otherwise the already-scheduled `draw_at` keeps running until the next round).
+### New table: `admin_permissions`
+- `user_id` (uuid, FK to auth.users)
+- `permissions` (jsonb array of feature keys, e.g. `["users","banners","kyc","deposits"]`)
+- Only super-admin (`gamingtom076@gmail.com`) can edit.
+- RLS: admins manage; users view own.
 
-### B. Credit X coin bonus on ticket purchase
-- In `LotteryChannel.tsx > ConfirmDialog.submit` (and in `LotteryTickets.tsx > book` for the per-ticket booking flow), after a successful insert/update credit:
-  `user_xcoin.balance += plan.xcoin_bonus * tickets_purchased`
-- Add a notification row "You earned X{bonus} coin for buying N ticket(s)".
-- Bonus is per ticket (matches the "+ 100 X coin" displayed alongside ticket price).
+### New table: `agents`
+- `user_id` (uuid) — auth user
+- `agent_code` (text, unique) — referral code shown to users
+- `name`, `email`, `phone`
+- `created_by` (uuid) — which admin created
+- `active` (bool)
+- RLS: admins manage all; agents view own row.
 
-### Files to edit
-- `src/pages/admin/AdminLotteryPlans.tsx` — remove `duration_minutes` input, recompute initial `draw_at` from recreate interval, add reset-draw button in edit dialog.
-- `src/pages/lottery/LotteryChannel.tsx` — credit `xcoin_bonus * count` to `user_xcoin` after entry insert.
-- `src/pages/lottery/LotteryTickets.tsx` — credit `xcoin_bonus * ids.length` after booking succeeds (so users who book later still get the bonus exactly once per ticket — guarded by the insert succeeding for previously-null user_id rows).
+### Extend `profiles`
+- Add `agent_id` (uuid, nullable) — populated when a user signs up under an agent's code.
+- `handle_new_user` trigger updated: if invitation code matches an `agent_code`, set `agent_id`.
 
-No DB migration needed.
+---
+
+## 2. Admin Panel — Sub-Admin Management
+
+**Route:** `/admin/manage-admins` (new)
+
+- List existing admins + sub-admins (from `user_roles` joined with `profiles`).
+- "Add Sub-Admin" button → modal with: email, password, name, **permission checkboxes** for each admin feature (Users, Banners, KYC, Deposits, Withdrawals, Banners, Invest Plans, Lottery, SEO, Agents, etc.).
+- Creates auth user via edge function (service role), assigns `subadmin` role, writes `admin_permissions` row.
+- Edit permissions / delete sub-admin.
+
+**AdminLayout** updated:
+- Reads logged-in user's role + permissions.
+- Hides sidebar items the sub-admin doesn't have permission for.
+- Super-admin (`gamingtom076@gmail.com`) always sees everything.
+
+---
+
+## 3. Admin Panel — Agent Management
+
+### `/admin/add-agent` (replace placeholder)
+- Form: Agent name, email, password, phone, **agent refcode** (auto-generated, editable).
+- Creates auth user (edge function), assigns `agent` role, inserts into `agents`.
+- Below: table of all agents → refcode, name, email, created date, status, **delete** button.
+
+### `/admin/agent-data` (replace placeholder)
+- Table of agents with aggregated stats per agent:
+  - Total invited users (count of profiles where `agent_id = agent.user_id`)
+  - Total deposits (sum of approved deposits from those users)
+  - Today's deposits
+  - Total withdrawals
+- Row click → detailed view: list of users under that agent + each user's deposit/withdraw history.
+
+---
+
+## 4. Agent Panel (new)
+
+### `/agent/login`
+- Email + password login.
+- Verifies `agent` role; rejects others.
+
+### `/agent` (dashboard, also reachable at `/agent-data1`)
+- Shows logged-in agent's:
+  - Agent refcode (copy button + share link `?ref=CODE`)
+  - Total invited members
+  - Active members (have deposited)
+  - Total deposit volume
+  - Today's deposits
+  - List of downline users (name masked, phone last-4, deposit total)
+
+---
+
+## 5. Edge Function
+
+**`admin-create-user`** — uses service role to:
+- Create auth user with email/password.
+- Assign role (`subadmin` or `agent`).
+- Insert permissions or agents row.
+- Only callable by authenticated admin (verified via JWT + `has_role` check).
+
+---
+
+## 6. Routing & Nav
+
+- Add routes in `App.tsx` for `/admin/manage-admins`, `/agent/login`, `/agent`, `/agent-data1`.
+- Replace placeholders for `/admin/add-agent` and `/admin/agent-data`.
+- Add "Manage Admins" link in admin sidebar (super-admin only).
+
+---
+
+## Technical Notes
+
+- Sub-admin permission keys map to sidebar items in `AdminLayout`.
+- Agent refcode reuses the existing referral flow — when a user registers with an agent's code as `invitation_code`, the trigger links them via `agent_id`.
+- All new tables get RLS using existing `has_role()` helper.
+- Super-admin gate: hard-code `gamingtom076@gmail.com` check for managing sub-admins (cannot be revoked by another admin).
+
+---
+
+Approve to proceed, or tell me what to adjust (e.g. different permission granularity, agent commission system, etc.).

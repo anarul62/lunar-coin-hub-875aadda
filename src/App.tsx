@@ -53,6 +53,11 @@ import AdminLotteryPlans from "./pages/admin/AdminLotteryPlans.tsx";
 import LotteryTickets from "./pages/lottery/LotteryTickets.tsx";
 import LotteryDetails from "./pages/lottery/LotteryDetails.tsx";
 import SeoHead from "./components/SeoHead.tsx";
+import AdminAddAgent from "./pages/admin/AdminAddAgent.tsx";
+import AdminAgentData from "./pages/admin/AdminAgentData.tsx";
+import AdminManageAdmins from "./pages/admin/AdminManageAdmins.tsx";
+import AgentLogin from "./pages/agent/AgentLogin.tsx";
+import AgentDashboard from "./pages/agent/AgentDashboard.tsx";
 
 
 const queryClient = new QueryClient();
@@ -72,8 +77,6 @@ const placeholders: { path: string; title: string }[] = [
   { path: "/admin/ewallet", title: "Modify Ewallet Address" },
   { path: "/admin/agents", title: "Agent Settings" },
   { path: "/admin/web", title: "Web Settings" },
-  { path: "/admin/add-agent", title: "Add Agent" },
-  { path: "/admin/agent-data", title: "Agent Data" },
   { path: "/admin/salary", title: "Manage Salary" },
   { path: "/admin/gift-code", title: "Gift Code" },
   { path: "/admin/activity", title: "Activity Award" },
@@ -144,6 +147,12 @@ const App = () => (
           <Route path="/admin/referral-bonus" element={<AdminReferralBonus />} />
           <Route path="/admin/kyc" element={<AdminKyc />} />
           <Route path="/admin/kyc/requests" element={<AdminKycRequests />} />
+          <Route path="/admin/add-agent" element={<AdminAddAgent />} />
+          <Route path="/admin/agent-data" element={<AdminAgentData />} />
+          <Route path="/admin/manage-admins" element={<AdminManageAdmins />} />
+          <Route path="/agent/login" element={<AgentLogin />} />
+          <Route path="/agent" element={<AgentDashboard />} />
+          <Route path="/agent-data1" element={<AgentDashboard />} />
           {placeholders.map(p => (
             <Route key={p.path} path={p.path} element={<AdminPlaceholder title={p.title} />} />
           ))}
