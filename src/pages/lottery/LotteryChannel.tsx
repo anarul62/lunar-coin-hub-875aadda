@@ -65,7 +65,7 @@ const LotteryChannel = ({ channelId, channelName, onBack }: Props) => {
       setMyEntries((ent as any) || []);
     }
   };
-  useEffect(() => { load(); /* refresh every 30s to drop expired */ const r = setInterval(load, 30_000); return () => clearInterval(r); }, [channelId]);
+  useEffect(() => { load(); const r = setInterval(load, 5_000); return () => clearInterval(r); }, [channelId]);
 
   return (
     <div className="min-h-[60vh] -mx-4">
