@@ -49,7 +49,52 @@ const allList = [
 const InvestHome = () => {
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const [kycOpen, setKycOpen] = useState(false);
+  const [liveLaunched, setLiveLaunched] = useState<any[]>([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const load = async () => {
+      const [{ data: ip }, { data: lp }, { data: chans }] = await Promise.all([
+        supabase.from("invest_plans").select("id,name,image_url,interest_value,interest_period,duration_days,min_amount,currency,channel_id,created_at").eq("enabled", true).order("created_at", { ascending: false }).limit(6),
+        supabase.from("lottery_plans").select("id,name,image_url,ticket_price,currency,total_tickets,draw_at,channel_id,created_at,hide_after_seconds").eq("enabled", true).order("created_at", { ascending: false }).limit(6),
+        supabase.from("invest_channels").select("id,key,name"),
+      ]);
+      const chanMap: Record<string, any> = {};
+      (chans || []).forEach((c: any) => { chanMap[c.id] = c; });
+      const inv = ((ip as any[]) || []).map((p) => ({
+        kind: "invest" as const,
+        id: p.id,
+        name: p.name,
+        image_url: p.image_url,
+        risk: `${chanMap[p.channel_id]?.name || "Invest"} · ${p.duration_days}d`,
+        roi: `${Number(p.interest_value || 0)}%/${p.interest_period}`,
+        tenure: `${p.duration_days} Days`,
+        min: `${p.currency === "INR" ? "₹" : p.currency === "USDT" ? "$" : ""}${Number(p.min_amount || 0)}`,
+        path: `/invest/${chanMap[p.channel_id]?.key || ""}`,
+        created_at: p.created_at,
+      }));
+      const lot = ((lp as any[]) || [])
+        .filter((p) => new Date(p.draw_at).getTime() + (Number(p.hide_after_seconds || 10) * 1000) > Date.now())
+        .map((p) => ({
+          kind: "lottery" as const,
+          id: p.id,
+          name: p.name,
+          image_url: p.image_url,
+          risk: "Lottery",
+          roi: `${p.total_tickets} Tickets`,
+          tenure: "Live Draw",
+          min: `${p.currency === "BDT" ? "৳" : p.currency === "INR" ? "₹" : p.currency === "USDT" ? "$" : "💎"}${Number(p.ticket_price || 0)}`,
+          path: `/lottery/${p.id}/tickets`,
+          created_at: p.created_at,
+        }));
+      const combined = [...inv, ...lot].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 6);
+      setLiveLaunched(combined);
+    };
+    load();
+    const t = setInterval(load, 15000);
+    return () => clearInterval(t);
+  }, []);
+
 
   return (
     <div className="pb-20">
