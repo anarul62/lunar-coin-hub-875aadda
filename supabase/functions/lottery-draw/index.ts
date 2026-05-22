@@ -98,6 +98,17 @@ Deno.serve(async (req) => {
 
     await sb.from("lottery_plans").update({ status: "completed" }).eq("id", plan.id);
     results.push({ plan: plan.id, winners: winners.length, pool });
+
+    // Auto-recreate: schedule a fresh round with the same settings
+    if (plan.auto_recreate) {
+      const days = Number(plan.recreate_days || 0);
+      const hours = Number(plan.recreate_hours || 0);
+      const mins = Number(plan.recreate_minutes || 0);
+      const intervalMs = ((days * 24 + hours) * 60 + mins) * 60_000;
+      const nextDraw = new Date(Date.now() + Math.max(60_000, intervalMs)).toISOString();
+      const { id, created_at, updated_at, status, ...base } = plan as any;
+      await sb.from("lottery_plans").insert({ ...base, status: "open", draw_at: nextDraw });
+    }
   }
 
   return new Response(JSON.stringify({ ok: true, results }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });

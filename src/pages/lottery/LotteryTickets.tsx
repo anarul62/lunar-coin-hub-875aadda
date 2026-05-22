@@ -88,9 +88,25 @@ const LotteryTickets = () => {
               return (
                 <button key={t.id} onClick={() => toggle(t)} className={`relative aspect-[3/2] rounded-md overflow-hidden ${sel ? "ring-4 ring-emerald-400" : ""} ${isSold && !mine ? "opacity-90" : ""}`}>
                   <img src={ticketImg} className="w-full h-full object-cover" alt="ticket" />
-                  <span className="absolute bottom-1 left-2 text-[8px] text-amber-900 font-bold">{t.code}</span>
+                  {/* Number sits on the dark engraved plate */}
+                  <span
+                    className="absolute font-black text-amber-200 drop-shadow-[0_1px_1px_rgba(0,0,0,0.9)]"
+                    style={{ top: "47%", left: "50%", transform: "translate(-50%,-50%)", fontSize: "clamp(14px,4.5vw,22px)", letterSpacing: "1px" }}
+                  >
+                    #{String(t.ticket_number).padStart(3, "0")}
+                  </span>
+                  {/* Code sits on the lower golden blank plate */}
+                  <span
+                    className="absolute font-extrabold text-[#3a210a]"
+                    style={{ top: "82%", left: "50%", transform: "translate(-50%,-50%)", fontSize: "clamp(8px,2.6vw,12px)", letterSpacing: "0.5px" }}
+                  >
+                    {t.code}
+                  </span>
                   {isSold && !mine && (
-                    <img src={soldRibbon} className="absolute inset-0 w-full h-full object-cover pointer-events-none" alt="sold" />
+                    <>
+                      <div className="absolute inset-0 bg-red-900/40 pointer-events-none" />
+                      <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-12 bg-red-600 text-white text-xs font-black px-3 py-1 rounded shadow-lg border-2 border-white">SOLD</span>
+                    </>
                   )}
                   {mine && (
                     <span className="absolute top-1 right-1 bg-emerald-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">MINE</span>

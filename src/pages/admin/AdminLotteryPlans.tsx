@@ -26,6 +26,12 @@ const empty = {
   pct_company: 10,
   pct_4_11_enabled: true,
   duration_minutes: 60,
+  draw_at_local: "",
+  auto_recreate: false,
+  hide_after_minutes: 1,
+  recreate_days: 0,
+  recreate_hours: 1,
+  recreate_minutes: 0,
 };
 
 const AdminLotteryPlans = () => {
@@ -46,8 +52,11 @@ const AdminLotteryPlans = () => {
     if (!form.channel_id || !form.name) return toast.error("Channel and name required");
     if (!form.total_tickets || form.total_tickets < 1) return toast.error("Total tickets must be at least 1");
     if (!form.ticket_price || form.ticket_price <= 0) return toast.error("Ticket price required");
-    const draw_at = new Date(Date.now() + form.duration_minutes * 60_000).toISOString();
-    const { error } = await supabase.from("lottery_plans").insert({ ...form, draw_at, image_url: form.game_image_url } as any);
+    const draw_at = form.draw_at_local
+      ? new Date(form.draw_at_local).toISOString()
+      : new Date(Date.now() + form.duration_minutes * 60_000).toISOString();
+    const { draw_at_local, ...rest } = form;
+    const { error } = await supabase.from("lottery_plans").insert({ ...rest, draw_at, image_url: rest.game_image_url } as any);
     if (error) return toast.error(error.message);
     toast.success("Lottery plan added (tickets seeded)");
     setForm({ ...empty });
@@ -86,19 +95,32 @@ const AdminLotteryPlans = () => {
                 {channels.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             </div>
-            <Input placeholder="Name (e.g. Snakes & Ladders No.1)" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-            <Input placeholder="Game image URL" value={form.game_image_url} onChange={(e) => setForm({ ...form, game_image_url: e.target.value })} />
+            <div><label className="text-xs text-slate-500">Plan name</label><Input placeholder="e.g. Snakes & Ladders No.1" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
+            <div><label className="text-xs text-slate-500">Game image URL</label><Input placeholder="https://..." value={form.game_image_url} onChange={(e) => setForm({ ...form, game_image_url: e.target.value })} /></div>
             <div className="grid grid-cols-2 gap-2">
-              <Input type="number" placeholder="Total tickets" value={form.total_tickets} onChange={(e) => setForm({ ...form, total_tickets: Number(e.target.value) })} />
-              <Input type="number" placeholder="Ticket price" value={form.ticket_price} onChange={(e) => setForm({ ...form, ticket_price: Number(e.target.value) })} />
+              <div><label className="text-xs text-slate-500">Total tickets</label><Input type="number" value={form.total_tickets} onChange={(e) => setForm({ ...form, total_tickets: Number(e.target.value) })} /></div>
+              <div><label className="text-xs text-slate-500">Ticket price</label><Input type="number" value={form.ticket_price} onChange={(e) => setForm({ ...form, ticket_price: Number(e.target.value) })} /></div>
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <select className="border border-slate-200 rounded-md px-3 py-2 text-sm" value={form.currency} onChange={(e) => setForm({ ...form, currency: e.target.value })}>
-                <option>XCOIN</option><option>BDT</option><option>USDT</option><option>INR</option>
-              </select>
-              <Input type="number" placeholder="X coin bonus (optional)" value={form.xcoin_bonus} onChange={(e) => setForm({ ...form, xcoin_bonus: Number(e.target.value) })} />
+              <div><label className="text-xs text-slate-500">Currency</label>
+                <select className="w-full border border-slate-200 rounded-md px-3 py-2 text-sm" value={form.currency} onChange={(e) => setForm({ ...form, currency: e.target.value })}>
+                  <option>XCOIN</option><option>BDT</option><option>USDT</option><option>INR</option>
+                </select>
+              </div>
+              <div><label className="text-xs text-slate-500">X coin bonus (optional)</label><Input type="number" value={form.xcoin_bonus} onChange={(e) => setForm({ ...form, xcoin_bonus: Number(e.target.value) })} /></div>
             </div>
-            <Input type="number" placeholder="Duration (minutes till draw)" value={form.duration_minutes} onChange={(e) => setForm({ ...form, duration_minutes: Number(e.target.value) })} />
+            <div><label className="text-xs text-slate-500">Duration in minutes (used if no exact draw time)</label><Input type="number" value={form.duration_minutes} onChange={(e) => setForm({ ...form, duration_minutes: Number(e.target.value) })} /></div>
+            <div><label className="text-xs text-slate-500">Draw at (exact date & time, optional)</label><Input type="datetime-local" value={form.draw_at_local} onChange={(e) => setForm({ ...form, draw_at_local: e.target.value })} /></div>
+            <div className="sm:col-span-2 border-t pt-3">
+              <label className="flex items-center gap-2 text-sm font-semibold"><Switch checked={form.auto_recreate} onCheckedChange={(v) => setForm({ ...form, auto_recreate: v })} /> Auto re-run this plan</label>
+              <p className="text-[11px] text-slate-500 mt-1">When ON, after draw ends a new identical round will start automatically using the interval below.</p>
+              <div className="grid grid-cols-3 gap-2 mt-2">
+                <div><label className="text-xs text-slate-500">Days</label><Input type="number" min={0} value={form.recreate_days} onChange={(e) => setForm({ ...form, recreate_days: Number(e.target.value) })} /></div>
+                <div><label className="text-xs text-slate-500">Hours</label><Input type="number" min={0} value={form.recreate_hours} onChange={(e) => setForm({ ...form, recreate_hours: Number(e.target.value) })} /></div>
+                <div><label className="text-xs text-slate-500">Minutes</label><Input type="number" min={0} value={form.recreate_minutes} onChange={(e) => setForm({ ...form, recreate_minutes: Number(e.target.value) })} /></div>
+              </div>
+              <div className="mt-2"><label className="text-xs text-slate-500">Hide from users (minutes after draw)</label><Input type="number" min={0} value={form.hide_after_minutes} onChange={(e) => setForm({ ...form, hide_after_minutes: Number(e.target.value) })} /></div>
+            </div>
             <div>
               <label className="text-xs text-slate-500">Prize Mode</label>
               <select className="w-full border border-slate-200 rounded-md px-3 py-2 text-sm" value={form.prize_mode} onChange={(e) => {
@@ -127,10 +149,12 @@ const AdminLotteryPlans = () => {
             <div key={p.id} className="p-3 flex items-center gap-3">
               {p.game_image_url ? <img src={p.game_image_url} className="h-12 w-12 rounded object-cover" /> : <div className="h-12 w-12 bg-slate-100 rounded" />}
               <div className="flex-1 min-w-0">
-                <p className="font-semibold truncate">{p.name}</p>
+                <p className="font-semibold truncate">{p.name} <span className="text-[10px] text-slate-400">({p.status})</span></p>
                 <p className="text-xs text-slate-500">
-                  {p.total_tickets} tix · {p.ticket_price} {p.currency} · {p.prize_mode} · {p.status} · draws {new Date(p.draw_at).toLocaleString()}
+                  {p.total_tickets} tix · {p.ticket_price} {p.currency} · {p.prize_mode}
+                  {p.auto_recreate ? ` · auto every ${p.recreate_days||0}d ${p.recreate_hours||0}h ${p.recreate_minutes||0}m` : ""}
                 </p>
+                <p className="text-[11px] text-slate-400">Draw: {new Date(p.draw_at).toLocaleString()}</p>
               </div>
               <Button variant="outline" size="sm" onClick={() => setEditing(p)}><Pencil className="h-4 w-4" /></Button>
               <Button variant="ghost" size="sm" onClick={() => remove(p.id)}><Trash2 className="h-4 w-4 text-red-600" /></Button>
@@ -165,6 +189,15 @@ const AdminLotteryPlans = () => {
                 <div><label className="text-xs text-slate-500">Company %</label><Input type="number" value={editing.pct_company} onChange={(e) => setEditing({ ...editing, pct_company: Number(e.target.value) })} /></div>
                 <div><label className="text-xs text-slate-500">4-11 %</label><Input type="number" value={editing.pct_4_11} onChange={(e) => setEditing({ ...editing, pct_4_11: Number(e.target.value) })} /></div>
                 <label className="flex items-end gap-2 text-sm pb-2"><Switch checked={editing.pct_4_11_enabled} onCheckedChange={(v) => setEditing({ ...editing, pct_4_11_enabled: v })} /> 4–11 on</label>
+              </div>
+              <div className="border-t pt-2 space-y-2">
+                <label className="flex items-center gap-2 text-sm font-semibold"><Switch checked={!!editing.auto_recreate} onCheckedChange={(v) => setEditing({ ...editing, auto_recreate: v })} /> Auto re-run</label>
+                <div className="grid grid-cols-3 gap-2">
+                  <div><label className="text-xs text-slate-500">Days</label><Input type="number" min={0} value={editing.recreate_days || 0} onChange={(e) => setEditing({ ...editing, recreate_days: Number(e.target.value) })} /></div>
+                  <div><label className="text-xs text-slate-500">Hours</label><Input type="number" min={0} value={editing.recreate_hours || 0} onChange={(e) => setEditing({ ...editing, recreate_hours: Number(e.target.value) })} /></div>
+                  <div><label className="text-xs text-slate-500">Minutes</label><Input type="number" min={0} value={editing.recreate_minutes || 0} onChange={(e) => setEditing({ ...editing, recreate_minutes: Number(e.target.value) })} /></div>
+                </div>
+                <div><label className="text-xs text-slate-500">Hide from users (minutes after draw)</label><Input type="number" min={0} value={editing.hide_after_minutes ?? 1} onChange={(e) => setEditing({ ...editing, hide_after_minutes: Number(e.target.value) })} /></div>
               </div>
               <label className="flex items-center gap-2 text-sm"><Switch checked={editing.enabled} onCheckedChange={(v) => setEditing({ ...editing, enabled: v })} /> Enabled</label>
             </div>

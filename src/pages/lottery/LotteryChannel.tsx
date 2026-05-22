@@ -24,15 +24,26 @@ const LotteryChannel = ({ channelId, channelName, onBack }: Props) => {
   }, []);
 
   const load = async () => {
+    // Ask backend to process expired draws + auto-recreate before reading
+    try { await supabase.functions.invoke("lottery-draw", { body: {} }); } catch (_) {}
+
+    const nowIso = new Date().toISOString();
     const { data: ps } = await supabase
       .from("lottery_plans")
       .select("*")
       .eq("channel_id", channelId)
       .eq("enabled", true)
       .order("created_at", { ascending: false });
-    setPlans((ps as any) || []);
-    if (ps?.length) {
-      const ids = (ps as any[]).map((p) => p.id);
+
+    // Hide plans whose draw_at + hide_after_minutes is past
+    const visible = ((ps as any[]) || []).filter((p) => {
+      const hideMs = (Number((p as any).hide_after_minutes) || 1) * 60_000;
+      return new Date(p.draw_at).getTime() + hideMs > Date.now();
+    });
+    setPlans(visible as any);
+
+    if (visible.length) {
+      const ids = visible.map((p: any) => p.id);
       const { data: tix } = await supabase
         .from("lottery_tickets")
         .select("plan_id,user_id")
@@ -52,7 +63,7 @@ const LotteryChannel = ({ channelId, channelName, onBack }: Props) => {
       setMyEntries((ent as any) || []);
     }
   };
-  useEffect(() => { load(); }, [channelId]);
+  useEffect(() => { load(); /* refresh every 30s to drop expired */ const r = setInterval(load, 30_000); return () => clearInterval(r); }, [channelId]);
 
   return (
     <div className="min-h-[60vh] -mx-4">
@@ -105,46 +116,42 @@ const CurrencyBadge = ({ currency, className = "" }: { currency: string; classNa
 };
 
 const LotteryCard = ({ plan, sold, onBuy }: { plan: LotteryPlan; sold: number; onBuy: () => void }) => {
-  // Show potential max pool when nothing sold yet so users see attractive numbers
   const effectiveCount = sold > 0 ? sold : plan.total_tickets;
   const pool = effectiveCount * Number(plan.ticket_price);
   const first = Math.floor(pool * (Number(plan.pct_first) / 100));
   const sym = currencySymbol(plan.currency);
   const isXcoin = plan.currency?.toUpperCase() === "XCOIN";
+  const Money = ({ value, className = "" }: { value: number; className?: string }) => (
+    <span className={`inline-flex items-center gap-1 ${className}`}>
+      {isXcoin ? <Gem className="h-3.5 w-3.5 text-cyan-300" /> : <span className="text-cyan-300 font-extrabold">{sym}</span>}
+      {value.toLocaleString()}
+    </span>
+  );
   return (
-    <div className="relative rounded-2xl bg-gradient-to-r from-indigo-800 to-indigo-700 border border-indigo-500/40 overflow-hidden shadow-lg">
-      <div className="absolute top-0 right-0 bg-fuchsia-600/40 px-3 py-1 rounded-bl-xl text-xs">
-        Ends in <span className="font-bold text-amber-300">{formatCountdown(plan.draw_at)}</span>
+    <div className="relative rounded-xl bg-gradient-to-br from-indigo-700 via-indigo-800 to-indigo-900 border border-amber-500/40 overflow-hidden shadow-md">
+      {/* Top end-in pill */}
+      <div className="absolute top-0 right-0 bg-gradient-to-l from-fuchsia-600/80 to-fuchsia-700/30 px-2.5 py-0.5 rounded-bl-xl rounded-tr-xl text-[10px] text-white/90">
+        Ends in <span className="font-extrabold text-amber-300 tracking-wider">{formatCountdown(plan.draw_at)}</span>
       </div>
-      <div className="flex gap-3 p-3 pt-8">
+      <div className="flex gap-2.5 p-2.5 pt-5 items-center">
         {plan.game_image_url ? (
-          <img src={plan.game_image_url} className="h-24 w-24 rounded-xl object-cover shrink-0" />
+          <img src={plan.game_image_url} className="h-16 w-16 rounded-lg object-cover shrink-0 ring-1 ring-amber-400/40" />
         ) : (
-          <div className="h-24 w-24 rounded-xl bg-indigo-600 shrink-0" />
+          <div className="h-16 w-16 rounded-lg bg-indigo-600 shrink-0" />
         )}
         <div className="flex-1 min-w-0">
-          <p className="italic text-white/90 text-sm">Prize Pool</p>
-          <p className="font-extrabold text-2xl text-amber-300 italic flex items-center gap-1">
-            {isXcoin
-              ? <><Gem className="h-5 w-5 text-cyan-300" />{pool.toLocaleString()}</>
-              : <>{pool.toLocaleString()} <span className="text-cyan-300">{sym}</span></>}
-          </p>
-          <p className="italic text-white/70 text-xs mt-1">1st Prize</p>
-          <p className="text-white font-bold flex items-center gap-1">
-            {isXcoin
-              ? <><Gem className="h-4 w-4 text-cyan-300" />{first.toLocaleString()}</>
-              : <>{first.toLocaleString()} <span className="text-cyan-300">{sym}</span></>}
-          </p>
-          {plan.xcoin_bonus ? <p className="text-xs text-emerald-300 mt-1">+ {plan.xcoin_bonus} X coin</p> : null}
-          <p className="text-[10px] text-white/50 mt-1">{sold}/{plan.total_tickets} sold</p>
+          <p className="italic text-white/80 text-[11px] leading-tight">Prize Pool</p>
+          <p className="font-extrabold text-lg text-amber-300 italic leading-tight"><Money value={pool} /></p>
+          <p className="italic text-white/60 text-[10px] mt-0.5 leading-tight">1st Prize</p>
+          <p className="text-white font-bold text-sm leading-tight"><Money value={first} /></p>
+          {plan.xcoin_bonus ? <p className="text-[10px] text-emerald-300 leading-tight">+ {plan.xcoin_bonus} X coin</p> : null}
+          <p className="text-[9px] text-white/50 mt-0.5">{sold}/{plan.total_tickets} sold</p>
         </div>
-      </div>
-      <div className="flex justify-end p-3 pt-0">
         <button
           onClick={onBuy}
-          className="bg-gradient-to-b from-emerald-400 to-emerald-600 text-white font-bold text-sm px-5 py-2 rounded-lg shadow-lg border border-emerald-300 flex items-center gap-1"
+          className="self-center bg-gradient-to-b from-emerald-400 to-emerald-600 text-white font-extrabold text-xs px-3 py-2 rounded-lg shadow-md border-2 border-emerald-300 flex items-center gap-1 shrink-0"
         >
-          <CurrencyBadge currency={plan.currency} className="h-4 w-4" />
+          <CurrencyBadge currency={plan.currency} className="h-3.5 w-3.5" />
           {plan.ticket_price}
         </button>
       </div>
