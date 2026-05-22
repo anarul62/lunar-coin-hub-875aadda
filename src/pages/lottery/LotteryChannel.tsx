@@ -98,10 +98,19 @@ const LotteryChannel = ({ channelId, channelName, onBack }: Props) => {
   );
 };
 
+const CurrencyBadge = ({ currency, className = "" }: { currency: string; className?: string }) => {
+  const sym = currencySymbol(currency);
+  if (currency?.toUpperCase() === "XCOIN") return <Gem className={`text-cyan-300 ${className}`} />;
+  return <span className={`font-extrabold ${className}`}>{sym}</span>;
+};
+
 const LotteryCard = ({ plan, sold, onBuy }: { plan: LotteryPlan; sold: number; onBuy: () => void }) => {
-  const pool = sold * Number(plan.ticket_price);
+  // Show potential max pool when nothing sold yet so users see attractive numbers
+  const effectiveCount = sold > 0 ? sold : plan.total_tickets;
+  const pool = effectiveCount * Number(plan.ticket_price);
   const first = Math.floor(pool * (Number(plan.pct_first) / 100));
   const sym = currencySymbol(plan.currency);
+  const isXcoin = plan.currency?.toUpperCase() === "XCOIN";
   return (
     <div className="relative rounded-2xl bg-gradient-to-r from-indigo-800 to-indigo-700 border border-indigo-500/40 overflow-hidden shadow-lg">
       <div className="absolute top-0 right-0 bg-fuchsia-600/40 px-3 py-1 rounded-bl-xl text-xs">
@@ -116,11 +125,18 @@ const LotteryCard = ({ plan, sold, onBuy }: { plan: LotteryPlan; sold: number; o
         <div className="flex-1 min-w-0">
           <p className="italic text-white/90 text-sm">Prize Pool</p>
           <p className="font-extrabold text-2xl text-amber-300 italic flex items-center gap-1">
-            <Gem className="h-5 w-5 text-cyan-300" />{pool.toLocaleString()}{sym !== "💎" && ` ${sym}`}
+            {isXcoin
+              ? <><Gem className="h-5 w-5 text-cyan-300" />{pool.toLocaleString()}</>
+              : <>{pool.toLocaleString()} <span className="text-cyan-300">{sym}</span></>}
           </p>
           <p className="italic text-white/70 text-xs mt-1">1st Prize</p>
-          <p className="text-white font-bold flex items-center gap-1"><Gem className="h-4 w-4 text-cyan-300" />{first.toLocaleString()}</p>
+          <p className="text-white font-bold flex items-center gap-1">
+            {isXcoin
+              ? <><Gem className="h-4 w-4 text-cyan-300" />{first.toLocaleString()}</>
+              : <>{first.toLocaleString()} <span className="text-cyan-300">{sym}</span></>}
+          </p>
           {plan.xcoin_bonus ? <p className="text-xs text-emerald-300 mt-1">+ {plan.xcoin_bonus} X coin</p> : null}
+          <p className="text-[10px] text-white/50 mt-1">{sold}/{plan.total_tickets} sold</p>
         </div>
       </div>
       <div className="flex justify-end p-3 pt-0">
@@ -128,7 +144,8 @@ const LotteryCard = ({ plan, sold, onBuy }: { plan: LotteryPlan; sold: number; o
           onClick={onBuy}
           className="bg-gradient-to-b from-emerald-400 to-emerald-600 text-white font-bold text-sm px-5 py-2 rounded-lg shadow-lg border border-emerald-300 flex items-center gap-1"
         >
-          <Gem className="h-4 w-4" />{plan.ticket_price}
+          <CurrencyBadge currency={plan.currency} className="h-4 w-4" />
+          {plan.ticket_price}
         </button>
       </div>
     </div>
