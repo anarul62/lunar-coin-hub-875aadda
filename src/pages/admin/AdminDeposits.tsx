@@ -28,6 +28,7 @@ const AdminDeposits = () => {
   const [searchMode, setSearchMode] = useState<"order" | "code">("order");
   const [rejectId, setRejectId] = useState<string | null>(null);
   const [reason, setReason] = useState("");
+  const [showLgpay, setShowLgpay] = useState(false);
 
   const load = async () => {
     setLoading(true);
