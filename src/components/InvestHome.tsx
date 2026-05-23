@@ -20,7 +20,7 @@ const categories = [
   { icon: Wallet, label: "Wallet", tag: null, path: "/wallet" },
   { icon: FileBadge, label: "Reports", tag: null, path: "/plan-history" },
   { icon: Sparkles, label: "Rewards", tag: "New", path: "/rewards" },
-  { icon: Lock, label: "Vault", tag: null, path: null },
+  { icon: Headphones, label: "Customer Service", tag: null, path: "/support" },
 ];
 
 const newlyLaunched = [
