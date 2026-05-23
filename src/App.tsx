@@ -58,6 +58,8 @@ import AdminAgentData from "./pages/admin/AdminAgentData.tsx";
 import AdminManageAdmins from "./pages/admin/AdminManageAdmins.tsx";
 import AgentLogin from "./pages/agent/AgentLogin.tsx";
 import AgentDashboard from "./pages/agent/AgentDashboard.tsx";
+import Support from "./pages/Support.tsx";
+import AdminSupport from "./pages/admin/AdminSupport.tsx";
 
 
 const queryClient = new QueryClient();
