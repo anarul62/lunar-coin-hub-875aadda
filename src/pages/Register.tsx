@@ -13,6 +13,7 @@ const countryCodes = [
 
 const Register = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [countryCode, setCountryCode] = useState("+91");
@@ -23,6 +24,19 @@ const Register = () => {
     password: "",
     invitationCode: "",
   });
+
+  useEffect(() => {
+    const ref = searchParams.get("ref") || searchParams.get("code") || searchParams.get("invite");
+    if (ref) {
+      setForm((f) => ({ ...f, invitationCode: ref.toUpperCase() }));
+      try { sessionStorage.setItem("ref_code", ref.toUpperCase()); } catch {}
+    } else {
+      try {
+        const saved = sessionStorage.getItem("ref_code");
+        if (saved) setForm((f) => ({ ...f, invitationCode: saved }));
+      } catch {}
+    }
+  }, [searchParams]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
