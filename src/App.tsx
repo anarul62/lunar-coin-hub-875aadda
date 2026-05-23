@@ -86,7 +86,7 @@ const placeholders: { path: string; title: string }[] = [
   { path: "/admin/invite-wheel", title: "Invite Wheel" },
   { path: "/admin/spin-wheel", title: "Spin Wheel" },
   { path: "/admin/bonus-collation", title: "Bonus Collation" },
-  { path: "/admin/support", title: "Customer Service" },
+  { path: "/admin/support-old", title: "Customer Service" },
   { path: "/admin/feedback", title: "Users Feedback" },
   { path: "/admin/telegram", title: "Telegram" },
 ];
