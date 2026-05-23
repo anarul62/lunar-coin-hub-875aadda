@@ -1,6 +1,6 @@
 import { useEffect, useState, ReactNode } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { isAdmin, adminLogout } from "@/lib/admin-auth";
+import { adminLogout, requireAdmin } from "@/lib/admin-auth";
 import {
   LayoutDashboard, Users, ShieldOff, Wallet, Percent, TrendingUp,
   Coins, Gem, FileCheck, LineChart, Gift, Megaphone, Settings,
@@ -93,7 +93,11 @@ const AdminLayout = ({ children, title }: { children: ReactNode; title?: string 
   const [unread, setUnread] = useState(0);
 
   useEffect(() => {
-    if (!isAdmin()) navigate("/admin/login");
+    let mounted = true;
+    requireAdmin().then((ok) => {
+      if (mounted && !ok) navigate("/admin/login");
+    });
+    return () => { mounted = false; };
   }, [navigate]);
 
   useEffect(() => {
