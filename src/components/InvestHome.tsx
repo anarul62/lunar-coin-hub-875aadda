@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Search, TrendingUp, Coins, Gem, ShieldCheck, FileBadge,
-  Wallet, Sparkles, BarChart3, Headphones, ChevronRight, Star,
+  Wallet, Sparkles, BarChart3, Headphones, Lock, ChevronRight, Star,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BannerSlider from "@/components/BannerSlider";
