@@ -29,6 +29,25 @@ export const adminLogin = async (email: string, password: string) => {
 
 export const isAdmin = () => localStorage.getItem(KEY) === "1";
 
+export const requireAdmin = async () => {
+  const session = await getReadySession();
+  const userId = session?.user?.id;
+  if (!userId || localStorage.getItem(KEY) !== "1") return false;
+
+  const { data: roleRow } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userId)
+    .in("role", ["admin", "subadmin"])
+    .maybeSingle();
+
+  if (!roleRow) {
+    localStorage.removeItem(KEY);
+    return false;
+  }
+  return true;
+};
+
 export const adminLogout = async () => {
   localStorage.removeItem(KEY);
   try { await supabase.auth.signOut(); } catch {}
