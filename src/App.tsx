@@ -58,6 +58,8 @@ import AdminAgentData from "./pages/admin/AdminAgentData.tsx";
 import AdminManageAdmins from "./pages/admin/AdminManageAdmins.tsx";
 import AgentLogin from "./pages/agent/AgentLogin.tsx";
 import AgentDashboard from "./pages/agent/AgentDashboard.tsx";
+import Support from "./pages/Support.tsx";
+import AdminSupport from "./pages/admin/AdminSupport.tsx";
 
 
 const queryClient = new QueryClient();
@@ -84,7 +86,7 @@ const placeholders: { path: string; title: string }[] = [
   { path: "/admin/invite-wheel", title: "Invite Wheel" },
   { path: "/admin/spin-wheel", title: "Spin Wheel" },
   { path: "/admin/bonus-collation", title: "Bonus Collation" },
-  { path: "/admin/support", title: "Customer Service" },
+  { path: "/admin/support-old", title: "Customer Service" },
   { path: "/admin/feedback", title: "Users Feedback" },
   { path: "/admin/telegram", title: "Telegram" },
 ];
@@ -153,6 +155,8 @@ const App = () => (
           <Route path="/agent/login" element={<AgentLogin />} />
           <Route path="/agent" element={<AgentDashboard />} />
           <Route path="/agent-data1" element={<AgentDashboard />} />
+          <Route path="/support" element={<Support />} />
+          <Route path="/admin/support" element={<AdminSupport />} />
           {placeholders.map(p => (
             <Route key={p.path} path={p.path} element={<AdminPlaceholder title={p.title} />} />
           ))}

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Search, TrendingUp, Coins, Gem, ShieldCheck, FileBadge,
-  Wallet, Sparkles, BarChart3, Lock, ChevronRight, Star,
+  Wallet, Sparkles, BarChart3, Headphones, Lock, ChevronRight, Star,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BannerSlider from "@/components/BannerSlider";
@@ -20,7 +20,7 @@ const categories = [
   { icon: Wallet, label: "Wallet", tag: null, path: "/wallet" },
   { icon: FileBadge, label: "Reports", tag: null, path: "/plan-history" },
   { icon: Sparkles, label: "Rewards", tag: "New", path: "/rewards" },
-  { icon: Lock, label: "Vault", tag: null, path: null },
+  { icon: Headphones, label: "Customer Service", tag: null, path: "/support" },
 ];
 
 const newlyLaunched = [
