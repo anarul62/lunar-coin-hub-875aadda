@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { getReadySession } from "@/lib/auth-session";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,7 +19,9 @@ const AgentLogin = () => {
     setLoading(true);
     const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim().toLowerCase(), password });
     if (error || !data.user) { setLoading(false); toast.error("Invalid credentials"); return; }
-    const { data: role } = await (supabase as any).from("user_roles").select("role").eq("user_id", data.user.id).eq("role", "agent").maybeSingle();
+    const session = await getReadySession();
+    const userId = session?.user?.id || data.user.id;
+    const { data: role } = await (supabase as any).from("user_roles").select("role").eq("user_id", userId).eq("role", "agent").maybeSingle();
     if (!role) {
       await supabase.auth.signOut();
       setLoading(false);

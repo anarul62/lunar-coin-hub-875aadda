@@ -31,21 +31,20 @@ const Login = () => {
     setLoading(true);
     try {
       const { data: profiles, error: profileError } = await supabase
-        .from("profiles")
-        .select("email")
-        .eq("phone", fullPhone)
-        .maybeSingle();
+        .rpc("lookup_login_email_by_phone" as any, { _phone: fullPhone });
 
       if (profileError) throw profileError;
 
-      if (!profiles?.email) {
+      const email = typeof profiles === "string" ? profiles : null;
+
+      if (!email) {
         toast.error("No account found with this phone number");
         setLoading(false);
         return;
       }
 
       const { error } = await supabase.auth.signInWithPassword({
-        email: profiles.email,
+        email,
         password,
       });
 

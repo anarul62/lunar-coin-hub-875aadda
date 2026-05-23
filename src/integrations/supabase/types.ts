@@ -1337,6 +1337,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      lookup_login_email_by_phone: { Args: { _phone: string }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user" | "subadmin" | "agent"

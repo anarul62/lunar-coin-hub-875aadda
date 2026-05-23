@@ -57,16 +57,6 @@ const Register = () => {
 
       if (error) throw error;
 
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase.from("profiles").update({
-          phone: fullPhone,
-          full_name: form.fullName,
-          email: form.email,
-          invitation_code: form.invitationCode || null,
-        }).eq("user_id", user.id);
-      }
-
       toast.success("Registration successful!");
       navigate("/");
     } catch (err: any) {
