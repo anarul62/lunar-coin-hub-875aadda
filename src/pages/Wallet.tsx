@@ -49,7 +49,8 @@ const Wallet = () => {
   const bal = Number(profile?.balance_usdt || 0);
   const locked = Number(profile?.locked_bonus_usdt || 0);
   const totalUsdt = bal + locked;
-  const display = showInr ? `₹${usdtToInr(totalUsdt, rate).toFixed(2)}` : `${totalUsdt.toFixed(4)} USDT`;
+  const userCur = getUserCurrencyFromPhone(profile?.phone);
+  const display = showLocal ? formatUserBalance(totalUsdt, userCur, rates) : `${totalUsdt.toFixed(4)} USDT`;
 
   const xcoinPerUsdt = Number(settings.xcoin_per_usdt || 1000);
   const minConvert = Number(settings.min_convert_xcoin || 100);
