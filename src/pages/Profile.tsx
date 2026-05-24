@@ -84,7 +84,8 @@ const Profile = () => {
   const bal = Number(profile.balance_usdt || 0);
   const locked = Number(profile.locked_bonus_usdt || 0);
   const totalUsdt = bal + locked;
-  const displayBal = showInr ? `₹${usdtToInr(totalUsdt, rate).toFixed(2)}` : `${totalUsdt.toFixed(4)} USDT`;
+  const userCur = getUserCurrencyFromPhone(profile.phone);
+  const displayBal = showLocal ? formatUserBalance(totalUsdt, userCur, rates) : `${totalUsdt.toFixed(4)} USDT`;
   const username = profile.full_name || profile.email?.split("@")[0] || "User";
   const kycVerified = kycStatus === "approved";
 
