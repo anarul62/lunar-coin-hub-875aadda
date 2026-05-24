@@ -13,7 +13,7 @@ import {
   Headphones, BookOpen, Info, RefreshCw, ChevronRight, ShieldCheck, Camera, Loader2,
   LogOut,
 } from "lucide-react";
-import { getUsdInrRate, usdtToInr } from "@/lib/currency";
+import { getUsdInrRate, usdtToInr, fetchLiveRates, getUserCurrencyFromPhone, formatUserBalance } from "@/lib/currency";
 
 const AVATARS = [72, 20, 10, 13, 2, 36, 1, 4, 5, 44, 28, 67, 3, 66, 34]
   .map(n => `https://aviator-demo.spribegaming.com/assets/static/avatars/v2/av-${n}.png`);
