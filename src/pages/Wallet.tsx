@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import BottomNav from "@/components/BottomNav";
 import { supabase } from "@/integrations/supabase/client";
-import { getUsdInrRate, usdtToInr } from "@/lib/currency";
+import { getUsdInrRate, usdtToInr, fetchLiveRates, getUserCurrencyFromPhone, formatUserBalance } from "@/lib/currency";
 import { Info, RefreshCw, Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
