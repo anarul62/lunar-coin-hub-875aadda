@@ -49,6 +49,7 @@ const Profile = () => {
     }
     setKycStatus((kyc?.[0]?.status as any) || "none");
     setRate(r);
+    setRates(rs);
     setLoading(false);
   };
   useEffect(() => { load(); }, []);
