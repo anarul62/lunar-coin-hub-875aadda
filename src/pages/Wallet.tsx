@@ -18,8 +18,9 @@ const Wallet = () => {
   const [profile, setProfile] = useState<any>(null);
   const [xcoin, setXcoin] = useState(0);
   const [rate, setRate] = useState(83);
+  const [rates, setRates] = useState<Record<string, number>>({ INR: 83, BDT: 110, PKR: 280, USDT: 1 });
   const [settings, setSettings] = useState<any>({ xcoin_per_usdt: 1000, min_convert_xcoin: 100, description: "" });
-  const [showInr, setShowInr] = useState(true);
+  const [showLocal, setShowLocal] = useState(true);
   const [infoOpen, setInfoOpen] = useState(false);
   const [convertOpen, setConvertOpen] = useState(false);
   const [convAmt, setConvAmt] = useState("");
