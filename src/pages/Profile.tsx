@@ -34,10 +34,11 @@ const Profile = () => {
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { navigate("/login"); return; }
-    const [{ data: prof }, { data: kyc }, r] = await Promise.all([
+    const [{ data: prof }, { data: kyc }, r, rs] = await Promise.all([
       supabase.from("profiles").select("*").eq("user_id", user.id).maybeSingle(),
       supabase.from("kyc_requests").select("status").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1),
       getUsdInrRate(),
+      fetchLiveRates(),
     ]);
     if (!prof) {
       // create empty profile fallback
