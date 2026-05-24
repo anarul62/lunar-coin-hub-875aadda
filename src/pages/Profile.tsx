@@ -134,7 +134,7 @@ const Profile = () => {
                 <p className="text-xs text-muted-foreground">Total balance</p>
                 <p className="font-heading text-2xl font-bold mt-1 flex items-center gap-2 text-gradient-gold">
                   {displayBal}
-                  <button onClick={() => setShowInr(s => !s)} className="text-muted-foreground hover:text-primary">
+                  <button onClick={() => setShowLocal(s => !s)} className="text-muted-foreground hover:text-primary">
                     <RefreshCw className="h-4 w-4"/>
                   </button>
                 </p>
