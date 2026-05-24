@@ -24,10 +24,11 @@ const Profile = () => {
   const [profile, setProfile] = useState<any>(null);
   const [kycStatus, setKycStatus] = useState<"none" | "pending" | "approved" | "rejected">("none");
   const [rate, setRate] = useState(83);
+  const [rates, setRates] = useState<Record<string, number>>({ INR: 83, BDT: 110, PKR: 280, USDT: 1 });
   const [avatarOpen, setAvatarOpen] = useState(false);
   const [convertOpen, setConvertOpen] = useState(false);
   const [kycOpen, setKycOpen] = useState(false);
-  const [showInr, setShowInr] = useState(true);
+  const [showLocal, setShowLocal] = useState(true);
 
   const load = async () => {
     setLoading(true);
