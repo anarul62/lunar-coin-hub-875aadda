@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import BottomNav from "@/components/BottomNav";
 import { supabase } from "@/integrations/supabase/client";
-import { getUsdInrRate, usdtToInr } from "@/lib/currency";
+import { getUsdInrRate, usdtToInr, fetchLiveRates, getUserCurrencyFromPhone, formatUserBalance } from "@/lib/currency";
 import { Info, RefreshCw, Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -18,8 +18,9 @@ const Wallet = () => {
   const [profile, setProfile] = useState<any>(null);
   const [xcoin, setXcoin] = useState(0);
   const [rate, setRate] = useState(83);
+  const [rates, setRates] = useState<Record<string, number>>({ INR: 83, BDT: 110, PKR: 280, USDT: 1 });
   const [settings, setSettings] = useState<any>({ xcoin_per_usdt: 1000, min_convert_xcoin: 100, description: "" });
-  const [showInr, setShowInr] = useState(true);
+  const [showLocal, setShowLocal] = useState(true);
   const [infoOpen, setInfoOpen] = useState(false);
   const [convertOpen, setConvertOpen] = useState(false);
   const [convAmt, setConvAmt] = useState("");
@@ -29,16 +30,18 @@ const Wallet = () => {
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { navigate("/login"); return; }
-    const [{ data: prof }, { data: xc }, { data: setRow }, r] = await Promise.all([
+    const [{ data: prof }, { data: xc }, { data: setRow }, r, rs] = await Promise.all([
       supabase.from("profiles").select("*").eq("user_id", user.id).maybeSingle(),
       supabase.from("user_xcoin").select("balance").eq("user_id", user.id).maybeSingle(),
       supabase.from("app_settings").select("value").eq("key", "xcoin_settings").maybeSingle(),
       getUsdInrRate(),
+      fetchLiveRates(),
     ]);
     setProfile(prof);
     setXcoin(Number(xc?.balance || 0));
     setSettings(setRow?.value || { xcoin_per_usdt: 1000, min_convert_xcoin: 100 });
     setRate(r);
+    setRates(rs);
     setLoading(false);
   };
   useEffect(() => { load(); }, []);
@@ -46,7 +49,8 @@ const Wallet = () => {
   const bal = Number(profile?.balance_usdt || 0);
   const locked = Number(profile?.locked_bonus_usdt || 0);
   const totalUsdt = bal + locked;
-  const display = showInr ? `₹${usdtToInr(totalUsdt, rate).toFixed(2)}` : `${totalUsdt.toFixed(4)} USDT`;
+  const userCur = getUserCurrencyFromPhone(profile?.phone);
+  const display = showLocal ? formatUserBalance(totalUsdt, userCur, rates) : `${totalUsdt.toFixed(4)} USDT`;
 
   const xcoinPerUsdt = Number(settings.xcoin_per_usdt || 1000);
   const minConvert = Number(settings.min_convert_xcoin || 100);
@@ -84,7 +88,7 @@ const Wallet = () => {
             <p className="text-xs text-muted-foreground">Total balance</p>
             <p className="font-heading text-3xl font-bold mt-1 flex items-center gap-2 text-gradient-gold">
               {display}
-              <button onClick={() => setShowInr(s => !s)} className="text-muted-foreground hover:text-primary">
+              <button onClick={() => setShowLocal(s => !s)} className="text-muted-foreground hover:text-primary">
                 <RefreshCw className="h-4 w-4"/>
               </button>
             </p>

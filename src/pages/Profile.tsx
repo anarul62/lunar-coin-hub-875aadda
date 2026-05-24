@@ -13,7 +13,7 @@ import {
   Headphones, BookOpen, Info, RefreshCw, ChevronRight, ShieldCheck, Camera, Loader2,
   LogOut,
 } from "lucide-react";
-import { getUsdInrRate, usdtToInr } from "@/lib/currency";
+import { getUsdInrRate, usdtToInr, fetchLiveRates, getUserCurrencyFromPhone, formatUserBalance } from "@/lib/currency";
 
 const AVATARS = [72, 20, 10, 13, 2, 36, 1, 4, 5, 44, 28, 67, 3, 66, 34]
   .map(n => `https://aviator-demo.spribegaming.com/assets/static/avatars/v2/av-${n}.png`);
@@ -24,19 +24,21 @@ const Profile = () => {
   const [profile, setProfile] = useState<any>(null);
   const [kycStatus, setKycStatus] = useState<"none" | "pending" | "approved" | "rejected">("none");
   const [rate, setRate] = useState(83);
+  const [rates, setRates] = useState<Record<string, number>>({ INR: 83, BDT: 110, PKR: 280, USDT: 1 });
   const [avatarOpen, setAvatarOpen] = useState(false);
   const [convertOpen, setConvertOpen] = useState(false);
   const [kycOpen, setKycOpen] = useState(false);
-  const [showInr, setShowInr] = useState(true);
+  const [showLocal, setShowLocal] = useState(true);
 
   const load = async () => {
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { navigate("/login"); return; }
-    const [{ data: prof }, { data: kyc }, r] = await Promise.all([
+    const [{ data: prof }, { data: kyc }, r, rs] = await Promise.all([
       supabase.from("profiles").select("*").eq("user_id", user.id).maybeSingle(),
       supabase.from("kyc_requests").select("status").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1),
       getUsdInrRate(),
+      fetchLiveRates(),
     ]);
     if (!prof) {
       // create empty profile fallback
@@ -47,6 +49,7 @@ const Profile = () => {
     }
     setKycStatus((kyc?.[0]?.status as any) || "none");
     setRate(r);
+    setRates(rs);
     setLoading(false);
   };
   useEffect(() => { load(); }, []);
@@ -81,7 +84,8 @@ const Profile = () => {
   const bal = Number(profile.balance_usdt || 0);
   const locked = Number(profile.locked_bonus_usdt || 0);
   const totalUsdt = bal + locked;
-  const displayBal = showInr ? `₹${usdtToInr(totalUsdt, rate).toFixed(2)}` : `${totalUsdt.toFixed(4)} USDT`;
+  const userCur = getUserCurrencyFromPhone(profile.phone);
+  const displayBal = showLocal ? formatUserBalance(totalUsdt, userCur, rates) : `${totalUsdt.toFixed(4)} USDT`;
   const username = profile.full_name || profile.email?.split("@")[0] || "User";
   const kycVerified = kycStatus === "approved";
 
@@ -130,7 +134,7 @@ const Profile = () => {
                 <p className="text-xs text-muted-foreground">Total balance</p>
                 <p className="font-heading text-2xl font-bold mt-1 flex items-center gap-2 text-gradient-gold">
                   {displayBal}
-                  <button onClick={() => setShowInr(s => !s)} className="text-muted-foreground hover:text-primary">
+                  <button onClick={() => setShowLocal(s => !s)} className="text-muted-foreground hover:text-primary">
                     <RefreshCw className="h-4 w-4"/>
                   </button>
                 </p>
