@@ -30,16 +30,18 @@ const Wallet = () => {
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { navigate("/login"); return; }
-    const [{ data: prof }, { data: xc }, { data: setRow }, r] = await Promise.all([
+    const [{ data: prof }, { data: xc }, { data: setRow }, r, rs] = await Promise.all([
       supabase.from("profiles").select("*").eq("user_id", user.id).maybeSingle(),
       supabase.from("user_xcoin").select("balance").eq("user_id", user.id).maybeSingle(),
       supabase.from("app_settings").select("value").eq("key", "xcoin_settings").maybeSingle(),
       getUsdInrRate(),
+      fetchLiveRates(),
     ]);
     setProfile(prof);
     setXcoin(Number(xc?.balance || 0));
     setSettings(setRow?.value || { xcoin_per_usdt: 1000, min_convert_xcoin: 100 });
     setRate(r);
+    setRates(rs);
     setLoading(false);
   };
   useEffect(() => { load(); }, []);
