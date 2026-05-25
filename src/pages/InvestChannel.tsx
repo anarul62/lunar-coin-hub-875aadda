@@ -90,21 +90,30 @@ const InvestChannel = () => {
 
       const bal = Number(profile?.balance_usdt || 0);
       const debitUsdt = currencyToUsdt(amount, confirmPlan.currency, rates);
-      if (bal < debitUsdt) {
-        toast.error("Insufficient balance");
-        return;
+      if (confirmPlan.currency === "XCOIN") {
+        const { data: xc } = await supabase.from("user_xcoin").select("balance").eq("user_id", user.id).maybeSingle();
+        const xBal = Number(xc?.balance || 0);
+        if (xBal < amount) {
+          toast.error("Insufficient X coin balance");
+          return;
+        }
+        if (xc) await supabase.from("user_xcoin").update({ balance: xBal - amount }).eq("user_id", user.id);
+        else await supabase.from("user_xcoin").insert({ user_id: user.id, balance: -amount } as any);
+      } else {
+        if (bal < debitUsdt) {
+          toast.error("Insufficient balance");
+          return;
+        }
+        const { error: ue } = await supabase
+          .from("profiles")
+          .update({ balance_usdt: bal - debitUsdt })
+          .eq("user_id", user.id);
+        if (ue) throw ue;
       }
 
       const total = calcReturn(confirmPlan, amount);
       const profit = total - amount;
       const endsAt = new Date(Date.now() + confirmPlan.duration_days * 86400000).toISOString();
-
-      // deduct balance
-      const { error: ue } = await supabase
-        .from("profiles")
-        .update({ balance_usdt: bal - debitUsdt })
-        .eq("user_id", user.id);
-      if (ue) throw ue;
 
       // create investment
       const { error: ie } = await supabase.from("user_investments").insert({
