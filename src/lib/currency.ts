@@ -7,6 +7,17 @@ export type UserCurrency = {
   symbol: string; // ₹, ৳, Rs, USDT
 };
 
+export type WalletCurrency = "INR" | "BDT" | "PKR" | "USDT" | "XCOIN";
+
+export const DEFAULT_CURRENCY_RATES: Record<string, number> = {
+  INR: 83,
+  BDT: 120,
+  PKR: 280,
+  USDT: 1,
+  USD: 1,
+  XCOIN: 1000,
+};
+
 let cached: { rate: number; ts: number } | null = null;
 let ratesCache: { rates: Record<string, number>; ts: number } | null = null;
 const TTL = 5 * 60 * 1000;
@@ -24,7 +35,23 @@ export const fetchLiveUsdInr = async (): Promise<number> => {
 
 export const fetchLiveRates = async (): Promise<Record<string, number>> => {
   if (ratesCache && Date.now() - ratesCache.ts < TTL) return ratesCache.rates;
-  const fallback = { INR: 83, BDT: 110, PKR: 280, USDT: 1, USD: 1 };
+  const fallback = DEFAULT_CURRENCY_RATES;
+  try {
+    const { data } = await supabase.from("app_settings").select("value").eq("key", "currency_rates").maybeSingle();
+    const v: any = data?.value || {};
+    if (data?.value) {
+      const rates: Record<string, number> = {
+        INR: Number(v.usdt_inr) || fallback.INR,
+        BDT: Number(v.usdt_bdt) || fallback.BDT,
+        PKR: Number(v.usdt_pkr) || fallback.PKR,
+        XCOIN: Number(v.usdt_xcoin) || fallback.XCOIN,
+        USDT: 1,
+        USD: 1,
+      };
+      ratesCache = { rates, ts: Date.now() };
+      return rates;
+    }
+  } catch {}
   try {
     const r = await fetch("https://open.er-api.com/v6/latest/USD");
     const j = await r.json();
@@ -32,6 +59,7 @@ export const fetchLiveRates = async (): Promise<Record<string, number>> => {
       INR: Number(j?.rates?.INR) || fallback.INR,
       BDT: Number(j?.rates?.BDT) || fallback.BDT,
       PKR: Number(j?.rates?.PKR) || fallback.PKR,
+      XCOIN: fallback.XCOIN,
       USDT: 1,
       USD: 1,
     };
@@ -43,6 +71,8 @@ export const fetchLiveRates = async (): Promise<Record<string, number>> => {
 };
 
 export const getUsdInrRate = async (): Promise<number> => {
+  const rates = await fetchLiveRates();
+  if (rates.INR > 0) return rates.INR;
   const { data } = await supabase.from("app_settings").select("value").eq("key", "usd_inr_rate").maybeSingle();
   const v = (data?.value as RateSetting) || { mode: "auto", rate: 83 };
   if (v.mode === "manual" && v.rate > 0) return v.rate;
@@ -57,6 +87,15 @@ export const formatCurrency = (amount: number, currency: "INR" | "USDT" | "BDT" 
   if (currency === "BDT") return `৳${amount.toFixed(2)}`;
   if (currency === "PKR") return `Rs ${amount.toFixed(2)}`;
   return `${amount.toFixed(4)} USDT`;
+};
+
+export const getCurrencySymbol = (currency?: string | null) => {
+  const c = (currency || "USDT").toUpperCase();
+  if (c === "INR") return "₹";
+  if (c === "BDT") return "৳";
+  if (c === "PKR") return "Rs ";
+  if (c === "XCOIN") return "💎";
+  return "₮";
 };
 
 /** Detect display currency by phone country code. */
