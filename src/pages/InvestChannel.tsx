@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { toast } from "sonner";
 import GoldTradingChart from "@/components/GoldTradingChart";
 import LotteryChannel from "@/pages/lottery/LotteryChannel";
+import { currencyToUsdt, fetchLiveRates } from "@/lib/currency";
 
 type Channel = { id: string; key: string; name: string; type: string; banner_url: string | null };
 type Plan = {
@@ -34,6 +35,7 @@ const InvestChannel = () => {
   const [amounts, setAmounts] = useState<Record<string, number>>({});
   const [confirmPlan, setConfirmPlan] = useState<Plan | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [rates, setRates] = useState<Record<string, number>>({ USDT: 1 });
 
   useEffect(() => {
     if (!channelKey) return;
@@ -53,6 +55,7 @@ const InvestChannel = () => {
         .order("featured", { ascending: false })
         .order("sort_order", { ascending: true });
       setPlans((ps as any) || []);
+      setRates(await fetchLiveRates());
     })();
   }, [channelKey]);
 
@@ -85,13 +88,9 @@ const InvestChannel = () => {
         .maybeSingle();
       if (pe) throw pe;
 
-      // Assume balance is in USDT; for now we only allow USDT-priced plans to deduct directly
       const bal = Number(profile?.balance_usdt || 0);
-      if (confirmPlan.currency !== "USDT") {
-        toast.error(`Only USDT plans can be purchased right now (${confirmPlan.currency} not supported yet)`);
-        return;
-      }
-      if (bal < amount) {
+      const debitUsdt = currencyToUsdt(amount, confirmPlan.currency, rates);
+      if (bal < debitUsdt) {
         toast.error("Insufficient balance");
         return;
       }
@@ -103,7 +102,7 @@ const InvestChannel = () => {
       // deduct balance
       const { error: ue } = await supabase
         .from("profiles")
-        .update({ balance_usdt: bal - amount })
+        .update({ balance_usdt: bal - debitUsdt })
         .eq("user_id", user.id);
       if (ue) throw ue;
 
