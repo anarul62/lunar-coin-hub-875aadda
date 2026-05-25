@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, ChevronRight, Loader2, Plus } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { getUsdInrRate, usdtToInr, inrToUsdt } from "@/lib/currency";
+import { currencyToUsdt, fetchLiveRates, getCurrencySymbol, usdtToCurrency } from "@/lib/currency";
 import { Button } from "@/components/ui/button";
 
 const WithdrawMethod = () => {
@@ -17,20 +17,20 @@ const WithdrawMethod = () => {
   const [settings, setSettings] = useState<any>({});
   const [userLimits, setUserLimits] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
-  const [rate, setRate] = useState(83);
+  const [rates, setRates] = useState<Record<string, number>>({ USDT: 1 });
   const [amount, setAmount] = useState("");
 
   const load = async () => {
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { navigate("/login"); return; }
-    const [{ data: m }, { data: addrs }, { data: prof }, { data: setRow }, { data: ul }, r] = await Promise.all([
+    const [{ data: m }, { data: addrs }, { data: prof }, { data: setRow }, { data: ul }, rs] = await Promise.all([
       supabase.from("withdraw_methods").select("*").eq("method_key", methodKey).maybeSingle(),
       supabase.from("withdraw_addresses").select("*").eq("user_id", user.id).eq("method_key", methodKey).order("created_at", { ascending: false }),
       supabase.from("profiles").select("*").eq("user_id", user.id).maybeSingle(),
       supabase.from("app_settings").select("value").eq("key", "withdraw_settings").maybeSingle(),
       supabase.from("user_withdraw_limits").select("*").eq("user_id", user.id).maybeSingle(),
-      getUsdInrRate(),
+      fetchLiveRates(),
     ]);
     setMethod(m);
     setAddresses(addrs || []);
@@ -38,7 +38,7 @@ const WithdrawMethod = () => {
     setProfile(prof);
     setSettings(setRow?.value || {});
     setUserLimits(ul);
-    setRate(r);
+    setRates(rs);
     setLoading(false);
   };
   useEffect(() => { load(); }, [methodKey]);
@@ -55,7 +55,7 @@ const WithdrawMethod = () => {
   }, [userLimits, settings]);
 
   const amt = Number(amount || 0);
-  const amtUsdt = isUSDT ? amt : inrToUsdt(amt, rate); // approximate; BDT not handled separately - using rate as INR equivalent for simplicity
+  const amtUsdt = currencyToUsdt(amt, currency, rates);
   const charge = method
     ? method.charge_type === "percent"
       ? amt * Number(method.charge_value) / 100
@@ -64,7 +64,7 @@ const WithdrawMethod = () => {
   const receive = Math.max(0, amt - charge);
 
   const balUsdt = Number(profile?.balance_usdt || 0);
-  const balInDisplay = isUSDT ? balUsdt : usdtToInr(balUsdt, rate);
+  const balInDisplay = usdtToCurrency(balUsdt, currency, rates);
 
   const setAll = () => setAmount(String(balInDisplay.toFixed(2)));
 
@@ -83,7 +83,7 @@ const WithdrawMethod = () => {
     if ((count || 0) >= limit.daily) return toast({ title: `Daily limit ${limit.daily} reached`, variant: "destructive" });
 
     setSubmitting(true);
-    const chargeUsdt = isUSDT ? charge : inrToUsdt(charge, rate);
+    const chargeUsdt = currencyToUsdt(charge, currency, rates);
     const { error } = await supabase.from("withdrawals").insert({
       user_id: user!.id,
       method_key: method.method_key,
@@ -111,7 +111,7 @@ const WithdrawMethod = () => {
 
   if (loading || !method) return <div className="min-h-screen flex items-center justify-center bg-[#f5f6fa]"><Loader2 className="animate-spin"/></div>;
 
-  const symbol = currency === "INR" ? "₹" : currency === "BDT" ? "৳" : "$";
+  const symbol = getCurrencySymbol(currency);
 
   return (
     <div className="min-h-screen bg-[#f5f6fa] text-slate-900 pb-32">
