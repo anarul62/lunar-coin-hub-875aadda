@@ -12,6 +12,8 @@ import { Trash2, Pencil } from "lucide-react";
 type Channel = { id: string; name: string; key: string };
 type Plan = any;
 
+const defaultRates = { usdt_bdt: 120, usdt_inr: 83, usdt_pkr: 280, usdt_xcoin: 1000 };
+
 const emptyForm = {
   channel_id: "",
   name: "",
@@ -31,7 +33,7 @@ const AdminInvestPlans = () => {
   const [params, setParams] = useSearchParams();
   const [channels, setChannels] = useState<Channel[]>([]);
   const [plans, setPlans] = useState<Plan[]>([]);
-  const [rates, setRates] = useState({ usdt_bdt: 120, usdt_inr: 83, usdt_xcoin: 1000 });
+  const [rates, setRates] = useState(defaultRates);
   const [form, setForm] = useState({ ...emptyForm });
   const [editing, setEditing] = useState<Plan | null>(null);
   const selectedChannel = params.get("channel") || "";
@@ -47,7 +49,7 @@ const AdminInvestPlans = () => {
   };
   const loadRates = async () => {
     const { data } = await supabase.from("app_settings").select("value").eq("key", "currency_rates").maybeSingle();
-    if (data?.value) setRates(data.value as any);
+    if (data?.value) setRates({ ...defaultRates, ...(data.value as any) });
   };
 
   useEffect(() => { loadChannels(); loadRates(); }, []);
@@ -105,6 +107,10 @@ const AdminInvestPlans = () => {
               <Input type="number" value={rates.usdt_inr} onChange={(e) => setRates({ ...rates, usdt_inr: Number(e.target.value) })} />
             </div>
             <div>
+              <label className="text-xs text-slate-500">PKR</label>
+              <Input type="number" value={rates.usdt_pkr} onChange={(e) => setRates({ ...rates, usdt_pkr: Number(e.target.value) })} />
+            </div>
+            <div>
               <label className="text-xs text-slate-500">X Coin</label>
               <Input type="number" value={rates.usdt_xcoin} onChange={(e) => setRates({ ...rates, usdt_xcoin: Number(e.target.value) })} />
             </div>
@@ -155,7 +161,7 @@ const AdminInvestPlans = () => {
                 <div>
                   <label className="text-xs text-slate-500">Currency</label>
                   <select className="w-full border border-slate-200 rounded-md px-3 py-2 text-sm" value={form.currency} onChange={(e) => setForm({ ...form, currency: e.target.value })}>
-                    <option>USDT</option><option>XCOIN</option><option>INR</option><option>BDT</option>
+                    <option>USDT</option><option>XCOIN</option><option>INR</option><option>BDT</option><option>PKR</option>
                   </select>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
@@ -219,7 +225,7 @@ const AdminInvestPlans = () => {
               <div>
                 <label className="text-xs text-slate-500">Currency</label>
                 <select className="w-full border border-slate-200 rounded-md px-3 py-2 text-sm" value={editing.currency} onChange={(e) => setEditing({ ...editing, currency: e.target.value })}>
-                  <option>USDT</option><option>XCOIN</option><option>INR</option><option>BDT</option>
+                  <option>USDT</option><option>XCOIN</option><option>INR</option><option>BDT</option><option>PKR</option>
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-2">
