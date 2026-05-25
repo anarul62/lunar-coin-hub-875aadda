@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { ArrowLeft, Wallet as WalletIcon, BookOpen, Copy, CheckCircle2, Loader2, X } from "lucide-react";
+import { fetchLiveRates, getCurrencySymbol, getUserWalletCurrency, usdtToCurrency } from "@/lib/currency";
 
 type Method = {
   id: string;
@@ -33,23 +34,26 @@ const Deposit = () => {
   const navigate = useNavigate();
   const [methods, setMethods] = useState<Method[]>([]);
   const [loading, setLoading] = useState(true);
-  const [balanceInr, setBalanceInr] = useState(0);
+  const [balanceDisplay, setBalanceDisplay] = useState({ amount: 0, currency: "USDT", symbol: "₮" });
   const [selected, setSelected] = useState<Method | null>(null);
 
   useEffect(() => {
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { navigate("/login"); return; }
-      const [{ data: pm }, { data: prof }] = await Promise.all([
+      const [{ data: pm }, { data: prof }, rates] = await Promise.all([
         supabase.from("payment_methods_public" as any).select("*").order("sort_order"),
-        supabase.from("profiles").select("balance_usdt").eq("user_id", user.id).maybeSingle(),
+        supabase.from("profiles").select("balance_usdt,preferred_currency,phone").eq("user_id", user.id).maybeSingle(),
+        fetchLiveRates(),
       ]);
       setMethods((pm as any) || []);
       const usdt = Number(prof?.balance_usdt || 0);
-      // approx INR using stored rate from upi method if any, else 90
-      const upi = (pm as any[])?.find(m => m.method_key === "upi_qr");
-      const r = Number(upi?.rate || 90);
-      setBalanceInr(usdt * r);
+      const walletCurrency = getUserWalletCurrency(prof as any);
+      setBalanceDisplay({
+        amount: usdtToCurrency(usdt, walletCurrency.code, rates),
+        currency: walletCurrency.code,
+        symbol: getCurrencySymbol(walletCurrency.code),
+      });
       setLoading(false);
     })();
   }, [navigate]);
@@ -67,7 +71,7 @@ const Deposit = () => {
         <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-md mb-5"
           style={{ background: "linear-gradient(135deg, #ff6b6b 0%, #ee5a70 100%)" }}>
           <div className="flex items-center gap-2 text-sm opacity-95"><WalletIcon className="h-4 w-4"/> Balance</div>
-          <div className="text-3xl font-bold mt-2">₹{balanceInr.toFixed(2)}</div>
+          <div className="text-3xl font-bold mt-2">{balanceDisplay.symbol}{balanceDisplay.amount.toFixed(2)}</div>
           <div className="absolute right-4 bottom-3 text-white/40 tracking-widest font-mono">**** ****</div>
           <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10"/>
         </div>
