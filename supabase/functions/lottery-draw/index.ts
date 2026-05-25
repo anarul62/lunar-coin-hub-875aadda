@@ -5,12 +5,31 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const fallbackRates: Record<string, number> = { USDT: 1, USD: 1, INR: 83, BDT: 120, PKR: 280, XCOIN: 1000 };
+
+const toUsdt = (amount: number, currency: string, rates: Record<string, number>) => {
+  const c = (currency || "USDT").toUpperCase();
+  if (c === "USDT") return amount;
+  const r = Number(rates[c] || fallbackRates[c] || 1);
+  return r > 0 ? amount / r : 0;
+};
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   const url = Deno.env.get("SUPABASE_URL")!;
   const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   const sb = createClient(url, key);
+
+  const { data: rateRow } = await sb.from("app_settings").select("value").eq("key", "currency_rates").maybeSingle();
+  const rv = (rateRow?.value || {}) as any;
+  const rates: Record<string, number> = {
+    ...fallbackRates,
+    INR: Number(rv.usdt_inr) || fallbackRates.INR,
+    BDT: Number(rv.usdt_bdt) || fallbackRates.BDT,
+    PKR: Number(rv.usdt_pkr) || fallbackRates.PKR,
+    XCOIN: Number(rv.usdt_xcoin) || fallbackRates.XCOIN,
+  };
 
   let planFilter: string | null = null;
   try {
@@ -93,7 +112,7 @@ Deno.serve(async (req) => {
       } else {
         const { data: pr } = await sb.from("profiles").select("balance_usdt").eq("user_id", w.user_id).maybeSingle();
         const bal = Number(pr?.balance_usdt || 0);
-        await sb.from("profiles").update({ balance_usdt: bal + Number(w.prize_amount) }).eq("user_id", w.user_id);
+        await sb.from("profiles").update({ balance_usdt: bal + toUsdt(Number(w.prize_amount), plan.currency, rates) }).eq("user_id", w.user_id);
       }
       await sb.from("notifications").insert({
         audience: "user",

@@ -2,27 +2,29 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, ChevronRight, Loader2, Wallet } from "lucide-react";
-import { getUsdInrRate, usdtToInr } from "@/lib/currency";
+import { fetchLiveRates, getCurrencySymbol, getUserWalletCurrency, usdtToCurrency } from "@/lib/currency";
 
 const Withdraw = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [methods, setMethods] = useState<any[]>([]);
   const [bal, setBal] = useState(0);
-  const [rate, setRate] = useState(83);
+  const [display, setDisplay] = useState({ amount: 0, currency: "USDT", symbol: "₮" });
 
   useEffect(() => {
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { navigate("/login"); return; }
-      const [{ data: ms }, { data: prof }, r] = await Promise.all([
+      const [{ data: ms }, { data: prof }, rates] = await Promise.all([
         supabase.from("withdraw_methods").select("*").eq("enabled", true).order("sort_order"),
-        supabase.from("profiles").select("balance_usdt").eq("user_id", user.id).maybeSingle(),
-        getUsdInrRate(),
+        supabase.from("profiles").select("balance_usdt,preferred_currency,phone").eq("user_id", user.id).maybeSingle(),
+        fetchLiveRates(),
       ]);
       setMethods(ms || []);
-      setBal(Number(prof?.balance_usdt || 0));
-      setRate(r);
+      const usdt = Number(prof?.balance_usdt || 0);
+      const walletCurrency = getUserWalletCurrency(prof as any);
+      setBal(usdt);
+      setDisplay({ amount: usdtToCurrency(usdt, walletCurrency.code, rates), currency: walletCurrency.code, symbol: getCurrencySymbol(walletCurrency.code) });
       setLoading(false);
     })();
   }, [navigate]);
@@ -38,7 +40,7 @@ const Withdraw = () => {
       <div className="p-4">
         <div className="rounded-2xl p-5 text-white bg-gradient-to-br from-[#ff6b6b] to-[#ff8e3c] shadow-lg">
           <div className="flex items-center gap-2 text-sm opacity-90"><Wallet className="h-4 w-4"/> Available balance</div>
-          <p className="text-3xl font-extrabold mt-2">₹{usdtToInr(bal, rate).toFixed(2)}</p>
+          <p className="text-3xl font-extrabold mt-2">{display.symbol}{display.amount.toFixed(2)}</p>
           <p className="text-xs opacity-80 mt-1">{bal.toFixed(4)} USDT</p>
         </div>
 

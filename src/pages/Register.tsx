@@ -9,6 +9,7 @@ const countryCodes = [
   { value: "+91", label: "🇮🇳 +91" },
   { value: "+880", label: "🇧🇩 +880" },
   { value: "+92", label: "🇵🇰 +92" },
+  { value: "+1", label: "🇺🇸 +1" },
 ];
 
 const Register = () => {

@@ -110,7 +110,7 @@ const AdminLotteryPlans = () => {
             <div className="grid grid-cols-2 gap-2">
               <div><label className="text-xs text-slate-500">Currency</label>
                 <select className="w-full border border-slate-200 rounded-md px-3 py-2 text-sm" value={form.currency} onChange={(e) => setForm({ ...form, currency: e.target.value })}>
-                  <option>XCOIN</option><option>BDT</option><option>USDT</option><option>INR</option>
+                  <option>XCOIN</option><option>BDT</option><option>USDT</option><option>INR</option><option>PKR</option>
                 </select>
               </div>
               <div><label className="text-xs text-slate-500">X coin bonus (optional)</label><Input type="number" value={form.xcoin_bonus} onChange={(e) => setForm({ ...form, xcoin_bonus: Number(e.target.value) })} /></div>
@@ -180,7 +180,7 @@ const AdminLotteryPlans = () => {
               <div className="grid grid-cols-2 gap-2">
                 <Input type="number" value={editing.ticket_price} onChange={(e) => setEditing({ ...editing, ticket_price: Number(e.target.value) })} />
                 <select className="border border-slate-200 rounded-md px-3 py-2 text-sm" value={editing.currency} onChange={(e) => setEditing({ ...editing, currency: e.target.value })}>
-                  <option>XCOIN</option><option>BDT</option><option>USDT</option><option>INR</option>
+                  <option>XCOIN</option><option>BDT</option><option>USDT</option><option>INR</option><option>PKR</option>
                 </select>
               </div>
               <Input type="number" value={editing.xcoin_bonus || 0} onChange={(e) => setEditing({ ...editing, xcoin_bonus: Number(e.target.value) })} placeholder="X coin bonus" />

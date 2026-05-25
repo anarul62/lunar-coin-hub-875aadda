@@ -103,6 +103,7 @@ const AdminWithdrawMethods = () => {
                 <select value={m.charge_currency} onChange={e => updM(m.id, { charge_currency: e.target.value })} className="h-9 rounded border border-slate-300 px-2 text-sm">
                   <option value="INR">INR</option>
                   <option value="BDT">BDT</option>
+                  <option value="PKR">PKR</option>
                   <option value="USDT">USDT</option>
                 </select>
                 <Button onClick={() => saveMethod(m)} disabled={saving === m.id} className="bg-emerald-600 hover:bg-emerald-700">

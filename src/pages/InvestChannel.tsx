@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { toast } from "sonner";
 import GoldTradingChart from "@/components/GoldTradingChart";
 import LotteryChannel from "@/pages/lottery/LotteryChannel";
+import { currencyToUsdt, fetchLiveRates } from "@/lib/currency";
 
 type Channel = { id: string; key: string; name: string; type: string; banner_url: string | null };
 type Plan = {
@@ -34,6 +35,7 @@ const InvestChannel = () => {
   const [amounts, setAmounts] = useState<Record<string, number>>({});
   const [confirmPlan, setConfirmPlan] = useState<Plan | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [rates, setRates] = useState<Record<string, number>>({ USDT: 1 });
 
   useEffect(() => {
     if (!channelKey) return;
@@ -53,6 +55,7 @@ const InvestChannel = () => {
         .order("featured", { ascending: false })
         .order("sort_order", { ascending: true });
       setPlans((ps as any) || []);
+      setRates(await fetchLiveRates());
     })();
   }, [channelKey]);
 
@@ -85,27 +88,32 @@ const InvestChannel = () => {
         .maybeSingle();
       if (pe) throw pe;
 
-      // Assume balance is in USDT; for now we only allow USDT-priced plans to deduct directly
       const bal = Number(profile?.balance_usdt || 0);
-      if (confirmPlan.currency !== "USDT") {
-        toast.error(`Only USDT plans can be purchased right now (${confirmPlan.currency} not supported yet)`);
-        return;
-      }
-      if (bal < amount) {
-        toast.error("Insufficient balance");
-        return;
+      const debitUsdt = currencyToUsdt(amount, confirmPlan.currency, rates);
+      if (confirmPlan.currency === "XCOIN") {
+        const { data: xc } = await supabase.from("user_xcoin").select("balance").eq("user_id", user.id).maybeSingle();
+        const xBal = Number(xc?.balance || 0);
+        if (xBal < amount) {
+          toast.error("Insufficient X coin balance");
+          return;
+        }
+        if (xc) await supabase.from("user_xcoin").update({ balance: xBal - amount }).eq("user_id", user.id);
+        else await supabase.from("user_xcoin").insert({ user_id: user.id, balance: -amount } as any);
+      } else {
+        if (bal < debitUsdt) {
+          toast.error("Insufficient balance");
+          return;
+        }
+        const { error: ue } = await supabase
+          .from("profiles")
+          .update({ balance_usdt: bal - debitUsdt })
+          .eq("user_id", user.id);
+        if (ue) throw ue;
       }
 
       const total = calcReturn(confirmPlan, amount);
       const profit = total - amount;
       const endsAt = new Date(Date.now() + confirmPlan.duration_days * 86400000).toISOString();
-
-      // deduct balance
-      const { error: ue } = await supabase
-        .from("profiles")
-        .update({ balance_usdt: bal - amount })
-        .eq("user_id", user.id);
-      if (ue) throw ue;
 
       // create investment
       const { error: ie } = await supabase.from("user_investments").insert({

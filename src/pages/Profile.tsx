@@ -13,7 +13,7 @@ import {
   Headphones, BookOpen, Info, RefreshCw, ChevronRight, ShieldCheck, Camera, Loader2,
   LogOut,
 } from "lucide-react";
-import { getUsdInrRate, usdtToInr, fetchLiveRates, getUserCurrencyFromPhone, formatUserBalance } from "@/lib/currency";
+import { getUsdInrRate, fetchLiveRates, getUserWalletCurrency, formatUserBalance } from "@/lib/currency";
 
 const AVATARS = [72, 20, 10, 13, 2, 36, 1, 4, 5, 44, 28, 67, 3, 66, 34]
   .map(n => `https://aviator-demo.spribegaming.com/assets/static/avatars/v2/av-${n}.png`);
@@ -24,7 +24,7 @@ const Profile = () => {
   const [profile, setProfile] = useState<any>(null);
   const [kycStatus, setKycStatus] = useState<"none" | "pending" | "approved" | "rejected">("none");
   const [rate, setRate] = useState(83);
-  const [rates, setRates] = useState<Record<string, number>>({ INR: 83, BDT: 110, PKR: 280, USDT: 1 });
+  const [rates, setRates] = useState<Record<string, number>>({ INR: 83, BDT: 120, PKR: 280, USDT: 1 });
   const [avatarOpen, setAvatarOpen] = useState(false);
   const [convertOpen, setConvertOpen] = useState(false);
   const [kycOpen, setKycOpen] = useState(false);
@@ -84,7 +84,7 @@ const Profile = () => {
   const bal = Number(profile.balance_usdt || 0);
   const locked = Number(profile.locked_bonus_usdt || 0);
   const totalUsdt = bal + locked;
-  const userCur = getUserCurrencyFromPhone(profile.phone);
+  const userCur = getUserWalletCurrency(profile);
   const displayBal = showLocal ? formatUserBalance(totalUsdt, userCur, rates) : `${totalUsdt.toFixed(4)} USDT`;
   const username = profile.full_name || profile.email?.split("@")[0] || "User";
   const kycVerified = kycStatus === "approved";

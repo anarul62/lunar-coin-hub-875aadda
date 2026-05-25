@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { calculateLotteryPrizes, currencySymbol, formatCountdown, LotteryPlan } from "@/lib/lottery";
+import { currencyToUsdt, fetchLiveRates } from "@/lib/currency";
 
 type Props = { channelId: string; channelName: string; onBack: () => void };
 
@@ -192,11 +193,14 @@ const DashboardList = ({ entries, onOpen }: { entries: any[]; onOpen: (planId: s
 const ConfirmDialog = ({ plan, sold, myCount, onClose }: { plan: LotteryPlan; sold: number; myCount: number; onClose: () => void }) => {
   const [count, setCount] = useState(1);
   const [busy, setBusy] = useState(false);
+  const [rates, setRates] = useState<Record<string, number>>({ USDT: 1 });
   const navigate = useNavigate();
   const total = useMemo(() => count * Number(plan.ticket_price), [count, plan]);
   const available = Math.max(1, plan.total_tickets - sold);
   const sym = currencySymbol(plan.currency);
   const isXcoin = plan.currency?.toUpperCase() === "XCOIN";
+
+  useEffect(() => { fetchLiveRates().then(setRates).catch(() => {}); }, []);
 
   const submit = async () => {
     setBusy(true);
@@ -215,8 +219,9 @@ const ConfirmDialog = ({ plan, sold, myCount, onClose }: { plan: LotteryPlan; so
       } else {
         const { data: pr } = await supabase.from("profiles").select("balance_usdt").eq("user_id", user.id).maybeSingle();
         const bal = Number(pr?.balance_usdt || 0);
-        if (bal < total) { toast.error("Insufficient balance"); return; }
-        await supabase.from("profiles").update({ balance_usdt: bal - total }).eq("user_id", user.id);
+        const totalUsdt = currencyToUsdt(total, plan.currency, rates);
+        if (bal < totalUsdt) { toast.error("Insufficient balance"); return; }
+        await supabase.from("profiles").update({ balance_usdt: bal - totalUsdt }).eq("user_id", user.id);
       }
 
       const { error } = await supabase.from("lottery_entries").insert({
