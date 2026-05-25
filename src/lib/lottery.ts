@@ -27,6 +27,7 @@ export const currencySymbol = (c: string) => {
   switch ((c || "").toUpperCase()) {
     case "BDT": return "৳";
     case "INR": return "₹";
+    case "PKR": return "Rs";
     case "USDT": return "$";
     case "XCOIN": return "💎";
     default: return c;
