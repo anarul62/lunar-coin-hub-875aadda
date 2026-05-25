@@ -82,6 +82,32 @@ export const getUsdInrRate = async (): Promise<number> => {
 export const usdtToInr = (usdt: number, rate: number) => usdt * rate;
 export const inrToUsdt = (inr: number, rate: number) => (rate > 0 ? inr / rate : 0);
 
+export const normalizeCurrency = (currency?: string | null): WalletCurrency => {
+  const c = (currency || "USDT").toUpperCase();
+  if (["INR", "BDT", "PKR", "USDT", "XCOIN"].includes(c)) return c as WalletCurrency;
+  return "USDT";
+};
+
+export const currencyToUsdt = (amount: number, currency: string | null | undefined, rates: Record<string, number>) => {
+  const c = normalizeCurrency(currency);
+  if (c === "USDT") return amount;
+  const r = Number(rates[c] || DEFAULT_CURRENCY_RATES[c] || 1);
+  return r > 0 ? amount / r : 0;
+};
+
+export const usdtToCurrency = (usdt: number, currency: string | null | undefined, rates: Record<string, number>) => {
+  const c = normalizeCurrency(currency);
+  if (c === "USDT") return usdt;
+  const r = Number(rates[c] || DEFAULT_CURRENCY_RATES[c] || 1);
+  return usdt * r;
+};
+
+export const getUserWalletCurrency = (profile?: { preferred_currency?: string | null; phone?: string | null } | null): UserCurrency => {
+  const saved = normalizeCurrency(profile?.preferred_currency);
+  if (saved !== "USDT" && saved !== "XCOIN") return { code: saved as UserCurrency["code"], symbol: getCurrencySymbol(saved) };
+  return getUserCurrencyFromPhone(profile?.phone);
+};
+
 export const formatCurrency = (amount: number, currency: "INR" | "USDT" | "BDT" | "PKR") => {
   if (currency === "INR") return `₹${amount.toFixed(2)}`;
   if (currency === "BDT") return `৳${amount.toFixed(2)}`;
