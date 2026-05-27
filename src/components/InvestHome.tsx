@@ -137,17 +137,17 @@ const InvestHome = () => {
             <button
               key={c.label}
               onClick={() => { if (c.label === "KYC") setKycOpen(true); else if (c.path) navigate(c.path); }}
-              className="relative flex flex-col items-center justify-center gap-1.5 rounded-xl bg-card border border-border py-3 px-1 hover:border-primary/30 transition-colors"
+              className="cat-3d group relative flex flex-col items-center justify-center gap-1.5 rounded-2xl py-3 px-1"
             >
               {c.tag && (
-                <span className="absolute -top-1.5 right-1 px-1.5 py-0.5 rounded bg-gradient-gold text-primary-foreground text-[8px] font-bold">
+                <span className="absolute -top-1.5 right-1 z-10 px-1.5 py-0.5 rounded bg-gradient-gold text-primary-foreground text-[8px] font-bold shadow-[0_2px_6px_rgba(0,0,0,0.5)]">
                   {c.tag}
                 </span>
               )}
-              <div className="h-9 w-9 rounded-full bg-gradient-gold-subtle border border-primary/20 flex items-center justify-center">
-                <c.icon className="h-4 w-4 text-primary" />
+              <div className="cat-3d-icon h-10 w-10 rounded-full flex items-center justify-center">
+                <c.icon className="h-4 w-4 text-primary drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]" />
               </div>
-              <span className="text-[10px] font-medium text-foreground text-center leading-tight">{c.label}</span>
+              <span className="text-[10px] font-semibold text-foreground text-center leading-tight drop-shadow-[0_1px_0_rgba(0,0,0,0.4)]">{c.label}</span>
             </button>
           ))}
         </div>
