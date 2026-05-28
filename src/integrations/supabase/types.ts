@@ -1403,6 +1403,10 @@ export type Database = {
       }
     }
     Functions: {
+      finalize_matured_investments: {
+        Args: { _user_id?: string }
+        Returns: number
+      }
       gen_referral_code: { Args: never; Returns: string }
       has_role: {
         Args: {
