@@ -47,6 +47,9 @@ const PlanHistory = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { navigate("/login"); return; }
 
+      // Auto-finalize any matured investments and credit wallet
+      await supabase.rpc("finalize_matured_investments" as any, { _user_id: user.id });
+
       const [{ data: inv }, { data: ent }, { data: res }] = await Promise.all([
         supabase.from("user_investments").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
         supabase.from("lottery_entries").select("*, lottery_plans(name,image_url,draw_at,status)").eq("user_id", user.id).order("created_at", { ascending: false }),

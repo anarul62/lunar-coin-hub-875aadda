@@ -29,6 +29,8 @@ const Wallet = () => {
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { navigate("/login"); return; }
+    // Auto-credit any matured investments before reading balances
+    await supabase.rpc("finalize_matured_investments" as any, { _user_id: user.id });
     const [{ data: prof }, { data: xc }, { data: setRow }, rs] = await Promise.all([
       supabase.from("profiles").select("*").eq("user_id", user.id).maybeSingle(),
       supabase.from("user_xcoin").select("balance").eq("user_id", user.id).maybeSingle(),
