@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Wallet, Eye, EyeOff, UserPlus, ChevronDown } from "lucide-react";
+import { Eye, EyeOff, UserPlus, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
+import cyberBg from "@/assets/login-cyber-bg.jpg";
 
 const countryCodes = [
   { value: "+91", label: "🇮🇳 +91" },
@@ -55,7 +55,6 @@ const Register = () => {
     }
 
     const fullPhone = `${countryCode}${form.phone}`;
-
     setLoading(true);
     try {
       const { error } = await supabase.auth.signUp({
@@ -69,9 +68,7 @@ const Register = () => {
           },
         },
       });
-
       if (error) throw error;
-
       toast.success("Registration successful!");
       navigate("/");
     } catch (err: any) {
@@ -81,46 +78,88 @@ const Register = () => {
     }
   };
 
+  const fieldWrap = (glow: string, border: string): React.CSSProperties => ({
+    background: "rgba(0,0,0,0.55)",
+    border: `1.5px solid ${border}`,
+    boxShadow: `0 0 16px ${glow}`,
+  });
+
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
+    <div
+      className="min-h-screen flex items-center justify-center px-4 py-10 relative"
+      style={{
+        backgroundImage: `url(${cyberBg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      }}
+    >
+      <div className="absolute inset-0 bg-black/40 pointer-events-none" />
+
+      <div className="w-full max-w-md relative z-10">
+        <div className="text-center mb-6">
           <Link to="/" className="inline-flex items-center gap-2 mb-6">
-            <Wallet className="h-8 w-8 text-primary" />
-            <span className="font-heading text-2xl font-bold text-gradient-gold">CryptoX</span>
+            <span
+              className="font-heading text-4xl font-extrabold tracking-wide"
+              style={{
+                background: "linear-gradient(90deg,#ff8a2a,#ffd76a)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                textShadow: "0 0 30px rgba(255,140,40,0.45)",
+              }}
+            >
+              ⚡ CryptoX
+            </span>
           </Link>
-          <h1 className="font-heading text-3xl font-bold text-foreground mb-2">Create Account</h1>
-          <p className="text-muted-foreground">Start your crypto journey today</p>
+          <h1
+            className="font-heading text-4xl sm:text-5xl font-extrabold text-white mb-3"
+            style={{ textShadow: "0 2px 24px rgba(0,0,0,0.7)" }}
+          >
+            Create Account
+          </h1>
+          <p className="text-white/80 text-base">Start your crypto journey today</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="rounded-2xl border border-border bg-card p-6 sm:p-8 space-y-4">
+        <form
+          onSubmit={handleSubmit}
+          className="rounded-3xl p-6 sm:p-7 space-y-4 backdrop-blur-xl"
+          style={{
+            background: "rgba(10,18,14,0.45)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.06)",
+          }}
+        >
+          {/* Full name */}
           <div>
-            <label className="text-sm text-muted-foreground mb-1.5 block">Full Name</label>
-            <input
-              name="fullName"
-              value={form.fullName}
-              onChange={handleChange}
-              placeholder="Enter your name"
-              className="w-full rounded-lg border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
-            />
+            <label className="text-sm text-white/85 mb-2 block">Full Name</label>
+            <div className="rounded-2xl" style={fieldWrap("rgba(0,200,140,0.35)", "rgba(0,200,140,0.55)")}>
+              <input
+                name="fullName"
+                value={form.fullName}
+                onChange={handleChange}
+                placeholder="Enter your name"
+                className="w-full bg-transparent px-4 py-3.5 text-white placeholder:text-white/45 focus:outline-none"
+              />
+            </div>
           </div>
 
+          {/* Phone */}
           <div>
-            <label className="text-sm text-muted-foreground mb-1.5 block">
-              Phone Number <span className="text-destructive">*</span>
+            <label className="text-sm text-white/85 mb-2 block">
+              Mobile Number <span className="text-orange-300">*</span>
             </label>
-            <div className="flex gap-2">
-              <div className="relative shrink-0">
+            <div className="flex gap-3">
+              <div className="relative shrink-0 rounded-2xl" style={fieldWrap("rgba(0,200,140,0.35)", "rgba(0,200,140,0.55)")}>
                 <select
                   value={countryCode}
                   onChange={(e) => setCountryCode(e.target.value)}
-                  className="appearance-none w-[90px] rounded-lg border border-border bg-secondary px-3 py-3 pr-7 text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
+                  className="appearance-none w-[110px] bg-transparent px-3 py-3.5 pr-7 text-sm text-white focus:outline-none"
                 >
                   {countryCodes.map((c) => (
-                    <option key={c.value} value={c.value}>{c.label}</option>
+                    <option key={c.value} value={c.value} className="bg-black text-white">{c.label}</option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-300 pointer-events-none" />
               </div>
               <input
                 name="phone"
@@ -129,31 +168,39 @@ const Register = () => {
                 onChange={handleChange}
                 placeholder="1XXXXXXXXX"
                 required
-                className="flex-1 min-w-0 rounded-lg border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
+                className="flex-1 min-w-0 rounded-2xl bg-black/55 px-4 py-3.5 text-white placeholder:text-white/45 focus:outline-none"
+                style={{
+                  border: "1.5px solid rgba(255,140,40,0.65)",
+                  boxShadow: "0 0 16px rgba(255,140,40,0.35)",
+                }}
               />
             </div>
           </div>
 
+          {/* Email */}
           <div>
-            <label className="text-sm text-muted-foreground mb-1.5 block">
-              Email (Gmail) <span className="text-destructive">*</span>
+            <label className="text-sm text-white/85 mb-2 block">
+              Email (Gmail) <span className="text-orange-300">*</span>
             </label>
-            <input
-              name="email"
-              type="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder="your@gmail.com"
-              required
-              className="w-full rounded-lg border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
-            />
+            <div className="rounded-2xl" style={fieldWrap("rgba(255,140,40,0.35)", "rgba(255,140,40,0.65)")}>
+              <input
+                name="email"
+                type="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="your@gmail.com"
+                required
+                className="w-full bg-transparent px-4 py-3.5 text-white placeholder:text-white/45 focus:outline-none"
+              />
+            </div>
           </div>
 
+          {/* Password */}
           <div>
-            <label className="text-sm text-muted-foreground mb-1.5 block">
-              Password <span className="text-destructive">*</span>
+            <label className="text-sm text-white/85 mb-2 block">
+              Password <span className="text-orange-300">*</span>
             </label>
-            <div className="relative">
+            <div className="relative rounded-2xl" style={fieldWrap("rgba(0,220,140,0.35)", "rgba(0,220,140,0.65)")}>
               <input
                 name="password"
                 type={showPassword ? "text" : "password"}
@@ -161,42 +208,57 @@ const Register = () => {
                 onChange={handleChange}
                 placeholder="Min 6 characters"
                 required
-                className="w-full rounded-lg border border-border bg-secondary px-4 py-3 pr-12 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
+                className="w-full bg-transparent px-4 py-3.5 pr-12 text-white placeholder:text-white/45 focus:outline-none"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-300 hover:text-emerald-200"
               >
                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
             </div>
           </div>
 
+          {/* Invitation code */}
           <div>
-            <label className="text-sm text-muted-foreground mb-1.5 block">
-              Invitation Code <span className="text-xs text-muted-foreground">(Optional)</span>
+            <label className="text-sm text-white/85 mb-2 block">
+              Invitation Code <span className="text-xs text-white/60">(Optional)</span>
             </label>
-            <input
-              name="invitationCode"
-              value={form.invitationCode}
-              onChange={handleChange}
-              placeholder="Enter referral code"
-              className="w-full rounded-lg border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
-            />
+            <div className="rounded-2xl" style={fieldWrap("rgba(34,211,238,0.35)", "rgba(34,211,238,0.6)")}>
+              <input
+                name="invitationCode"
+                value={form.invitationCode}
+                onChange={handleChange}
+                placeholder="Enter referral code"
+                className="w-full bg-transparent px-4 py-3.5 text-white placeholder:text-white/45 focus:outline-none"
+              />
+            </div>
           </div>
 
-          <Button
+          <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-gold text-primary-foreground font-semibold text-base py-6 hover:opacity-90 mt-2"
+            className="w-full rounded-2xl py-4 font-bold text-white text-lg flex items-center justify-center gap-2 transition-transform active:translate-y-[1px] disabled:opacity-60"
+            style={{
+              background: "linear-gradient(90deg,#22c55e 0%,#16a34a 35%,#f97316 100%)",
+              boxShadow:
+                "0 10px 30px rgba(34,197,94,0.35), 0 10px 30px rgba(249,115,22,0.25), inset 0 1px 0 rgba(255,255,255,0.25)",
+              textShadow: "0 1px 2px rgba(0,0,0,0.35)",
+            }}
           >
-            {loading ? "Creating Account..." : <><UserPlus className="h-5 w-5 mr-2" /> Register</>}
-          </Button>
+            {loading ? "Creating Account..." : (<><UserPlus className="h-5 w-5" /> Register</>)}
+          </button>
 
-          <p className="text-center text-sm text-muted-foreground pt-2">
+          <p className="text-center text-sm text-white/75 pt-1">
             Already have an account?{" "}
-            <Link to="/login" className="text-primary hover:underline font-medium">Log In</Link>
+            <Link
+              to="/login"
+              className="font-semibold"
+              style={{ color: "#22d3ee", textShadow: "0 0 10px rgba(34,211,238,0.5)" }}
+            >
+              Log In
+            </Link>
           </p>
         </form>
       </div>
