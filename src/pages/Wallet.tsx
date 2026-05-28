@@ -78,73 +78,112 @@ const Wallet = () => {
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="h-6 w-6 animate-spin text-primary"/></div>;
 
   return (
-    <div className="min-h-screen bg-background pb-20 text-foreground">
+    <div className="min-h-screen bg-background pb-20 text-foreground relative overflow-hidden">
+      {/* Cinematic ambient glow */}
+      <div className="pointer-events-none absolute inset-0 opacity-60"
+        style={{
+          background:
+            "radial-gradient(600px 300px at 50% -10%, hsl(43 96% 56% / 0.18), transparent 60%), radial-gradient(500px 280px at 100% 30%, hsl(35 100% 45% / 0.12), transparent 70%)",
+        }}
+      />
       <Navbar />
-      <main className="pt-14">
-        {/* Total balance card */}
-        <div className="relative px-4 pt-4 pb-6">
-          <div className="rounded-2xl bg-card border border-border p-5 shadow-card">
-            <p className="text-xs text-muted-foreground">Total balance</p>
-            <p className="font-heading text-3xl font-bold mt-1 flex items-center gap-2 text-gradient-gold">
-              {display}
-              <button onClick={() => setShowLocal(s => !s)} className="text-muted-foreground hover:text-primary">
-                <RefreshCw className="h-4 w-4"/>
-              </button>
-            </p>
-            <p className="text-[11px] text-muted-foreground mt-1">Available: {bal.toFixed(4)} USDT</p>
-            {locked > 0 && <p className="text-[11px] text-primary/90 mt-0.5">🔒 Locked bonus: {locked.toFixed(2)} USDT</p>}
+      <main className="pt-14 relative z-10">
+        {/* Total balance — premium 3D gold card */}
+        <div className="px-4 pt-4 pb-5">
+          <div
+            className="relative rounded-2xl p-5 overflow-hidden cat-3d"
+            style={{ perspective: "1000px" }}
+          >
+            <div
+              className="pointer-events-none absolute -top-16 -right-16 h-48 w-48 rounded-full opacity-30 blur-2xl"
+              style={{ background: "var(--gradient-gold)" }}
+            />
+            <div className="relative">
+              <p className="text-[11px] uppercase tracking-[0.2em] text-primary/80 font-semibold">Total balance</p>
+              <p className="font-heading text-4xl font-extrabold mt-2 flex items-center gap-2 text-gradient-gold drop-shadow-[0_2px_10px_rgba(255,180,40,0.35)]">
+                {display}
+                <button onClick={() => setShowLocal(s => !s)} className="text-primary/70 hover:text-primary transition">
+                  <RefreshCw className="h-4 w-4"/>
+                </button>
+              </p>
+              <div className="mt-3 flex items-center gap-3 text-[11px]">
+                <span className="px-2 py-0.5 rounded-md border border-primary/30 bg-primary/5 text-primary/90">Available</span>
+                <span className="text-muted-foreground">{bal.toFixed(4)} USDT</span>
+              </div>
+              {locked > 0 && (
+                <p className="text-[11px] text-primary/90 mt-1.5">🔒 Locked bonus: {locked.toFixed(2)} USDT</p>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* X Coin panel - cyan */}
+        {/* X Coin panel — dark premium gold-trim */}
         <div className="px-4">
-          <div className="rounded-2xl p-5" style={{ backgroundColor: "#b9eaf6" }}>
-            <div className="flex items-center gap-3">
-              <img src={XCOIN_IMG} alt="X Coin" className="h-16 w-16 object-contain"/>
+          <div
+            className="relative rounded-2xl p-5 overflow-hidden cat-3d"
+          >
+            <div
+              className="pointer-events-none absolute inset-0 opacity-50"
+              style={{
+                background:
+                  "radial-gradient(220px 160px at 15% 50%, hsl(43 96% 56% / 0.25), transparent 70%)",
+              }}
+            />
+            <div className="relative flex items-center gap-3">
+              <div className="relative">
+                <div className="absolute inset-0 rounded-full blur-xl opacity-60" style={{ background: "var(--gradient-gold)" }} />
+                <img src={XCOIN_IMG} alt="X Coin" className="relative h-16 w-16 object-contain drop-shadow-[0_4px_12px_rgba(255,180,40,0.5)]"/>
+              </div>
               <div className="flex-1">
-                <p className="text-slate-900 font-bold text-lg leading-tight">Total x coin</p>
-                <p className="text-slate-900 text-3xl font-extrabold mt-1">{xcoin.toFixed(1)}</p>
+                <p className="text-foreground/90 font-semibold text-base leading-tight">Total X Coin</p>
+                <p className="text-3xl font-heading font-extrabold mt-1 text-gradient-gold">{xcoin.toFixed(1)}</p>
               </div>
               <div className="flex flex-col items-end gap-2">
                 <div className="flex items-center gap-2">
-                  <button onClick={() => setInfoOpen(true)} className="h-7 w-7 rounded-full bg-blue-400 flex items-center justify-center text-white shadow">
+                  <button onClick={() => setInfoOpen(true)} className="h-8 w-8 rounded-full flex items-center justify-center text-primary-foreground shadow-[0_4px_0_hsl(0_0%_2%),0_8px_18px_hsl(0_0%_0%/0.5)] active:translate-y-[2px] transition"
+                    style={{ background: "var(--gradient-gold)" }}>
                     <Info className="h-4 w-4"/>
                   </button>
-                  <button onClick={() => setConvertOpen(true)} className="px-4 py-1.5 bg-yellow-400 rounded-lg text-slate-900 font-bold shadow text-sm">
+                  <button onClick={() => setConvertOpen(true)} className="px-4 py-1.5 rounded-lg text-primary-foreground font-bold text-sm shadow-[0_4px_0_hsl(0_0%_2%),0_8px_18px_hsl(0_0%_0%/0.5)] active:translate-y-[2px] transition"
+                    style={{ background: "var(--gradient-gold)" }}>
                     Convert
                   </button>
                 </div>
-                <p className="text-[10px] text-slate-700 text-center leading-tight">transfer main<br/>wallet</p>
+                <p className="text-[10px] text-muted-foreground text-center leading-tight">transfer main<br/>wallet</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Two cards */}
+        {/* Two cards — premium dark with gold trim */}
         <div className="px-4 mt-4 grid grid-cols-2 gap-3">
-          <button onClick={() => navigate("/redeem-xcoin")} className="bg-card border border-border rounded-2xl overflow-hidden text-left">
-            <div className="h-32 bg-gradient-to-br from-rose-400 to-red-500 flex items-center justify-center">
-              <img src="https://i.ibb.co/3v8y5sJ/redpacket.png" onError={(e:any) => e.target.style.display='none'} className="h-24 object-contain" alt=""/>
-              <span className="text-6xl">🧧</span>
+          <button onClick={() => navigate("/redeem-xcoin")} className="cat-3d rounded-2xl overflow-hidden text-left">
+            <div className="h-32 flex items-center justify-center relative"
+              style={{ background: "linear-gradient(135deg, hsl(0 70% 45%), hsl(15 80% 40%))" }}>
+              <div className="absolute inset-0 opacity-40" style={{ background: "radial-gradient(circle at 30% 30%, hsl(43 96% 56% / 0.4), transparent 60%)" }} />
+              <span className="text-6xl relative drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]">🧧</span>
             </div>
             <div className="p-3">
-              <p className="font-bold text-sm flex items-center gap-1">
+              <p className="font-bold text-sm flex items-center gap-1 text-gradient-gold">
                 <img src={XCOIN_IMG} className="h-4 w-4"/> Redeem X Coin
               </p>
               <p className="text-[11px] text-muted-foreground leading-tight mt-1">Enter the redemption code to receive gift rewards</p>
             </div>
           </button>
-          <button onClick={() => navigate("/attendance")} className="bg-card border border-border rounded-2xl overflow-hidden text-left">
-            <div className="h-32 bg-gradient-to-br from-orange-300 to-rose-400 flex items-center justify-center">
-              <span className="text-6xl">📅</span>
+          <button onClick={() => navigate("/attendance")} className="cat-3d rounded-2xl overflow-hidden text-left">
+            <div className="h-32 flex items-center justify-center relative"
+              style={{ background: "linear-gradient(135deg, hsl(35 100% 45%), hsl(43 96% 56%))" }}>
+              <div className="absolute inset-0 opacity-30" style={{ background: "radial-gradient(circle at 70% 30%, hsl(0 0% 100% / 0.4), transparent 60%)" }} />
+              <span className="text-6xl relative drop-shadow-[0_4px_8px_rgba(0,0,0,0.4)]">📅</span>
             </div>
             <div className="p-3">
-              <p className="font-bold text-sm">Attendance bonus</p>
+              <p className="font-bold text-sm text-gradient-gold">Attendance bonus</p>
               <p className="text-[11px] text-muted-foreground leading-tight mt-1">The more consecutive days you sign in, the higher the reward will be.</p>
             </div>
           </button>
         </div>
       </main>
+
 
       {/* Info dialog */}
       <Dialog open={infoOpen} onOpenChange={setInfoOpen}>
