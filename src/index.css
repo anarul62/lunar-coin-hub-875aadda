@@ -56,6 +56,32 @@
 
     font-family: 'Inter', sans-serif;
   }
+
+  .light {
+    --background: 43 40% 97%;
+    --foreground: 0 0% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+    --primary: 38 92% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 43 30% 94%;
+    --secondary-foreground: 0 0% 10%;
+    --muted: 43 20% 92%;
+    --muted-foreground: 0 0% 40%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 0 0% 10%;
+    --border: 43 20% 86%;
+    --input: 43 20% 86%;
+    --ring: 38 92% 45%;
+  }
+  .light body {
+    background:
+      radial-gradient(1200px 600px at 10% -10%, hsl(43 96% 56% / 0.12), transparent 60%),
+      radial-gradient(900px 500px at 110% 10%, hsl(35 100% 45% / 0.10), transparent 60%),
+      hsl(var(--background));
+  }
 }
 
 @layer base {

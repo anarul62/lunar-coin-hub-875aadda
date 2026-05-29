@@ -183,7 +183,7 @@ const Profile = () => {
         <section className="px-4 mt-5">
           <h3 className="text-sm font-semibold mb-3">Service Center</h3>
           <div className="grid grid-cols-3 gap-y-5">
-            <Service icon={SettingsIcon} label="Settings"/>
+            <Service icon={SettingsIcon} label="Settings" onClick={() => navigate("/settings")}/>
             <Service icon={MessageSquare} label="Feedback"/>
             <Service icon={Megaphone} label="Announcement"/>
             <Service icon={Headphones} label="Support"/>
@@ -237,8 +237,8 @@ const CardTile = ({ icon: Icon, title, sub }: any) => (
   </button>
 );
 
-const Service = ({ icon: Icon, label }: any) => (
-  <button className="flex flex-col items-center gap-1.5">
+const Service = ({ icon: Icon, label, onClick }: any) => (
+  <button onClick={onClick} className="flex flex-col items-center gap-1.5">
     <div className="h-10 w-10 rounded-lg bg-secondary border border-border text-primary flex items-center justify-center"><Icon className="h-5 w-5"/></div>
     <span className="text-[11px] text-muted-foreground text-center">{label}</span>
   </button>

@@ -60,6 +60,11 @@ import AgentLogin from "./pages/agent/AgentLogin.tsx";
 import AgentDashboard from "./pages/agent/AgentDashboard.tsx";
 import Support from "./pages/Support.tsx";
 import AdminSupport from "./pages/admin/AdminSupport.tsx";
+import Settings from "./pages/Settings.tsx";
+
+if (typeof document !== "undefined" && localStorage.getItem("theme") === "light") {
+  document.documentElement.classList.add("light");
+}
 
 
 const queryClient = new QueryClient();
@@ -157,6 +162,7 @@ const App = () => (
           <Route path="/agent-data1" element={<AgentDashboard />} />
           <Route path="/support" element={<Support />} />
           <Route path="/admin/support" element={<AdminSupport />} />
+          <Route path="/settings" element={<Settings />} />
           {placeholders.map(p => (
             <Route key={p.path} path={p.path} element={<AdminPlaceholder title={p.title} />} />
           ))}
