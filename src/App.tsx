@@ -162,6 +162,7 @@ const App = () => (
           <Route path="/agent-data1" element={<AgentDashboard />} />
           <Route path="/support" element={<Support />} />
           <Route path="/admin/support" element={<AdminSupport />} />
+          <Route path="/settings" element={<Settings />} />
           {placeholders.map(p => (
             <Route key={p.path} path={p.path} element={<AdminPlaceholder title={p.title} />} />
           ))}
