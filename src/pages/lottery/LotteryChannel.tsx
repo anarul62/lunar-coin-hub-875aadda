@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { toast } from "sonner";
 import { calculateLotteryPrizes, currencySymbol, formatCountdown, LotteryPlan } from "@/lib/lottery";
 import { currencyToUsdt, fetchLiveRates } from "@/lib/currency";
+import lotteryBg from "@/assets/lottery-cyber-bg.jpg";
 
 type Props = { channelId: string; channelName: string; onBack: () => void };
 
