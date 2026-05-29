@@ -183,7 +183,7 @@ const Profile = () => {
         <section className="px-4 mt-5">
           <h3 className="text-sm font-semibold mb-3">Service Center</h3>
           <div className="grid grid-cols-3 gap-y-5">
-            <Service icon={SettingsIcon} label="Settings"/>
+            <Service icon={SettingsIcon} label="Settings" onClick={() => navigate("/settings")}/>
             <Service icon={MessageSquare} label="Feedback"/>
             <Service icon={Megaphone} label="Announcement"/>
             <Service icon={Headphones} label="Support"/>
