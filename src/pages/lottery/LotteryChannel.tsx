@@ -68,28 +68,46 @@ const LotteryChannel = ({ channelId, channelName, onBack }: Props) => {
   };
   useEffect(() => { load(); const r = setInterval(load, 5_000); return () => clearInterval(r); }, [channelId]);
 
+  // Sci-fi golden background: deep amber gradient + faint hex/grid overlay
+  const sciFiBg: React.CSSProperties = {
+    backgroundImage: [
+      "radial-gradient(1200px 400px at 50% -10%, rgba(255,225,140,0.55), transparent 60%)",
+      "radial-gradient(600px 300px at 100% 0%, rgba(255,170,40,0.35), transparent 60%)",
+      "linear-gradient(180deg, #b8770f 0%, #8a4f08 45%, #5a3206 100%)",
+    ].join(","),
+  };
+  const gridOverlay: React.CSSProperties = {
+    backgroundImage:
+      "linear-gradient(rgba(255,220,120,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,220,120,0.08) 1px, transparent 1px)",
+    backgroundSize: "26px 26px",
+  };
+
   return (
-    <div className="min-h-[60vh] -mx-4">
-      <div className="bg-gradient-to-b from-indigo-700 to-indigo-900 px-4 pt-4 pb-8 rounded-b-3xl text-white">
-        <button onClick={onBack} className="flex items-center gap-1 text-sm opacity-80 mb-3"><ArrowLeft className="h-4 w-4" /> Back</button>
+    <div className="min-h-[60vh] -mx-4 relative" style={sciFiBg}>
+      <div className="absolute inset-0 pointer-events-none" style={gridOverlay} />
+      <div className="relative px-4 pt-4 pb-8 rounded-b-3xl text-amber-50 border-b border-amber-300/30 shadow-[0_8px_30px_-12px_rgba(255,180,40,0.5)]">
+        <button onClick={onBack} className="flex items-center gap-1 text-sm opacity-90 mb-3 hover:opacity-100"><ArrowLeft className="h-4 w-4" /> Back</button>
         <div className="flex gap-6 items-end">
-          <button onClick={() => setTab("lottery")} className={`font-bold text-2xl tracking-tight ${tab==="lottery" ? "" : "opacity-50"}`}>Lottery</button>
-          <button onClick={() => setTab("dashboard")} className={`font-bold text-2xl tracking-tight ${tab==="dashboard" ? "" : "opacity-50"}`}>
+          <button onClick={() => setTab("lottery")} className={`font-bold text-2xl tracking-tight drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)] ${tab==="lottery" ? "text-white" : "opacity-60"}`}>
+            Lottery
+            {tab==="lottery" && <span className="block h-1 mt-1 bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-400 rounded-full shadow-[0_0_10px_rgba(255,215,100,0.8)]" />}
+          </button>
+          <button onClick={() => setTab("dashboard")} className={`font-bold text-2xl tracking-tight drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)] ${tab==="dashboard" ? "text-white" : "opacity-60"}`}>
             dashboard
-            {tab==="dashboard" && <span className="block h-1 mt-1 bg-emerald-400 rounded-full" />}
+            {tab==="dashboard" && <span className="block h-1 mt-1 bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-400 rounded-full shadow-[0_0_10px_rgba(255,215,100,0.8)]" />}
           </button>
         </div>
       </div>
 
-      <div className="bg-indigo-900 min-h-[60vh] px-3 pt-4 pb-32 text-white">
+      <div className="relative min-h-[60vh] px-3 pt-4 pb-32 text-amber-50">
         {tab === "lottery" ? (
           <>
             <div className="flex items-center gap-2 mb-3">
-              <div className="h-4 w-4 rounded-full border-2 border-white" />
-              <span className="bg-black text-white text-sm font-bold rounded-md px-2 py-1">Digital E lottery</span>
+              <div className="h-4 w-4 rounded-full border-2 border-amber-200 shadow-[0_0_8px_rgba(255,215,100,0.7)]" />
+              <span className="bg-gradient-to-r from-amber-950/90 to-amber-900/80 text-amber-100 text-sm font-bold rounded-md px-2.5 py-1 border border-amber-400/40 shadow-[0_0_12px_rgba(255,180,40,0.35)]">Digital E lottery</span>
             </div>
             <div className="space-y-4">
-              {plans.length === 0 && <p className="text-sm text-white/60 text-center py-10">No lottery plans yet.</p>}
+              {plans.length === 0 && <p className="text-sm text-amber-100/70 text-center py-10">No lottery plans yet.</p>}
               {plans.map((p) => (
                 <LotteryCard key={p.id} plan={p} sold={soldByPlan[p.id] || 0} onBuy={() => setConfirm(p)} />
               ))}
