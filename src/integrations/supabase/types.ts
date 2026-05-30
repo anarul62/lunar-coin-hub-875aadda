@@ -839,6 +839,45 @@ export type Database = {
         }
         Relationships: []
       }
+      site_content_sections: {
+        Row: {
+          body: string
+          category: string
+          created_at: string
+          enabled: boolean
+          icon: string
+          id: string
+          slug: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string
+          category: string
+          created_at?: string
+          enabled?: boolean
+          icon?: string
+          id?: string
+          slug: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          category?: string
+          created_at?: string
+          enabled?: boolean
+          icon?: string
+          id?: string
+          slug?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_seo_settings: {
         Row: {
           author: string
