@@ -61,6 +61,9 @@ import AgentDashboard from "./pages/agent/AgentDashboard.tsx";
 import Support from "./pages/Support.tsx";
 import AdminSupport from "./pages/admin/AdminSupport.tsx";
 import Settings from "./pages/Settings.tsx";
+import Fra from "./pages/Fra.tsx";
+import About from "./pages/About.tsx";
+import AdminSiteContent from "./pages/admin/AdminSiteContent.tsx";
 
 if (typeof document !== "undefined" && localStorage.getItem("theme") === "light") {
   document.documentElement.classList.add("light");
@@ -163,6 +166,9 @@ const App = () => (
           <Route path="/support" element={<Support />} />
           <Route path="/admin/support" element={<AdminSupport />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/fra" element={<Fra />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/admin/site-content" element={<AdminSiteContent />} />
           {placeholders.map(p => (
             <Route key={p.path} path={p.path} element={<AdminPlaceholder title={p.title} />} />
           ))}
