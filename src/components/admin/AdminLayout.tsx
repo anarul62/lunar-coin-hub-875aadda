@@ -54,6 +54,7 @@ const groups: Group[] = [
     { label: "Agent Settings", icon: UserCog, path: "/admin/agents" },
     { label: "Web Settings", icon: Settings, path: "/admin/web" },
     { label: "SEO", icon: Search, path: "/admin/seo" },
+    { label: "FRA & About Content", icon: FileCheck, path: "/admin/site-content" },
   ]},
   { title: "Manage Agents", items: [
     { label: "Add Agent", icon: UserCog, path: "/admin/add-agent" },

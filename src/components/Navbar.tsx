@@ -16,7 +16,7 @@ const menuItems: { label: string; icon: any; expandable: boolean; path?: string 
   { label: "Portfolio", icon: Briefcase, expandable: false },
   { label: "Refer & Earn", icon: Gift, expandable: false, path: "/referral" },
   { label: "Our Products", icon: Package, expandable: true },
-  { label: "FRA", icon: FileText, expandable: false },
+  { label: "FRA", icon: FileText, expandable: false, path: "/fra" },
   { label: "Tools", icon: Wrench, expandable: true },
 ];
 

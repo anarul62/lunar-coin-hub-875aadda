@@ -188,7 +188,7 @@ const Profile = () => {
             <Service icon={Megaphone} label="Announcement"/>
             <Service icon={Headphones} label="Support"/>
             <Service icon={BookOpen} label="Guide"/>
-            <Service icon={Info} label="About us"/>
+            <Service icon={Info} label="About us" onClick={() => navigate("/about")}/>
           </div>
         </section>
 
