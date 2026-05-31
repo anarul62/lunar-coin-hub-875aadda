@@ -10,17 +10,22 @@ type Section = { id: string; slug: string; icon: string; title: string; body: st
 const About = () => {
   const navigate = useNavigate();
   const [items, setItems] = useState<Section[]>([]);
+  const [certUrl, setCertUrl] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
-      const { data } = await (supabase as any)
-        .from("site_content_sections")
-        .select("id,slug,icon,title,body")
-        .eq("category", "about")
-        .eq("enabled", true)
-        .order("sort_order", { ascending: true });
+      const [{ data }, { data: setting }] = await Promise.all([
+        (supabase as any)
+          .from("site_content_sections")
+          .select("id,slug,icon,title,body")
+          .eq("category", "about")
+          .eq("enabled", true)
+          .order("sort_order", { ascending: true }),
+        (supabase as any).from("app_settings").select("value").eq("key", "about_certificate_url").maybeSingle(),
+      ]);
       setItems(data || []);
+      setCertUrl((setting?.value?.url as string) || "");
       setLoading(false);
     })();
   }, []);
