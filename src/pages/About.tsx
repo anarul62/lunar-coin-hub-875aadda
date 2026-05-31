@@ -68,6 +68,17 @@ const About = () => {
               </article>
             ))
           )}
+
+          {certUrl && (
+            <article className="rounded-2xl border border-primary/30 bg-card p-3 shadow-card mt-2">
+              <h2 className="flex items-center gap-2 text-base font-semibold mb-2">
+                <span className="text-lg">📜</span>
+                <span className="text-gradient-gold">Official Licence</span>
+              </h2>
+              <img src={certUrl} alt="Crypto X official licence certificate"
+                className="w-full rounded-xl border border-border" loading="lazy" />
+            </article>
+          )}
         </section>
       </main>
       <BottomNav />
