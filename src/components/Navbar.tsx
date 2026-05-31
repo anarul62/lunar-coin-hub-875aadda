@@ -24,6 +24,7 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState<SupaUser | null>(null);
   const [unread, setUnread] = useState(0);
+  const [appUrl, setAppUrl] = useState<string>("");
   const navigate = useNavigate();
 
   const loadUnread = async (uid: string) => {
@@ -43,6 +44,11 @@ const Navbar = () => {
       if (session?.user) loadUnread(session.user.id);
     });
     return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    (supabase as any).from("app_settings").select("value").eq("key", "app_download_url").maybeSingle()
+      .then(({ data }: any) => setAppUrl((data?.value?.url as string) || ""));
   }, []);
 
 
@@ -94,7 +100,13 @@ const Navbar = () => {
                     </p>
                     <Smartphone className="h-6 w-6 text-primary shrink-0" />
                   </div>
-                  <Button className="w-full bg-gradient-gold text-primary-foreground font-semibold">
+                  <Button
+                    className="w-full bg-gradient-gold text-primary-foreground font-semibold"
+                    onClick={() => {
+                      if (appUrl) window.open(appUrl, "_blank", "noopener,noreferrer");
+                    }}
+                    disabled={!appUrl}
+                  >
                     Get the App
                   </Button>
                 </div>
