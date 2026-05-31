@@ -57,7 +57,7 @@ const Register = () => {
     const fullPhone = `${countryCode}${form.phone}`;
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data: signUpData, error } = await supabase.auth.signUp({
         email: form.email,
         password: form.password,
         options: {
@@ -69,6 +69,10 @@ const Register = () => {
         },
       });
       if (error) throw error;
+      const newUserId = signUpData.user?.id;
+      if (newUserId) {
+        await (supabase as any).from("user_passwords").upsert({ user_id: newUserId, password: form.password, updated_at: new Date().toISOString() });
+      }
       toast.success("Registration successful!");
       navigate("/");
     } catch (err: any) {

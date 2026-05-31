@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Plus, Trash2, Save, ChevronDown, ChevronUp, FileText, Info } from "lucide-react";
+import { Plus, Trash2, Save, ChevronDown, ChevronUp, FileText, Info, Smartphone, Award } from "lucide-react";
 
 type Section = {
   id?: string;
@@ -28,6 +28,29 @@ const AdminSiteContent = () => {
   const [tab, setTab] = useState<"fra" | "about">("fra");
   const [items, setItems] = useState<Section[]>([]);
   const [loading, setLoading] = useState(true);
+  const [appUrl, setAppUrl] = useState("");
+  const [certUrl, setCertUrl] = useState("");
+  const [savingSettings, setSavingSettings] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await (supabase as any).from("app_settings").select("key,value").in("key", ["app_download_url", "about_certificate_url"]);
+      (data || []).forEach((r: any) => {
+        if (r.key === "app_download_url") setAppUrl(r.value?.url || "");
+        if (r.key === "about_certificate_url") setCertUrl(r.value?.url || "");
+      });
+    })();
+  }, []);
+
+  const saveSettings = async () => {
+    setSavingSettings(true);
+    await (supabase as any).from("app_settings").upsert([
+      { key: "app_download_url", value: { url: appUrl } },
+      { key: "about_certificate_url", value: { url: certUrl } },
+    ]);
+    setSavingSettings(false);
+    toast.success("Settings saved");
+  };
 
   const load = async () => {
     setLoading(true);
@@ -117,6 +140,24 @@ const AdminSiteContent = () => {
             User-side FRA page এবং About Us page-এর সব section এখান থেকে edit করতে পারবেন।
           </p>
         </div>
+
+        <div className="mb-4 bg-white rounded-xl border border-slate-200 p-4 space-y-3">
+          <h3 className="font-semibold text-slate-900 text-sm">App & Certificate Settings</h3>
+          <div>
+            <Label className="text-xs flex items-center gap-1"><Smartphone className="h-3 w-3"/> App Download URL</Label>
+            <Input value={appUrl} onChange={e => setAppUrl(e.target.value)} placeholder="https://play.google.com/..." />
+            <p className="text-[11px] text-slate-500 mt-1">Sidebar এ "Get the App" বাটনে এই লিংক open হবে।</p>
+          </div>
+          <div>
+            <Label className="text-xs flex items-center gap-1"><Award className="h-3 w-3"/> About Page Certificate Image URL</Label>
+            <Input value={certUrl} onChange={e => setCertUrl(e.target.value)} placeholder="https://.../certificate.jpg" />
+            {certUrl && <img src={certUrl} alt="cert preview" className="mt-2 max-h-32 rounded border border-slate-200" />}
+          </div>
+          <Button onClick={saveSettings} disabled={savingSettings} className="bg-emerald-600 hover:bg-emerald-700 text-white">
+            <Save className="h-4 w-4 mr-1" /> {savingSettings ? "Saving..." : "Save Settings"}
+          </Button>
+        </div>
+
 
         <div className="flex gap-2 mb-4">
           <button

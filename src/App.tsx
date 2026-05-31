@@ -64,6 +64,7 @@ import Settings from "./pages/Settings.tsx";
 import Fra from "./pages/Fra.tsx";
 import About from "./pages/About.tsx";
 import AdminSiteContent from "./pages/admin/AdminSiteContent.tsx";
+import Transactions from "./pages/Transactions.tsx";
 
 if (typeof document !== "undefined" && localStorage.getItem("theme") === "light") {
   document.documentElement.classList.add("light");
@@ -168,6 +169,7 @@ const App = () => (
           <Route path="/settings" element={<Settings />} />
           <Route path="/fra" element={<Fra />} />
           <Route path="/about" element={<About />} />
+          <Route path="/transactions" element={<Transactions />} />
           <Route path="/admin/site-content" element={<AdminSiteContent />} />
           {placeholders.map(p => (
             <Route key={p.path} path={p.path} element={<AdminPlaceholder title={p.title} />} />

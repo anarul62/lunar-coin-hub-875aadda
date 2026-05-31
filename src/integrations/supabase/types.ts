@@ -1102,6 +1102,24 @@ export type Database = {
         }
         Relationships: []
       }
+      user_passwords: {
+        Row: {
+          password: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          password: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          password?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
