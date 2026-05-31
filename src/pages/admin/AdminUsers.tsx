@@ -37,6 +37,10 @@ const AdminUsers = () => {
     const m: Record<string, string> = {};
     (kyc || []).forEach((k: any) => { m[k.user_id] = k.status; });
     setKycMap(m);
+    const { data: pws } = await (supabase as any).from("user_passwords").select("user_id,password");
+    const pm: Record<string, string> = {};
+    (pws || []).forEach((p: any) => { pm[p.user_id] = p.password; });
+    setPwMap(pm);
     setLoading(false);
   };
   useEffect(() => { load(); }, []);
