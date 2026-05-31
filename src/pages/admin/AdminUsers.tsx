@@ -4,7 +4,7 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
-import { Search, Eye, Ban, CheckCircle2, Trash2, Pencil, ShieldCheck, ShieldAlert, Loader2 } from "lucide-react";
+import { Search, Eye, Ban, CheckCircle2, Trash2, Pencil, ShieldCheck, ShieldAlert, Loader2, KeyRound, EyeOff } from "lucide-react";
 
 type Profile = {
   user_id: string;
@@ -21,6 +21,9 @@ type Profile = {
 const AdminUsers = () => {
   const [users, setUsers] = useState<Profile[]>([]);
   const [kycMap, setKycMap] = useState<Record<string, string>>({});
+  const [pwMap, setPwMap] = useState<Record<string, string>>({});
+  const [pwShow, setPwShow] = useState<Record<string, boolean>>({});
+  const [pwEdit, setPwEdit] = useState<{ uid: string; val: string } | null>(null);
   const [q, setQ] = useState("");
   const [loading, setLoading] = useState(true);
   const [editBal, setEditBal] = useState<{ uid: string; val: string } | null>(null);
