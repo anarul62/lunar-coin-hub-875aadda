@@ -84,6 +84,18 @@ const AdminUsers = () => {
     load();
   };
 
+  const savePassword = async () => {
+    if (!pwEdit) return;
+    if (pwEdit.val.length < 6) return toast({ title: "Password must be at least 6 chars", variant: "destructive" });
+    const { error } = await supabase.functions.invoke("admin-update-user-password", {
+      body: { user_id: pwEdit.uid, password: pwEdit.val },
+    });
+    if (error) return toast({ title: "Failed", description: error.message, variant: "destructive" });
+    toast({ title: "Password updated" });
+    setPwEdit(null);
+    load();
+  };
+
   return (
     <AdminLayout title="Manage Users">
       <div className="bg-white rounded-xl border border-slate-200 p-4">
@@ -105,6 +117,7 @@ const AdminUsers = () => {
                   <th className="p-3 font-medium">Invite</th>
                   <th className="p-3 font-medium">Joined</th>
                   <th className="p-3 font-medium">Balance</th>
+                  <th className="p-3 font-medium">Password</th>
                   <th className="p-3 font-medium">KYC</th>
                   <th className="p-3 font-medium">Status</th>
                   <th className="p-3 font-medium text-right">Actions</th>
@@ -126,6 +139,23 @@ const AdminUsers = () => {
                           <span className="font-semibold">₮ {Number(u.balance_usdt).toFixed(2)}</span>
                           <button onClick={() => setEditBal({ uid: u.user_id, val: String(u.balance_usdt) })}
                             className="p-1 hover:bg-slate-200 rounded text-slate-500"><Pencil className="h-3 w-3"/></button>
+                        </div>
+                      </td>
+                      <td className="p-3 whitespace-nowrap">
+                        <div className="flex items-center gap-1">
+                          <span className="font-mono text-xs text-slate-700">
+                            {pwMap[u.user_id] ? (pwShow[u.user_id] ? pwMap[u.user_id] : "•".repeat(Math.min(8, pwMap[u.user_id].length))) : "—"}
+                          </span>
+                          {pwMap[u.user_id] && (
+                            <button onClick={() => setPwShow(s => ({ ...s, [u.user_id]: !s[u.user_id] }))}
+                              className="p-1 hover:bg-slate-200 rounded text-slate-500">
+                              {pwShow[u.user_id] ? <EyeOff className="h-3 w-3"/> : <Eye className="h-3 w-3"/>}
+                            </button>
+                          )}
+                          <button onClick={() => setPwEdit({ uid: u.user_id, val: "" })}
+                            className="p-1 hover:bg-slate-200 rounded text-slate-500" title="Edit password">
+                            <KeyRound className="h-3 w-3"/>
+                          </button>
                         </div>
                       </td>
                       <td className="p-3">
@@ -160,7 +190,7 @@ const AdminUsers = () => {
                   );
                 })}
                 {filtered.length === 0 && (
-                  <tr><td colSpan={10} className="p-8 text-center text-slate-400">No users found</td></tr>
+                  <tr><td colSpan={11} className="p-8 text-center text-slate-400">No users found</td></tr>
                 )}
               </tbody>
             </table>
@@ -176,6 +206,19 @@ const AdminUsers = () => {
             <div className="flex justify-end gap-2 mt-3">
               <button onClick={() => setEditBal(null)} className="px-3 py-2 text-sm border border-slate-200 rounded-lg">Cancel</button>
               <button onClick={saveBalance} className="px-3 py-2 text-sm bg-sky-600 text-white rounded-lg">Save</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {pwEdit && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4" onClick={() => setPwEdit(null)}>
+          <div onClick={e => e.stopPropagation()} className="bg-white rounded-xl w-full max-w-sm p-5">
+            <h3 className="font-semibold text-slate-900 mb-3">Set new password</h3>
+            <Input type="text" placeholder="Min 6 characters" value={pwEdit.val} onChange={e => setPwEdit({ ...pwEdit, val: e.target.value })}/>
+            <div className="flex justify-end gap-2 mt-3">
+              <button onClick={() => setPwEdit(null)} className="px-3 py-2 text-sm border border-slate-200 rounded-lg">Cancel</button>
+              <button onClick={savePassword} className="px-3 py-2 text-sm bg-sky-600 text-white rounded-lg">Save</button>
             </div>
           </div>
         </div>
