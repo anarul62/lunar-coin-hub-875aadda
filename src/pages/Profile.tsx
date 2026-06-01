@@ -29,14 +29,16 @@ const Profile = () => {
   const [convertOpen, setConvertOpen] = useState(false);
   const [kycOpen, setKycOpen] = useState(false);
   const [showLocal, setShowLocal] = useState(true);
+  const [telegramUrl, setTelegramUrl] = useState("");
 
   const load = async () => {
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { navigate("/login"); return; }
-    const [{ data: prof }, { data: kyc }, r, rs] = await Promise.all([
+    const [{ data: prof }, { data: kyc }, { data: telegram }, r, rs] = await Promise.all([
       supabase.from("profiles").select("*").eq("user_id", user.id).maybeSingle(),
       supabase.from("kyc_requests").select("status").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1),
+      (supabase as any).from("app_settings").select("value").eq("key", "telegram_support_url").maybeSingle(),
       getUsdInrRate(),
       fetchLiveRates(),
     ]);
@@ -48,6 +50,7 @@ const Profile = () => {
       setProfile(prof);
     }
     setKycStatus((kyc?.[0]?.status as any) || "none");
+    setTelegramUrl((telegram?.value?.url as string) || "");
     setRate(r);
     setRates(rs);
     setLoading(false);
@@ -184,10 +187,10 @@ const Profile = () => {
           <h3 className="text-sm font-semibold mb-3">Service Center</h3>
           <div className="grid grid-cols-3 gap-y-5">
             <Service icon={SettingsIcon} label="Settings" onClick={() => navigate("/settings")}/>
-            <Service icon={MessageSquare} label="Feedback"/>
-            <Service icon={Megaphone} label="Announcement"/>
-            <Service icon={Headphones} label="Support"/>
-            <Service icon={BookOpen} label="Guide"/>
+            <Service icon={MessageSquare} label="Feedback" onClick={() => navigate("/feedback")}/>
+            <Service icon={Megaphone} label="Announcement" onClick={() => navigate("/announcements")}/>
+            <Service icon={Headphones} label="Support" onClick={() => telegramUrl ? window.open(telegramUrl, "_blank", "noopener,noreferrer") : toast({ title: "Telegram link not set" })}/>
+            <Service icon={BookOpen} label="Guide" onClick={() => navigate("/guide")}/>
             <Service icon={Info} label="About us" onClick={() => navigate("/about")}/>
           </div>
         </section>
