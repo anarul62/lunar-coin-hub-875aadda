@@ -65,6 +65,12 @@ import Fra from "./pages/Fra.tsx";
 import About from "./pages/About.tsx";
 import AdminSiteContent from "./pages/admin/AdminSiteContent.tsx";
 import Transactions from "./pages/Transactions.tsx";
+import Announcements from "./pages/Announcements.tsx";
+import Guide from "./pages/Guide.tsx";
+import Feedback from "./pages/Feedback.tsx";
+import AdminTelegram from "./pages/admin/AdminTelegram.tsx";
+import AdminGuide from "./pages/admin/AdminGuide.tsx";
+import AdminFeedback from "./pages/admin/AdminFeedback.tsx";
 
 if (typeof document !== "undefined" && localStorage.getItem("theme") === "light") {
   document.documentElement.classList.add("light");
@@ -96,8 +102,6 @@ const placeholders: { path: string; title: string }[] = [
   { path: "/admin/spin-wheel", title: "Spin Wheel" },
   { path: "/admin/bonus-collation", title: "Bonus Collation" },
   { path: "/admin/support-old", title: "Customer Service" },
-  { path: "/admin/feedback", title: "Users Feedback" },
-  { path: "/admin/telegram", title: "Telegram" },
 ];
 
 const App = () => (
@@ -170,7 +174,13 @@ const App = () => (
           <Route path="/fra" element={<Fra />} />
           <Route path="/about" element={<About />} />
           <Route path="/transactions" element={<Transactions />} />
+          <Route path="/announcements" element={<Announcements />} />
+          <Route path="/guide" element={<Guide />} />
+          <Route path="/feedback" element={<Feedback />} />
           <Route path="/admin/site-content" element={<AdminSiteContent />} />
+          <Route path="/admin/telegram" element={<AdminTelegram />} />
+          <Route path="/admin/guide" element={<AdminGuide />} />
+          <Route path="/admin/feedback" element={<AdminFeedback />} />
           {placeholders.map(p => (
             <Route key={p.path} path={p.path} element={<AdminPlaceholder title={p.title} />} />
           ))}
