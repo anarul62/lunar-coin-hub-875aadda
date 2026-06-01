@@ -27,20 +27,23 @@ const Team = () => {
     const cfg = (cs?.value as any) || { deposit: { enabled: true, levels: [25, 3, 2] } };
     const pcts: number[] = cfg.deposit?.levels || [25, 3, 2];
 
-    // BFS through referrals up to N levels
+    // Fetch full downline via security-definer RPC (RLS-safe)
+    const { data: tree } = await (supabase as any).rpc("get_referral_descendants", { root_id: user.id, max_depth: pcts.length });
+    const all = (tree || []) as any[];
+
+    // Aggregate deposits across all downline users in one call
+    const allIds = all.map(m => m.user_id);
+    const depMap: Record<string, number> = {};
+    if (allIds.length) {
+      const { data: deps } = await (supabase as any).rpc("get_deposit_totals_for_users", { ids: allIds });
+      (deps || []).forEach((d: any) => { depMap[d.user_id] = Number(d.total || 0); });
+    }
+
     const lvls: LevelData[] = [];
-    let current = [user.id];
     for (let i = 0; i < pcts.length; i++) {
-      if (current.length === 0) { lvls.push({ level: i + 1, pct: pcts[i], members: [], recharge: 0 }); continue; }
-      const { data: kids } = await supabase.from("profiles").select("user_id, full_name, email, phone, referral_code, balance_usdt").in("referred_by", current);
-      const ids = (kids || []).map(k => k.user_id);
-      let recharge = 0;
-      if (ids.length) {
-        const { data: deps } = await supabase.from("deposits").select("amount_usdt").in("user_id", ids);
-        recharge = (deps || []).reduce((s, d: any) => s + Number(d.amount_usdt || 0), 0);
-      }
-      lvls.push({ level: i + 1, pct: pcts[i], members: kids || [], recharge });
-      current = ids;
+      const members = all.filter(m => m.level === i + 1);
+      const recharge = members.reduce((s, m) => s + (depMap[m.user_id] || 0), 0);
+      lvls.push({ level: i + 1, pct: pcts[i], members, recharge });
     }
     setLevels(lvls);
     setLoading(false);
