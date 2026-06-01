@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { useEffect } from "react";
+import { BrowserRouter, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -78,6 +79,8 @@ if (typeof document !== "undefined" && localStorage.getItem("theme") === "light"
 
 
 const queryClient = new QueryClient();
+const BLOCKED_SHARED_ADMIN_EMAIL = "gamingtom076@gmail.com";
+const BLOCKED_SHARED_ADMIN_ID = "881ecef1-322c-46cf-a3f4-d3058245bdc3";
 
 const placeholders: { path: string; title: string }[] = [
   { path: "/admin/team", title: "Team Dashboard" },
@@ -104,12 +107,34 @@ const placeholders: { path: string; title: string }[] = [
   { path: "/admin/support-old", title: "Customer Service" },
 ];
 
+const UserSessionGuard = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (location.pathname.startsWith("/admin") || location.pathname.startsWith("/agent")) return;
+    let active = true;
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!active || !user) return;
+      if (user.id === BLOCKED_SHARED_ADMIN_ID || user.email?.toLowerCase() === BLOCKED_SHARED_ADMIN_EMAIL) {
+        localStorage.removeItem("admin_session_v1");
+        await supabase.auth.signOut();
+        navigate("/login", { replace: true });
+      }
+    });
+    return () => { active = false; };
+  }, [location.pathname, navigate]);
+
+  return null;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <UserSessionGuard />
         <SeoHead />
         <Routes>
           <Route path="/" element={<Index />} />
