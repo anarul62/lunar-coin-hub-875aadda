@@ -84,6 +84,7 @@ const groups: Group[] = [
     { label: "Customer Service", icon: Headphones, path: "/admin/support" },
     { label: "Users Feedback", icon: MessageSquare, path: "/admin/feedback" },
     { label: "Telegram", icon: Send, path: "/admin/telegram" },
+    { label: "User Guide", icon: FileCheck, path: "/admin/guide" },
   ]},
 ];
 

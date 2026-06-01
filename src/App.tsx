@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { useEffect } from "react";
+import { BrowserRouter, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -53,6 +54,7 @@ import AdminLotteryPlans from "./pages/admin/AdminLotteryPlans.tsx";
 import LotteryTickets from "./pages/lottery/LotteryTickets.tsx";
 import LotteryDetails from "./pages/lottery/LotteryDetails.tsx";
 import SeoHead from "./components/SeoHead.tsx";
+import { supabase } from "@/integrations/supabase/client";
 import AdminAddAgent from "./pages/admin/AdminAddAgent.tsx";
 import AdminAgentData from "./pages/admin/AdminAgentData.tsx";
 import AdminManageAdmins from "./pages/admin/AdminManageAdmins.tsx";
@@ -65,6 +67,12 @@ import Fra from "./pages/Fra.tsx";
 import About from "./pages/About.tsx";
 import AdminSiteContent from "./pages/admin/AdminSiteContent.tsx";
 import Transactions from "./pages/Transactions.tsx";
+import Announcements from "./pages/Announcements.tsx";
+import Guide from "./pages/Guide.tsx";
+import Feedback from "./pages/Feedback.tsx";
+import AdminTelegram from "./pages/admin/AdminTelegram.tsx";
+import AdminGuide from "./pages/admin/AdminGuide.tsx";
+import AdminFeedback from "./pages/admin/AdminFeedback.tsx";
 
 if (typeof document !== "undefined" && localStorage.getItem("theme") === "light") {
   document.documentElement.classList.add("light");
@@ -72,6 +80,8 @@ if (typeof document !== "undefined" && localStorage.getItem("theme") === "light"
 
 
 const queryClient = new QueryClient();
+const BLOCKED_SHARED_ADMIN_EMAIL = "gamingtom076@gmail.com";
+const BLOCKED_SHARED_ADMIN_ID = "881ecef1-322c-46cf-a3f4-d3058245bdc3";
 
 const placeholders: { path: string; title: string }[] = [
   { path: "/admin/team", title: "Team Dashboard" },
@@ -96,9 +106,28 @@ const placeholders: { path: string; title: string }[] = [
   { path: "/admin/spin-wheel", title: "Spin Wheel" },
   { path: "/admin/bonus-collation", title: "Bonus Collation" },
   { path: "/admin/support-old", title: "Customer Service" },
-  { path: "/admin/feedback", title: "Users Feedback" },
-  { path: "/admin/telegram", title: "Telegram" },
 ];
+
+const UserSessionGuard = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (location.pathname.startsWith("/admin") || location.pathname.startsWith("/agent")) return;
+    let active = true;
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!active || !user) return;
+      if (user.id === BLOCKED_SHARED_ADMIN_ID || user.email?.toLowerCase() === BLOCKED_SHARED_ADMIN_EMAIL) {
+        localStorage.removeItem("admin_session_v1");
+        await supabase.auth.signOut();
+        navigate("/login", { replace: true });
+      }
+    });
+    return () => { active = false; };
+  }, [location.pathname, navigate]);
+
+  return null;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -106,6 +135,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <UserSessionGuard />
         <SeoHead />
         <Routes>
           <Route path="/" element={<Index />} />
@@ -170,7 +200,13 @@ const App = () => (
           <Route path="/fra" element={<Fra />} />
           <Route path="/about" element={<About />} />
           <Route path="/transactions" element={<Transactions />} />
+          <Route path="/announcements" element={<Announcements />} />
+          <Route path="/guide" element={<Guide />} />
+          <Route path="/feedback" element={<Feedback />} />
           <Route path="/admin/site-content" element={<AdminSiteContent />} />
+          <Route path="/admin/telegram" element={<AdminTelegram />} />
+          <Route path="/admin/guide" element={<AdminGuide />} />
+          <Route path="/admin/feedback" element={<AdminFeedback />} />
           {placeholders.map(p => (
             <Route key={p.path} path={p.path} element={<AdminPlaceholder title={p.title} />} />
           ))}

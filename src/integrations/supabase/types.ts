@@ -1030,6 +1030,36 @@ export type Database = {
           },
         ]
       }
+      user_feedback: {
+        Row: {
+          admin_note: string | null
+          created_at: string
+          id: string
+          message: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_note?: string | null
+          created_at?: string
+          id?: string
+          message: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_note?: string | null
+          created_at?: string
+          id?: string
+          message?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_investments: {
         Row: {
           amount: number
