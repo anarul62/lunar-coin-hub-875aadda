@@ -1465,6 +1465,25 @@ export type Database = {
         Returns: number
       }
       gen_referral_code: { Args: never; Returns: string }
+      get_deposit_totals_for_users: {
+        Args: { ids: string[] }
+        Returns: {
+          total: number
+          user_id: string
+        }[]
+      }
+      get_referral_descendants: {
+        Args: { max_depth?: number; root_id: string }
+        Returns: {
+          balance_usdt: number
+          email: string
+          full_name: string
+          level: number
+          phone: string
+          referral_code: string
+          user_id: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
