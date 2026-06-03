@@ -61,6 +61,7 @@ const InvestChannel = () => {
   }, [channelKey]);
 
   const showChart = channelKey === "gold";
+  const showSilverChart = channelKey === "silver";
 
   const handleConfirmInvest = async () => {
     if (!confirmPlan || !channel) return;
