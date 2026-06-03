@@ -171,6 +171,10 @@ const InvestChannel = () => {
           <div className="mb-4">
             <GoldTradingChart onBack={() => navigate("/invest")} />
           </div>
+        ) : showSilverChart ? (
+          <div className="mb-4">
+            <SilverTradingChart onBack={() => navigate("/invest")} />
+          </div>
         ) : (
           channel?.banner_url && (
             <img src={channel.banner_url} alt={channel.name} className="w-full aspect-[2/1] object-cover rounded-xl mb-4" />
