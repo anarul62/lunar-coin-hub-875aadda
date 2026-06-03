@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import GoldTradingChart from "@/components/GoldTradingChart";
+import SilverTradingChart from "@/components/SilverTradingChart";
 import LotteryChannel from "@/pages/lottery/LotteryChannel";
 import { currencyToUsdt, fetchLiveRates } from "@/lib/currency";
 
